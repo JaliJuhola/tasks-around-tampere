@@ -5,6 +5,7 @@
   "dependencies": {
     "@babel/core": "7.1.0",
     "@svgr/webpack": "2.4.1",
+    "axios": "^0.18.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "9.0.0",
     "babel-jest": "23.6.0",
@@ -70,15 +71,15 @@
   ],
   "jest": {
     "collectCoverageFrom": [
-      "src/**/*.{js,jsx}"
+      "static/**/*.{js,jsx}"
     ],
     "resolver": "jest-pnp-resolver",
     "setupFiles": [
       "react-app-polyfill/jsdom"
     ],
     "testMatch": [
-      "<rootDir>/tasks-around-university/src/**/__tests__/**/*.{js,jsx}",
-      "<rootDir>/tasks-around-university/src/**/?(*.)(spec|test).{js,jsx}"
+      "<rootDir>/tasks-around-university/static/**/__tests__/**/*.{js,jsx}",
+      "<rootDir>/tasks-around-university/static/**/?(*.)(spec|test).{js,jsx}"
     ],
     "testEnvironment": "jsdom",
     "testURL": "http://localhost",
