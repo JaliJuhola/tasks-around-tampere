@@ -59,10 +59,30 @@ ROOT_URLCONF = 'rest.urls'
 
 WSGI_APPLICATION = 'rest.wsgi.application'
 
+TEST_SERVER_DOMAIN = "http://localhost:8081/"
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-
+REST_FRAMEWORK = {
+    'TEST_REQUEST_RENDERER_CLASSES': (
+        'rest_framework.renderers.MultiPartRenderer',
+    )
+}
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

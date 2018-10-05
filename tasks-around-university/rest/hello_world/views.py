@@ -9,19 +9,18 @@ from rest.hello_world.serializers import CounterSerializer
 def get_last_counter_response():
     counter = Counter.objects.last()
     if not counter:
-        return JsonResponse({
+        return Response(data={
             'error': u'No Counter found'},
             status=status.HTTP_400_BAD_REQUEST
         )
     serializer = CounterSerializer(counter)
-    print(serializer.data)
-    return JsonResponse(serializer.data)
+    return Response(data=serializer.data)
 
 
 @api_view(['GET', 'POST', 'PATCH'])
 def counter_view(request):
     """
-    List all code snippets, or create a new snippet.
+    Creates new counter item or increases existing one or gets latest one
     """
     if request.method == 'POST':
         Counter.objects.create()
