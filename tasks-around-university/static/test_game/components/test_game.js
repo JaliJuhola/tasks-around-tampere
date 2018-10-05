@@ -17,12 +17,10 @@ class TestMiniGame extends Component {
   }
   get_data = () => {
     const self = this
-    setInterval(() =>
     axios.get("http://localhost:8000/test")
     .then(function (response) {
         self.setState({updated_at: response.data.updated_at, count: response.data.count})
-      }), 5000
-    );
+      })
   }
   patchClick = (e) => {
     const self = this
