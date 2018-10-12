@@ -6,7 +6,7 @@
 - ```git clone https://github.com/JaliJuhola/tasks_around_university.git```
 ### Troubleshoot:
 - install git CLI -> https://git-scm.com/downloads
-## Install Python 
+## Install Python
 ### Install python 3.7 globally
 - [https://www.python.org/downloads/release/python-370/](https://www.python.org/downloads/release/python-370/)
 - upgrade pip ```py -m pip install -U pip```
@@ -27,14 +27,14 @@
 ### migrate database
 - run ```python manage.py migrate``` in git/tasks_around_university/tasks-around-university
 ### Start dev server and rest api
-- 
+-
 - ```python manage.py runserver```
 - ```npm start``` in root directory
 
 ### Testing database connection
-- [http://localhost:3000/mini_games/test](http://localhost:3000/mini_games/test) 
+- [http://localhost:3000/mini_games/test](http://localhost:3000/mini_games/test)
 - At the beginning database is empty clicking Post you create new database object and clicking patch you add item to it.
-- You can also observe this change in Django-shell by running ```python manage.py shell``` 
+- You can also observe this change in Django-shell by running ```python manage.py shell```
 Example query:
 ```
 from rest.hello_world.models import Counter
@@ -44,11 +44,11 @@ for item in Counter.objects.all():
 // In example you can get dictionary for item showing in testing site by
 // Counter.objects.last().__dict__
 // Changing it by
-// c = Counter.objects.last() 
+// c = Counter.objects.last()
 // c.count = 9999
 // c.save()
 // now count in ui should be updated as well
-``` 
+```
 - More about django queries in [Django documentation](https://docs.djangoproject.com/en/2.1/topics/db/queries/)
 
 # Testing
@@ -58,3 +58,6 @@ for item in Counter.objects.all():
 
 ## Python unittests
 - ```python manage.py test```
+
+
+Moikka
