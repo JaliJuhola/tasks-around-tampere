@@ -63,4 +63,4 @@ for item in Counter.objects.all():
 - ```python manage.py test```
 
 # Contributing to repository
-- [a relative link](installation.md)
+- [Link to contributing document](CONTRIBUTING.md)
