@@ -4,7 +4,9 @@ from rest_framework.response import Response
 from rest.hello_world.models import Counter
 from django.http import JsonResponse
 from rest.hello_world.serializers import CounterSerializer
-
+from django.conf import settings
+import pusher
+from rest.push_the_buttons.channels import PushTheButtonsChannels
 
 def get_last_counter_response():
     counter = Counter.objects.last()
@@ -22,6 +24,7 @@ def counter_view(request):
     """
     Creates new counter item or increases existing one or gets latest one
     """
+    PushTheButtonsChannels.new_push_available("asd","asd", "123")
     if request.method == 'POST':
         Counter.objects.create()
     if request.method == 'PATCH':
