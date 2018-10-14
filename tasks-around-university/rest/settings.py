@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest.hello_world.apps.HelloWorldConfig',
+    'rest.maingame.apps.MaingameConfig',
+    'rest.push_the_buttons.apps.PushTheButtonsConfig',
     'corsheaders'
 ]
 
