@@ -19,17 +19,20 @@
 ###  Instal node through node.js installation page
 - Instal node through [https://nodejs.org/en/](https://nodejs.org/en/)
 - Restart computer
-### Install react dependecies
+### Install node package maanger dependecies
 - ```npm install``` in root directory
+- ```npm install -g expo-cli```
 
 ### Install and start postgres
 - [http://www.postgresqltutorial.com/install-postgresql/](http://www.postgresqltutorial.com/install-postgresql/)
+- If you have docker installed you can also run docker-compose up in root directory
 ### migrate database
 - run ```python manage.py migrate``` in git/tasks_around_university/tasks-around-university
 ### Start dev server and rest api
 - 
 - ```python manage.py runserver```
-- ```npm start``` in root directory
+- ```expo start``` in root directory
+- ```npm start``` in root directory (Hello world app)
 
 ### Testing database connection
 - [http://localhost:3000/mini_games/test](http://localhost:3000/mini_games/test) 
@@ -58,3 +61,6 @@ for item in Counter.objects.all():
 
 ## Python unittests
 - ```python manage.py test```
+
+# Contributing to repository
+- [a relative link](installation.md)
