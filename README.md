@@ -61,9 +61,6 @@ for item in Counter.objects.all():
 
 ## Python unittests
 - ```python manage.py test```
-<<<<<<< HEAD
-=======
 
 # Contributing to repository
-- [a relative link](installation.md)
->>>>>>> development
+- [Link to contributing document](CONTRIBUTING.md)
