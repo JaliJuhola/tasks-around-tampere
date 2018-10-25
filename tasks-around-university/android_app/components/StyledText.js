@@ -6,3 +6,4 @@ export class MonoText extends React.Component {
     return <Text {...this.props} style={[this.props.style, { fontFamily: 'space-mono' }]} />;
   }
 }
+

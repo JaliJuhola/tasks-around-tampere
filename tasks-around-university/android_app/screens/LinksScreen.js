@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
-
+import Scanner from '../components/main_game/Scanner'
 export default class LinksScreen extends React.Component {
   static navigationOptions = {
     title: 'Links',
