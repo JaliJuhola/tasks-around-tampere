@@ -19,6 +19,7 @@ import MenuIcon from './MenuIcon';
 import DrawerContent from '../navigation/DrawerContent';
 import HomeScreen from '../maingame/screens/HomeScreen';
 import ScannerScreen from '../maingame/screens/ScannerScreen';
+import PushTheButtonsScreen from '../pushthebuttons/screens/PushTheButtonsScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -52,6 +53,8 @@ const getSceneStyle = () => ({
   shadowOpacity: 1,
   shadowRadius: 3,
 });
+
+
 
 // on Android, the URI prefix typically contains a host in addition to scheme
 const prefix = Platform.OS === 'android' ? 'mychat://mychat/' : 'mychat://';
@@ -107,6 +110,13 @@ const AppNavigator = () => (
                     component={ScannerScreen}
                     title="scanner"
                     tabBarLabel="scanner"
+                    icon={TabBarIcon}
+                  />
+                  <Scene
+                    key="push_the_buttons"
+                    component={PushTheButtonsScreen}
+                    title="push the buttons"
+                    tabBarLabel="button push"
                     icon={TabBarIcon}
                   />
                 </Tabs>
