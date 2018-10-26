@@ -39,11 +39,7 @@ def player_location(request, pk):
         return JsonResponse(serializer.data)
 
 def player_group_location(request, pk):
-        #players = Player_Group.objects.filter(group=pk)
-        #pl = Player.objects.filter(id__in=[players.player])
-        #players = []
     players = [p.player for p in Player_Group.objects.filter(group=pk)]
-            #players.append(p.player)
     if not players: #Player_Group.DoesNotExist:
         return HttpResponse(status=404)
     
