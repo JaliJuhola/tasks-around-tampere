@@ -1,3 +1,5 @@
+import Layout from '../layouts/ScannerLayout';
+
 const BOX_MARGIN = 30;
 const BOX_SIZE = Layout.window.width - BOX_MARGIN * 2;
 const BOX_TOP = Layout.window.height / 2 - BOX_SIZE / 2;
@@ -110,6 +112,20 @@ const overlayBaseStyle = {
       color: 'rgba(255,255,255,0.8)',
       fontSize: 18,
     },
+    footer: {
+      position: 'absolute',
+      bottom: 30,
+      left: 0,
+      right: 0,
+      alignItems: 'center',
+      },
+      cancelText: {
+      color: '#fff',
+      backgroundColor: 'transparent',
+      fontSize: 17,
+      fontWeight: '500',
+      textAlign: 'center',
+      },
   });
 
   export default styles;
