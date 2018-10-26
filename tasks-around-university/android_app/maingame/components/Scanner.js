@@ -10,10 +10,8 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import ScannerStyles from './styles/ScannerStyles'
-
-
-import Layout from '../testscan/Layout';
+import ScannerStyles from '../styles/ScannerStyles'
+import { Actions } from 'react-native-router-flux';
 import { BarCodeScanner, Permissions } from 'expo';
 
 export default class Scanner extends Component {
@@ -89,10 +87,8 @@ export default class Scanner extends Component {
 
   _handlePressCancel = () => {
     this.setState({ lastScannedUrl: null });
+    Actions.pop()
   };
-  _handlePressCancel1 = () => {
-    this.props.navigation.goBack(null);
-    };
   _maybeRenderUrl = () => {
     if (!this.state.lastScannedUrl) {
       return;
@@ -101,11 +97,6 @@ export default class Scanner extends Component {
     return (
       <View style={ScannerStyles.bottomBar}>
         <View style={ScannerStyles.footer}>
-          <TouchableOpacity
-            onPress={this._handlePressCancel1}
-            hitSlop={{ top: 40, bottom: 40, right: 40, left: 40 }}>
-            <Text style={ScannerStyles.cancelText}>Cancel</Text>
-          </TouchableOpacity>
         </View>
         <TouchableOpacity style={ScannerStyles.url} onPress={this._handlePressUrl}>
           <Text numberOfLines={1} style={ScannerStyles.urlText}>
