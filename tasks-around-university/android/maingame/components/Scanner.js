@@ -15,11 +15,14 @@ import { Actions } from 'react-native-router-flux';
 import { BarCodeScanner, Permissions } from 'expo';
 
 export default class Scanner extends Component {
-  state = {
-    hasCameraPermission: null,
-    lastScannedUrl: null,
-  };
-
+  constructor(props) {
+    super(props);
+    this.props = props;
+    this.state = {
+      hasCameraPermission: null,
+      lastScannedUrl: null,
+    };
+  }
   componentDidMount() {
     this._requestCameraPermission();
   }
@@ -71,6 +74,9 @@ export default class Scanner extends Component {
   }
 
   _handlePressUrl = () => {
+    if(this.props.scan_action(this.state.lastScannedUrl)) {
+      return;
+    }
     Alert.alert(
       'Open this URL?',
       this.state.lastScannedUrl,
