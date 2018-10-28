@@ -20,9 +20,8 @@
 - Instal node through [https://nodejs.org/en/](https://nodejs.org/en/)
 - Restart computer
 ### Install node package maanger dependecies
-- ```npm install``` in root directory
-- ```npm install -g expo-cli```
-
+- ```npm install -g expo-cli``` in root directory
+- ```npm install``` in git/tasks_around_university/tasks-around-university/android
 ### Install and start postgres
 - [http://www.postgresqltutorial.com/install-postgresql/](http://www.postgresqltutorial.com/install-postgresql/)
 - If you have docker installed you can also run docker-compose up in root directory
@@ -31,8 +30,7 @@
 ### Start dev server and rest api
 - 
 - ```python manage.py runserver```
-- ```expo start``` in root directory
-- ```npm start``` in root directory (Hello world app)
+- ```expo start``` in git/tasks_around_university/tasks-around-university/android
 
 ### Testing database connection
 - [http://localhost:3000/mini_games/test](http://localhost:3000/mini_games/test) 
