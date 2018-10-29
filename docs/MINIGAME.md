@@ -11,12 +11,13 @@
 ### Rest apis
 
 - Example of rest apis being used
+- Name should be something like /api/mini_game_name/
 
 
 ## Where to code these?
 
 - When creating minigame it should be added under (android_app)[/tasks-around-university/android_app]
-- Create new folders for minigame ´´android_app/minigame_1´´ and there you can create your app
+- Create new folders for minigame ´´android/minigame_1´´ and there you can create your app
 
 ## Transition to minigame
 
