@@ -1,9 +1,9 @@
 # Version control
 ## Git pipeline by creating new pull request
 - Change branch to development ```git checkout development```
-- Pull latest version of development ```git checkout development```
+- Pull latest version of development ```git pull```
 - Create new branch ```git branch <type>_<what_is_done>``` read branch naming conventions below
-- Checkout to created branch ```git branch created_branch_name```
+- Checkout to created branch ```git checkout created_branch_name```
 - make your changes to code and test those
 - add your changes by using ```git add -p``` and ```git add file_where_changes_are.txt```
 - crete commit ```git commit -m "Here short explanation what is done."```
