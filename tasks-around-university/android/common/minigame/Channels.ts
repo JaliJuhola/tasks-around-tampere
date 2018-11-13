@@ -80,6 +80,7 @@ export class MinigameEntry {
           });
     }
     public game_started() {
+
         return false;
     }
     public add_member(member, channel) {

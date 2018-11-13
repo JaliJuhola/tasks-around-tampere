@@ -1,6 +1,6 @@
 import settings from "../../Settings";
 import axios from "axios";
-import {getSocketConnection} from "../minigame/Channels";
+import Connection from "../minigame/Connection";
 
 export default class MiniGameScore {
     private group_id: string;
@@ -12,7 +12,7 @@ export default class MiniGameScore {
         this.group_id = group_id;
         this.current_score = 0;
         this.minigame_name = minigame_name;
-        this.pusher = getSocketConnection;
+        this.pusher = Connection.getSocketConnection;
       }
 
     public increaseScore(score_to_add) : boolean {

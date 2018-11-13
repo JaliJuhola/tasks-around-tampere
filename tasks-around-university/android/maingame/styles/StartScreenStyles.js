@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 30,
   },
-  
+
   });
 
 export default styles;

@@ -13,15 +13,14 @@ import {
   Button,
 } from 'react-native';
     // Enable pusher logging - don't include this in production
-import Pusher from 'pusher-js/react-native';
 import { Actions } from 'react-native-router-flux';
-import {getSocketConnection} from '../../common/minigame/Connection';
-import {MiniGameScore} from '../../common/minigame/Score';
+// import Connection from '../../../android/common/minigame/Connection';
+// import {MiniGameScore} from '../../../android/common/minigame/Score';
 
 export default class PushTheButtonsScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.pusher = getSocketConnection()
+    // this.pusher = Connection.getSocketConnection()
     this.state = {
       playerToClickMessage: "Player 3 should click the button!",
       joinGroupModalVisible: false,
@@ -69,7 +68,7 @@ export default class PushTheButtonsScreen extends React.Component {
           return { currentScore: currentScore };
         });
       }
-      MiniGameScore.broadcastScore(this.state.group_id, setScore);
+      // MiniGameScore.broadcastScore(this.state.group_id, setScore);
     }
     activate_channels()
     return (
