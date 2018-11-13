@@ -20,6 +20,8 @@ import DrawerContent from '../navigation/DrawerContent';
 import HomeScreen from '../maingame/screens/HomeScreen';
 import ScannerScreen from '../maingame/screens/ScannerScreen';
 import PushTheButtonsScreen from '../pushthebuttons/screens/PushTheButtonsScreen';
+import StartScreen from '../maingame/screens/StartScreen';
+import LobbyScreen from '../maingame/screens/LobbyScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -118,6 +120,22 @@ const AppNavigator = () => (
                     title="push the buttons"
                     tabBarLabel="button push"
                     icon={TabBarIcon}
+                  />
+                  <Scene
+                    key="start"
+                    component={StartScreen}
+                    title="Start"
+                    tabBarLabel="Start Screen"
+                    icon={TabBarIcon}
+					hideNavBar={true}
+                  />
+                  <Scene
+                    key="lobby"
+                    component={LobbyScreen}
+                    title="Lobby"
+                    tabBarLabel="Lobby Screen"
+                    icon={TabBarIcon}
+					hideNavBar={true}
                   />
                 </Tabs>
               </Scene>
