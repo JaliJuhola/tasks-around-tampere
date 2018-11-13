@@ -20,6 +20,7 @@ import DrawerContent from '../navigation/DrawerContent';
 import HomeScreen from '../maingame/screens/HomeScreen';
 import ScannerScreen from '../maingame/screens/ScannerScreen';
 import PushTheButtonsScreen from '../pushthebuttons/screens/PushTheButtonsScreen';
+import MapScreen from '../maingame/screens/MapScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -117,6 +118,13 @@ const AppNavigator = () => (
                     component={PushTheButtonsScreen}
                     title="push the buttons"
                     tabBarLabel="button push"
+                    icon={TabBarIcon}
+                  />
+                  <Scene
+                    key="main_map"
+                    component={MapScreen}
+                    title="Map"
+                    tabBarLabel="Map"
                     icon={TabBarIcon}
                   />
                 </Tabs>
