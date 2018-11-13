@@ -20,7 +20,7 @@ import DrawerContent from '../navigation/DrawerContent';
 import HomeScreen from '../maingame/screens/HomeScreen';
 import ScannerScreen from '../maingame/screens/ScannerScreen';
 import PushTheButtonsScreen from '../pushthebuttons/screens/PushTheButtonsScreen';
-import StartScreen from '../maingame/screens/MapScreen';
+import MapScreen from '../maingame/screens/MapScreen';
 
 const styles = StyleSheet.create({
   container: {
