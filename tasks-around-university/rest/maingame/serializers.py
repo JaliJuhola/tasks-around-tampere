@@ -55,10 +55,12 @@ class PlayerLocationSerializer(serializers.ModelSerializer):
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ('id', 'x', 'y', 'created_at', 'updated_at', 'group_id')
-    id = serializers.IntegerField()
+        fields = ('id', 'x', 'y', 'created_at', 'updated_at', 'group_id', 'name', 'token')
+    id = serializers.IntegerField(read_only=True)
     x = serializers.IntegerField(default=0)
     y = serializers.IntegerField(default=0)
-    created_at = serializers.DateTimeField()
-    updated_at = serializers.DateTimeField()
+    created_at = serializers.DateTimeField(read_only=True)
+    updated_at = serializers.DateTimeField(read_only=True)
+    name = serializers.CharField()
     group_id = serializers.IntegerField(source="group.id", required=False)
+    token = serializers.CharField(required=False)

@@ -2,11 +2,11 @@ import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import Auth from '../../core/auth/auth';
 /*Stylesheets*/
 import StartScreenStyles from '../styles/StartScreenStyles';
 
-
+import { Actions } from 'react-native-router-flux';
 
 export default class StartScreen extends React.Component {
   state = {
@@ -14,14 +14,16 @@ export default class StartScreen extends React.Component {
     groupname: '',
   };
 
-  /*
-  static navigationOptions = {
-    header: null,
-  };
-  */
-  
   joinGroup(){
-    console.log('Liity Ryhmään: ' + this.state.groupname);
+    if(Auth.fetch_or_create_user(this.state.username)) {
+      if(Auth.joinGroup(this.state.groupname)) {
+        Actions.push_the_buttons()
+      }
+    }
+    console.log("Error when joining group");
+  }
+  createGroup() {
+    console.log('Luo Ryhmä: ' + this.state.groupname);
   }
 
   render() {
@@ -61,7 +63,7 @@ export default class StartScreen extends React.Component {
         <Button mode="contained" style={[StartScreenStyles.button, StartScreenStyles.violetButton, StartScreenStyles.firstButton]} onPress={() => this.joinGroup()}>
           Liity Ryhmään
         </Button>
-        <Button mode="contained" style={StartScreenStyles.button} onPress={() => console.log('Luo Ryhmä: ' + this.state.groupname)}>
+        <Button mode="contained" style={StartScreenStyles.button} onPress={() => this.createGroup()}>
           Luo Ryhmä
         </Button>
       </View>

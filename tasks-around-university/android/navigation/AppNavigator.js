@@ -86,6 +86,14 @@ const AppNavigator = () => (
                 activeBackgroundColor="white"
                 inactiveBackgroundColor="rgba(255, 0, 0, 0.5)">
                 <Scene
+                  key="start"
+                  component={StartScreen}
+                  title="Start"
+                  tabBarLabel="Start Screen"
+                  icon={TabBarIcon}
+                  hideNavBar={true}
+                />
+                <Scene
                   key="main_home"
                   component={HomeScreen}
                   title="Home"
@@ -107,20 +115,12 @@ const AppNavigator = () => (
                   icon={TabBarIcon}
                 />
                 <Scene
-                  key="start"
-                  component={StartScreen}
-                  title="Start"
-                  tabBarLabel="Start Screen"
-                  icon={TabBarIcon}
-        hideNavBar={true}
-                />
-                <Scene
                   key="lobby"
                   component={LobbyScreen}
                   title="Lobby"
                   tabBarLabel="Lobby Screen"
                   icon={TabBarIcon}
-        hideNavBar={true}
+                  hideNavBar={true}
                 />
               </Tabs>
             </Scene>
