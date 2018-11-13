@@ -38,18 +38,19 @@ class MinigameEntry {
             members.count;
 
             members.each(function(member) {
-                member += member.id;
+                this.member_add(member.id);
             })
         })
         var count = socket.members.count;
-        this.connectGame(count);
+        //if (count == group.playercount)
+            this.connectGame(count);
         //if(lobby exitted)
             //this.disconnectLobby(socket)
         return count;
     }
 
     public connectGame(count) {
-        //if (count == group.playercount)
+        
             var pusher = new pusher('9aef7be7bb27baad1641', {
             cluster: 'eu',
             forceTLS: true
