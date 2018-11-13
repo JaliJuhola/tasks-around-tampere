@@ -37,11 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'rest.hello_world.apps.HelloWorldConfig',
     'rest.maingame.apps.MaingameConfig',
     'rest.push_the_buttons.apps.PushTheButtonsConfig',
     'corsheaders'
-]
+    ]
 
 CORS_ORIGIN_ALLOW_ALL = True
 

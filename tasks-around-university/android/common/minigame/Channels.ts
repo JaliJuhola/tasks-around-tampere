@@ -2,8 +2,7 @@ import Pusher from 'pusher-js/react-native';
 import axios from "axios";
 
 
-
-const socket = new Pusher("9aef7be7bb27baad1641", {
+const auth_socket = new Pusher("9aef7be7bb27baad1641", {
     cluster: "eu",
     forceTLS: true,
     authorizer: function (channel, options) {
@@ -22,17 +21,19 @@ const socket = new Pusher("9aef7be7bb27baad1641", {
         };
     }
   });
-class MinigameEntry {
+
+
+export class MinigameEntry {
 
     //NEEDS AUTHENTICATION REQUEST AS IT WILL NOT WORK WITHOUT IT
-    public connectLobby(socket) {
+    public connectLobby() {
         //var pusher = new pusher('9aef7be7bb27baad1641');
-        socket.connection.bind('error', function(err) {
+        auth_socket.connection.bind('error', function(err) {
             if (err.error.data.code === 4004) {
                 console.log('Over limit connections!');
             }
         })
-        var channel = socket.subscribe('presence-lobby-channel');
+        var channel = auth_socket.subscribe('presence-lobby-channel');
 
         channel.bind('pusher:subscription_succeeded', function(members) {
             members.count;
@@ -41,7 +42,7 @@ class MinigameEntry {
                 this.member_add(member.id);
             })
         })
-        var count = socket.members.count;
+        var count = auth_socket.members.count;
         //if (count == group.playercount)
             this.connectGame(count);
         //if(lobby exitted)
@@ -50,27 +51,27 @@ class MinigameEntry {
     }
 
     public connectGame(count) {
-        
-            var pusher = new pusher('9aef7be7bb27baad1641', {
-            cluster: 'eu',
-            forceTLS: true
-            });
-            pusher.connection.bind('error', function(err) {
-                if (err.error.data.code === 4004) {
-                    console.log('Over limit connections!');
-                }
-            })
-        var channelGame = pusher.subscribe('game-channel');
 
-        //if(game exitted)
-            //this.disconnectGame()
+        var pusher = new pusher('9aef7be7bb27baad1641', {
+        cluster: 'eu',
+        forceTLS: true
+        });
+        pusher.connection.bind('error', function(err) {
+            if (err.error.data.code === 4004) {
+                console.log('Over limit connections!');
+            }
+        })
+    var channelGame = pusher.subscribe('game-channel');
+
+    //if(game exitted)
+        //this.disconnectGame()
     }
 
     public disconnectLobby(socket) {
         socket.unsubscribe('presence-lobby-channel');
         socket.bind('pusher:member_removed', function (member) {
             this.remove_member(member.id)
-           
+
         });
 
         socket.bind('pusher:connection_disconnected', function(member){
@@ -78,11 +79,13 @@ class MinigameEntry {
             this.remove_member(member.id)
           });
     }
-
+    public game_started() {
+        return false;
+    }
     public add_member(member, channel) {
-        
+
       }
-    
+
     public remove_member(member, channel) {
 
     }
