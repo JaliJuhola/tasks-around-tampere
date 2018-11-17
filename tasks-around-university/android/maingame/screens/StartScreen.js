@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Auth from '../../core/auth/auth';
+import {Auth} from '../../core/auth/auth';
 /*Stylesheets*/
 import StartScreenStyles from '../styles/StartScreenStyles';
 
