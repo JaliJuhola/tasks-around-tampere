@@ -28,3 +28,4 @@ class MiniGameEntry {
         }
     }
 }
+export default MiniGameEntry;

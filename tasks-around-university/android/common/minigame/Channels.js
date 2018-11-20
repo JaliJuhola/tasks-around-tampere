@@ -22,11 +22,10 @@ const auth_socket = new Pusher("9aef7be7bb27baad1641", {
     }
   });
 
-
 export class MinigameEntry {
 
     //NEEDS AUTHENTICATION REQUEST AS IT WILL NOT WORK WITHOUT IT
-    public connectLobby() {
+    connectLobby() {
         //var pusher = new pusher('9aef7be7bb27baad1641');
         auth_socket.connection.bind('error', function(err) {
             if (err.error.data.code === 4004) {
@@ -50,7 +49,7 @@ export class MinigameEntry {
         return count;
     }
 
-    public connectGame(count) {
+    connectGame(count) {
 
         var pusher = new pusher('9aef7be7bb27baad1641', {
         cluster: 'eu',
@@ -67,7 +66,7 @@ export class MinigameEntry {
         //this.disconnectGame()
     }
 
-    public disconnectLobby(socket) {
+    disconnectLobby(socket) {
         socket.unsubscribe('presence-lobby-channel');
         socket.bind('pusher:member_removed', function (member) {
             this.remove_member(member.id)
@@ -79,15 +78,15 @@ export class MinigameEntry {
             this.remove_member(member.id)
           });
     }
-    public game_started() {
+    game_started() {
 
         return false;
     }
-    public add_member(member, channel) {
+    add_member(member, channel) {
 
       }
 
-    public remove_member(member, channel) {
+    remove_member(member, channel) {
 
     }
 }

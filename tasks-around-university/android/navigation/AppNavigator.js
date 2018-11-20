@@ -18,8 +18,10 @@ import MenuIcon from './MenuIcon';
 import HomeScreen from '../maingame/screens/HomeScreen';
 import ScannerScreen from '../maingame/screens/ScannerScreen';
 import PushTheButtonsScreen from '../pushthebuttons/screens/PushTheButtonsScreen';
+import MapScreen from '../maingame/screens/MapScreen';
 import StartScreen from '../maingame/screens/StartScreen';
 import LobbyScreen from '../maingame/screens/LobbyScreen';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -121,6 +123,13 @@ const AppNavigator = () => (
                   tabBarLabel="Lobby Screen"
                   icon={TabBarIcon}
                   hideNavBar={true}
+                />
+                <Scene
+                  key="main_map"
+                  component={MapScreen}
+                  title="Map"
+                  tabBarLabel="Map"
+                  icon={TabBarIcon}
                 />
               </Tabs>
             </Scene>

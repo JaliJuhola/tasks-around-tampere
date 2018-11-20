@@ -2,10 +2,10 @@ import { AsyncStorage } from "react-native";
 
 
 export default class GlobalStorage {
-    static async setItem(key, value) {
+    static setItem(key, value) {
         AsyncStorage.setItem(key, value);
     }
-    static async getItem(key) {
+    static getItem(key) {
         AsyncStorage.getItem(key);
     }
 

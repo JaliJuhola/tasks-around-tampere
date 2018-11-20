@@ -32,6 +32,7 @@ class DrawerContent extends React.Component {
         <Button onPress={Actions.pop}>Back</Button>
         <Button onPress={Actions.main_home}>Switch to Home</Button>
         <Button onPress={Actions.scanners}>test scanner</Button>
+        <Button onPress={Actions.main_map}>Map</Button>
       </View>
     );
   }

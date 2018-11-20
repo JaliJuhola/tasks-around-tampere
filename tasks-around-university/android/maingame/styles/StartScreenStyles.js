@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '90%',
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    color: 'rgba(255,255,255)',
+    color: '#FFFFFF',
     borderTopLeftRadius: 0,
   },
   smallText: {

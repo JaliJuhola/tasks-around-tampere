@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   },
   lobbyCard:{
 	width: '90%',
-	backgroundColor: 'white',
+	backgroundColor: '#FFFFFF',
 	elevation: 3,
 	borderRadius: 5,
 	padding: 20,
@@ -45,9 +45,9 @@ const styles = StyleSheet.create({
 	alignItems: 'center',
 	justifyContent: 'center',
   },
-  
+
   lobbyCardJoined:{
-	  
+
   },
   lobbyCardWaiting:{
 	backgroundColor: 'darkgrey',
