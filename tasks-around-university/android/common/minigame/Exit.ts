@@ -9,3 +9,4 @@ class MiniGameExit {
         Actions.main_game();
     }
 }
+export default MiniGameExit;

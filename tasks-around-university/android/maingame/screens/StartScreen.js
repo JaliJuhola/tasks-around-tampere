@@ -15,15 +15,17 @@ export default class StartScreen extends React.Component {
   };
 
   joinGroup(){
-    if(Auth.fetch_or_create_user(this.state.username)) {
-      if(Auth.joinGroup(this.state.groupname)) {
-        Actions.push_the_buttons()
-      }
-    }
-    console.log("Error when joining group");
-  }
-  createGroup() {
-    console.log('Luo Ryhmä: ' + this.state.groupname);
+    Actions.main_map()
+  //   console.log(Auth)
+  //   if(Auth.fetch_or_create_user(this.state.username)) {
+  //     if(Auth.join_group(this.state.groupname)) {
+  //       Actions.push_the_buttons()
+  //     }
+  //   }
+  //   alert("Error when joining group");
+  // }
+  // createGroup() {
+  //   console.log('Luo Ryhmä: ' + this.state.groupname);
   }
 
   render() {
