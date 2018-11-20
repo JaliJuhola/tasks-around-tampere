@@ -8,5 +8,5 @@ class WaitingPlayersToJoinChannels:
     EVENT_PLAYER_JOINED = "joined"
 
     @classmethod
-    def new_push_available(cls, player_name, players_on_game, group_id):
-        push_event_to_channel("{}-{}".format(cls.CHANNEL_NAME, group_id), cls.EVENT_PLAYER_JOINED, {'player_name': player_name, 'players_on_game': players_on_game})
+    def new_push_available(cls, player_name, players_on_game, group_id, group_name):
+        push_event_to_channel("{}-{}".format(cls.CHANNEL_NAME, group_id), cls.EVENT_PLAYER_JOINED, {'player_name': player_name, 'players_on_game': players_on_game, 'group_name': group_name})

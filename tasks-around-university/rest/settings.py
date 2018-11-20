@@ -37,24 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'rest.hello_world.apps.HelloWorldConfig',
     'rest.maingame.apps.MaingameConfig',
     'rest.push_the_buttons.apps.PushTheButtonsConfig',
     'corsheaders'
-]
+    ]
 
 CORS_ORIGIN_ALLOW_ALL = True
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware'
-    # 'django.middleware.security.SecurityMiddleware',
-    # 'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
-    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # 'django.contrib.messages.middleware.MessageMiddleware',
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'rest.urls'
@@ -68,7 +62,10 @@ TEST_SERVER_DOMAIN = "http://localhost:8081/"
 REST_FRAMEWORK = {
     'TEST_REQUEST_RENDERER_CLASSES': (
         'rest_framework.renderers.MultiPartRenderer',
-    )
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'rest.authentication.TokenAuthentication',
+    ),
 }
 TEMPLATES = [
     {

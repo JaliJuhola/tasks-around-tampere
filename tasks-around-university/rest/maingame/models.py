@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+
 class Hotspot(models.Model):
     id = models.AutoField(primary_key=True)
     x = models.IntegerField()
@@ -13,6 +14,7 @@ class Hotspot(models.Model):
 
 class Group(models.Model):
     id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(default=timezone.now)
 
@@ -21,7 +23,8 @@ class Player(models.Model):
     id = models.AutoField(primary_key=True)
     x = models.IntegerField(default=0)
     y = models.IntegerField(default=0)
+    name = models.CharField(max_length=128)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(default=timezone.now)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, null=True)
-
+    token = models.CharField(max_length=128)

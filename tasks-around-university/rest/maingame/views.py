@@ -9,6 +9,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.authtoken.models import Token
+from rest.maingame.channels import WaitingPlayersToJoinChannels
+import uuid
 
 @api_view(['GET'])
 def hotspot_list(request):
@@ -37,7 +40,7 @@ def player_location(request, pk):
     return Response(serializer.data)
 
 
-class PlayerView(APIView):
+class AuthView(APIView):
     """
     List all snippets, or create a new snippet.
     """
@@ -53,14 +56,16 @@ class PlayerView(APIView):
         except Player.DoesNotExist:
            return Response({'message': 'player not found'}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = PlayerSerializer(player)
-        return Response(serializer.data)
+        return Response({'token': player.token})
 
     def post(self, request, format=None):
-        serializer = PlayerSerializer(request.data)
+        serializer = PlayerSerializer(data=request.data)
+        token = uuid.uuid1()
+        serializer.token = token
+
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'token': token}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -71,8 +76,24 @@ class PlayerGroupView(APIView):
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
 
-    def get(self, request, pk):
-
-        players = Player.objects.filter(group__id=pk)
+    def get(self, request):
+        identifier = request.GET["group_id"]
+        if not identifier:
+            return Response({'id': 'This field is required!'}, status=status.HTTP_400_BAD_REQUEST)
+        players = Player.objects.filter(group__id=identifier)
         serializer = PlayerSerializer(players, many=True)
         return Response(serializer.data)
+
+    def post(self, request, format=None):
+        identifier = request.GET["group_id"]
+        if not identifier:
+            return Response({'id': 'This field is required!'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            group = Group.objects.get(id=identifier)
+            request.user.group = group
+            request.user.save()
+            players_on_game = Player.objects.filter(group=group).count()
+            WaitingPlayersToJoinChannels.new_push_available(request.user.name, players_on_game, group.id, group.name)
+        except Group.DoesNotExist:
+           return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': request.user.name + " Succesfully joined group " + group.name}, status=status.HTTP_201_CREATED)

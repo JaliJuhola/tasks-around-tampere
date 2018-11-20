@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '90%',
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    color: "white",
+    color: 'rgba(255,255,255)',
     borderTopLeftRadius: 0,
   },
   smallText: {
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 30,
   },
-  
+
   });
 
 export default styles;

@@ -2,12 +2,15 @@ import Layout from '../constants/Layout';
 import {
   StyleSheet,
 } from 'react-native';
+
+
 const BOX_MARGIN = 30;
 const BOX_SIZE = Layout.window.width - BOX_MARGIN * 2;
 const BOX_TOP = Layout.window.height / 2 - BOX_SIZE / 2;
 const BOX_BOTTOM = BOX_TOP + BOX_SIZE;
 const BOX_LEFT = BOX_MARGIN;
 const BOX_RIGHT = Layout.window.width - BOX_MARGIN;
+
 
 const overlayBaseStyle = {
     position: 'absolute',

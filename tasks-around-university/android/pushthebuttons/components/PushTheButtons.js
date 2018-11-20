@@ -13,25 +13,30 @@ import {
   Button,
 } from 'react-native';
     // Enable pusher logging - don't include this in production
-import Pusher from 'pusher-js/react-native';
 import { Actions } from 'react-native-router-flux';
+// import Connection from '../../../android/common/minigame/Connection';
+// import {MiniGameScore} from '../../../android/common/minigame/Score';
+
 export default class PushTheButtonsScreen extends React.Component {
   constructor(props) {
     super(props);
+    // this.pusher = Connection.getSocketConnection()
     this.state = {
       playerToClickMessage: "Player 3 should click the button!",
       joinGroupModalVisible: false,
       player_id: 1,
+      group_id: 1,
+      currentScore: 0,
     };
   }
 
   render() {
     playerFailed = () => {
-        alert("You lost")
+        alert("You lost");
         Actions.main_home()
     }
     playerSucceed = () => {
-        alert("n1")
+        alert("n1");
     }
     playerClickedButton = () => {
       if (this.state.playerToClickMessage != null) {
@@ -56,24 +61,14 @@ export default class PushTheButtonsScreen extends React.Component {
         alert("Wait for signal!")
       }
     }
+
     activate_channels = () => {
-      Pusher.logToConsole = true;
-      var pusher = new Pusher('9001161e48db4e48e5f0', {
-        cluster: 'eu',
-        forceTLS: true
-      });
-      var channel = pusher.subscribe('my-channel');
-      channel.bind('new_push', function(data) {
-        if(data.player_id === this.state.player_id) {
-            this.setState(previousState => {
-                return { playerToClickMessage: str(data.target_player) + " Should push the button!" };
-            });
-        } else {
-            this.setState(previousState => {
-                return { playerToClickMessage: "New push action!" };
-            });
-        }
-      });
+      const setScore = function(currentScore) {
+        this.setState(previousState => {
+          return { currentScore: currentScore };
+        });
+      }
+      // MiniGameScore.broadcastScore(this.state.group_id, setScore);
     }
     activate_channels()
     return (
