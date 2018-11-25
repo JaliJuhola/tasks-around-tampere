@@ -32,12 +32,23 @@ export class Http {
     }
     static async get(url_extensions) {
         var token = await this.getToken();
-        return axios.get(settings['rest_api_url'] + url_extensions, {headers: {'Authorization': token}})
+        return axios.patch(settings['rest_api_url'] + url_extensions, {headers: {'Authorization': token}})
           .then(function (response) {
             return response;
           })
           .catch(function (error) {
             return {'error': error};
         })
+    }
+    static async patch(url_extensions, data) {
+        var token = await this.getToken();
+        return axios.patch(settings['rest_api_url'] + url_extensions, data, {headers: {'Authorization': token }})
+          .then(function (response) {
+            console.log(response);
+            return response;
+          })
+          .catch(function (error) {
+            return {'error': error};
+          })
     }
 }

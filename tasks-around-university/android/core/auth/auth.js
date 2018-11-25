@@ -15,9 +15,6 @@ export class Auth {
             return error;
         });
         GlobalStorage.setItem("token", status['data']['token']);
-        console.log("************************************");
-        console.log(status['data'])
-        console.log("************************************");
         return status
     }
     static async join_group(group_id) {
@@ -25,6 +22,9 @@ export class Auth {
         var status = await Http.post('api/group/player', {
             group_id: group_id,
         })
+        console.log("************************************");
+        console.log(status['data'])
+        console.log("************************************");
         if('error' in status) {
             return false;
         }

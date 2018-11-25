@@ -1,7 +1,7 @@
 import React from 'react';
 import { ExpoLinksView } from '@expo/samples';
 import axios from 'axios';
-import {Http} from '../../core/connections/http'
+import {CommonData} from '../../common/CommonData';
 import {
   Image,
   Platform,
@@ -13,20 +13,29 @@ import {
   View,
   Button,
 } from 'react-native';
+import {MiniGameScore} from '../../common/minigame/Score';
     // Enable pusher logging - don't include this in production
 import { Actions } from 'react-native-router-flux';
+import {Http} from '../../core/connections/http';
+
 // import Connection from '../../../android/common/minigame/Connection';
 // import {MiniGameScore} from '../../../android/common/minigame/Score';
 
+const SCORE_TO_ADD = 1;
+const MINIGAME_KEY = 'push_the_buttons';
 export default class PushTheButtonsScreen extends React.Component {
   constructor(props) {
     super(props);
-    // this.pusher = Connection.getSocketConnection()
+    // Common data should be abstracted later
+    this.playerId = CommonData.getPlayerId();
+    this.groupId = CommonData.getGroupId();
+    this.groupName = CommonData.getGroupName();
+    this.playerName = CommonData.getPlayerName();
+    this.scoreHelper = MiniGameScore(CommonData.getGroupId(), MINIGAME_KEY);
+
     this.state = {
       playerToClickMessage: "Player 3 should click the button!",
       joinGroupModalVisible: false,
-      player_id: 1,
-      group_id: 1,
       currentScore: 0,
     };
   }
@@ -41,35 +50,44 @@ export default class PushTheButtonsScreen extends React.Component {
     }
     var playerClickedButton = () => {
       if (this.state.playerToClickMessage != null) {
-        axios.patch('http://localhost:8000/push_the_buttons/button_clicked', {
-            params: {
-              id: 1, // My player id
-              group_id: 1 // My group id
-            }
-          })
+        Http.patch('push_the_buttons/button_clicked',{id: this.playerId, group_id: this.groupId
+        })
           .then(function (response) {
             console.log(response);
+            this.setState(previousState => {
+              return { playerToClickMessage: null };
+          });
           })
           .catch(function (error) {
             playerFailed()
           })
-          .then(function () {
-            this.setState(previousState => {
-                return { playerToClickMessage: null };
-            });
-          });
       } else {
         alert("Wait for signal!");
       }
     }
 
     var activate_channels = () => {
-      const setScore = function(currentScore) {
+      // Listens score
+      var setScore = function(value) {
         this.setState(previousState => {
-          return { currentScore: currentScore };
+          return { currentScore: value };
         });
       }
-      // MiniGameScore.broadcastScore(this.state.group_id, setScore);
+      this.scoreHelper.broadcastScore(setScore);
+      // listens new click actions
+      var setNewClickAction = function(value) {
+        this.setState(previousState => {
+          return { playerToClickMessage: value };
+        });
+      }
+        var channel = this.pusher.subscribe('actions-' + this.group_id);
+
+        channel.bind('score_updated', function(data) {
+          if(data.method === "new") {
+            setNewClickAction(data)
+          }
+        });
+        return channel;
     }
     activate_channels();
     return (
