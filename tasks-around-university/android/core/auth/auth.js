@@ -15,14 +15,31 @@ export class Auth {
             return error;
         });
         GlobalStorage.setItem("token", status['data']['token']);
+        console.log("************************************");
         console.log(status['data'])
+        console.log("************************************");
         return status
     }
     static async join_group(group_id) {
+
         var status = await Http.post('api/group/player', {
             group_id: group_id,
         })
-        return !('error' in status)
+        if('error' in status) {
+            return false;
+        }
+        var player = {
+            id: status['data']['player_id'],
+            name: status['data']['player_name'],
+        }
+        var group = {
+            id: status['data']['group_id'],
+            name: status['data']['group_name'],
+        }
+        GlobalStorage.setItem("player", player);
+        GlobalStorage.setItem("group", group);
+
+        return true;
     }
     static async check_auth()  {
         if(await GlobalStorage.getItem("token")) {

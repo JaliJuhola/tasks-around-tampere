@@ -55,7 +55,7 @@ class AuthView(APIView):
         except Player.DoesNotExist:
            return Response({'message': 'player not found'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'token': player.token, 'id': player.id, 'name': player.name, 'group': player.group.name})
+        return Response({'token': player.token})
 
     def post(self, request, format=None):
         serializer = PlayerSerializer(data=request.data)
@@ -93,5 +93,5 @@ class PlayerGroupView(APIView):
             WaitingPlayersToJoinChannels.new_push_available(request.user.name, players_on_game, group.id, group.name)
         except Group.DoesNotExist:
            return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'message': request.user.name + " Succesfully joined group " + group.name}, status=status.HTTP_201_CREATED)
+        return Response({ 'player_id': request.user.id, 'player_name': request.user.name, 'group_name': request.user.group.name, 'group_id': request.user.group.id}, status=status.HTTP_201_CREATED)
 
