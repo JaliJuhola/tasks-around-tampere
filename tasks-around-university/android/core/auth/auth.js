@@ -19,12 +19,10 @@ export class Auth {
         return status
     }
     static async join_group(group_id) {
-        return await Http.post('api/group/player', {
+        var status = await Http.post('api/group/player', {
             group_id: group_id,
-        }).then(function (response) {
-            console.log(response)
-            return response;
-          })
+        })
+        return !('error' in status)
     }
     static async check_auth()  {
         if(await GlobalStorage.getItem("token")) {

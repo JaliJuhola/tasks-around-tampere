@@ -82,7 +82,6 @@ class PlayerGroupView(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        print(request.data)
         identifier = request.data['group_id']
         if not identifier:
             return Response({'id': 'This field is required!'}, status=status.HTTP_400_BAD_REQUEST)
