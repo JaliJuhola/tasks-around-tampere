@@ -55,8 +55,8 @@ class AuthView(APIView):
         except Player.DoesNotExist:
            return Response({'message': 'player not found'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'token': player.token})
-
+        return Response({'token': player.token, 'id': player.id, 'name': player.name, 'group': player.group.name})
+  
     def post(self, request, format=None):
         serializer = PlayerSerializer(data=request.data)
         token = uuid.uuid1()
@@ -95,3 +95,4 @@ class PlayerGroupView(APIView):
         except Group.DoesNotExist:
            return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'message': request.user.name + " Succesfully joined group " + group.name}, status=status.HTTP_201_CREATED)
+
