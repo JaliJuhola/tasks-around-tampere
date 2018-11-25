@@ -20,7 +20,7 @@ export class Auth {
     }
     static async join_group(group_id) {
         return await Http.post('api/group/player', {
-            name: group_id,
+            group_id: group_id,
         }).then(function (response) {
             console.log(response)
             return response;
