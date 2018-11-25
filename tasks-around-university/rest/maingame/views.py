@@ -12,12 +12,29 @@ from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
 from rest.maingame.channels import WaitingPlayersToJoinChannels
 import uuid
+import pusher
+import json
 
 @api_view(['GET'])
 def hotspot_list(request):
     hotspots = Hotspot.objects.all()
     serializer = HotspotSerializer(hotspots, many=True)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+def pusher_authentication(request):
+  auth = pusher.authenticate(
+    channel=request.form['channel_name'],
+    socket_id=request.form['socket_id'],
+    custom_data={
+      u'user_id': str(request.user.id),
+      u'user_info': {
+        u'user_name': str(request.user.name)
+      }
+    }
+  )
+  return json.dumps(auth)
 
 @api_view(['GET'])
 def hotspot_detail(request, pk):
