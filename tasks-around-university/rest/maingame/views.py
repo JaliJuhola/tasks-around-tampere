@@ -24,8 +24,8 @@ def hotspot_list(request):
 @api_view(['POST'])
 def pusher_authentication(request):
   auth = PUSHER_CLIENT.authenticate(
-    channel=request.form['channel_name'],
-    socket_id=request.form['socket_id'],
+    channel=request.data['channel_name'],
+    socket_id=request.data['socket_id'],
     custom_data={
       u'user_id': str(request.user.id),
       u'user_info': {
