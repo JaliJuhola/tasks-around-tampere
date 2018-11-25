@@ -12,7 +12,7 @@ from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
 from rest.maingame.channels import WaitingPlayersToJoinChannels
 import uuid
-import pusher
+from rest.common.channels import PUSHER_CLIENT
 import json
 
 @api_view(['GET'])
@@ -23,7 +23,7 @@ def hotspot_list(request):
 
 @api_view(['POST'])
 def pusher_authentication(request):
-  auth = pusher.authenticate(
+  auth = PUSHER_CLIENT.authenticate(
     channel=request.form['channel_name'],
     socket_id=request.form['socket_id'],
     custom_data={
