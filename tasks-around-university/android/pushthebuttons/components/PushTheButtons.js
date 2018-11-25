@@ -50,7 +50,7 @@ export default class PushTheButtonsScreen extends React.Component {
     }
     var playerClickedButton = () => {
       if (this.state.playerToClickMessage != null) {
-        Http.patch('push_the_buttons/button_clicked',{id: this.playerId, group_id: this.groupId
+        Http.patch('api/push_the_buttons/',{group_id: this.groupId
         })
           .then(function (response) {
             console.log(response);
@@ -67,32 +67,36 @@ export default class PushTheButtonsScreen extends React.Component {
     }
 
     var activate_channels = () => {
-      // Listens score
-      var setScore = function(value) {
-        this.setState(previousState => {
-          return { currentScore: value };
-        });
-      }
-      this.scoreHelper.broadcastScore(setScore);
-      // listens new click actions
-      var setNewClickAction = function(value) {
-        this.setState(previousState => {
-          return { playerToClickMessage: value };
-        });
-      }
-        var channel = this.pusher.subscribe('actions-' + this.group_id);
+        var channel = this.pusher.subscribe('push-the-buttons-' + this.group_id);
 
-        channel.bind('score_updated', function(data) {
-          if(data.method === "new") {
-            setNewClickAction(data)
-          }
+        channel.bind('push-completed', function(data) {
+          console.log(data);
+          this.setState(previousState => {
+            return { currentScore: data['current_score']};
+          });
+        });
+        channel.bind('new-push', function(data) {
+          console.log(data);
+          this.setState(previousState => {
+            // return { currentScore: data['current_score'] };
+          });
         });
         return channel;
+
     }
+    "push-the-buttons-{group_id}" event: push-completed
+
+{'target_player': target_player, 'player_who_has_event': player_who_has_event}
+
+"{push-the-buttons}-{group_id}" push-completed
+
+{'player_id': player_who_pushed}
+
     activate_channels();
     return (
       <View style={styles.container}>
         <Text>You are player 1</Text>
+        <Text>Current Score {this.state.currentScore}</Text>
         <Text>{this.state.playerToClickMessage || "Wait for new command!"}</Text>
         <Button
           onPress={playerClickedButton}

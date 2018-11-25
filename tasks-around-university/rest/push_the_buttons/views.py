@@ -10,6 +10,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest.maingame.channels import WaitingPlayersToJoinChannels
 import uuid
+from rest.push_the_buttons.channels import PushTheButtonsChannels
+from rest.push_the_buttons.models import PushTheButtonsMainGame
+
+PUSH_THE_BUTTONS_SCORE_TO_ADD = 1
 
 class PushTheButtonView(APIView):
     """
@@ -24,9 +28,29 @@ class PushTheButtonView(APIView):
             return Response({'message': 'both id fields are required!'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             group = Group.objects.get(id=group_id)
+            game_object = PushTheButtonsMainGame.objects.get_or_create(group=group)
             player = request.user
-            players_on_game = Player.objects.filter(group=group).count()
-            random_player = Player.objects.last()
+            random_player_1 = Player.objects.order_by('?').first()
+            random_player_2 = Player.objects.order_by('?').first()
+            game_object.next_to_click = random_player_1
+            game_object.current_score = game_object.current_score + PUSH_THE_BUTTONS_SCORE_TO_ADD
+            game_object.save()
+            PushTheButtonsChannels.push_completed_event(player.id, group.id, game_object.current_score)
+            PushTheButtonsChannels.new_push_available(random_player_1.id, random_player_2.id, group.id)
         except Group.DoesNotExist:
            return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({ 'player_id': request.user.id, 'player_name': request.user.name, 'group_name': request.user.group.name, 'group_id': request.user.group.id}, status=status.HTTP_201_CREATED)
+
+    def post(self, request):
+        group_id = request.data['group_id']
+        if not group_id:
+            return Response({'message': 'both id fields are required!'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            group = Group.objects.get(id=group_id)
+            game_object = PushTheButtonsMainGame.objects.get_or_create(group=group)
+            game_object.game_ended = True
+            game_object.save()
+            PushTheButtonsChannels.push_completed_event(None, group.id)
+        except Group.DoesNotExist:
+           return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({status: True})
