@@ -14,18 +14,26 @@ export default class StartScreen extends React.Component {
     groupname: '',
   };
 
-  joinGroup(){
-    Actions.main_map()
-  //   console.log(Auth)
-  //   if(Auth.fetch_or_create_user(this.state.username)) {
-  //     if(Auth.join_group(this.state.groupname)) {
-  //       Actions.push_the_buttons()
-  //     }
-  //   }
-  //   alert("Error when joining group");
-  // }
-  // createGroup() {
-  //   console.log('Luo Ryhmä: ' + this.state.groupname);
+   async joinGroup(){
+    var succeed = await Auth.fetch_or_create_user(this.state.username);
+    if(succeed) {
+      succeed = await Auth.join_group(this.state.groupname);
+      if(succeed) {
+        alert("joined group");
+        //#TODO message here?
+        Actions.push_the_buttons();
+      } else {
+        //#TODO auth error message
+        alert("error when joining the group");
+      }
+    } else {
+      //#TODO overall error message
+      alert("Error when joining group");
+    }
+  }
+  createGroup() {
+    //#TODO this should be done (how?)
+    console.log('Luo Ryhmä: ' + this.state.groupname);
   }
 
   render() {

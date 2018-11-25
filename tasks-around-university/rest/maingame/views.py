@@ -39,7 +39,6 @@ def player_location(request, pk):
     serializer = PlayerLocationSerializer(player)
     return Response(serializer.data)
 
-
 class AuthView(APIView):
     """
     List all snippets, or create a new snippet.
@@ -62,7 +61,6 @@ class AuthView(APIView):
         serializer = PlayerSerializer(data=request.data)
         token = uuid.uuid1()
         serializer.token = token
-
         if serializer.is_valid():
             serializer.save()
             return Response({'token': token}, status=status.HTTP_201_CREATED)

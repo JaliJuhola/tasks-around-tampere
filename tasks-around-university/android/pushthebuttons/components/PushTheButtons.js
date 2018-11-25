@@ -1,6 +1,7 @@
 import React from 'react';
 import { ExpoLinksView } from '@expo/samples';
 import axios from 'axios';
+import {Http} from '../../core/connections/http'
 import {
   Image,
   Platform,
@@ -31,14 +32,14 @@ export default class PushTheButtonsScreen extends React.Component {
   }
 
   render() {
-    playerFailed = () => {
+    var playerFailed = () => {
         alert("You lost");
         Actions.main_home()
     }
-    playerSucceed = () => {
+    var playerSucceed = () => {
         alert("n1");
     }
-    playerClickedButton = () => {
+    var playerClickedButton = () => {
       if (this.state.playerToClickMessage != null) {
         axios.patch('http://localhost:8000/push_the_buttons/button_clicked', {
             params: {
@@ -62,7 +63,7 @@ export default class PushTheButtonsScreen extends React.Component {
       }
     }
 
-    activate_channels = () => {
+    var activate_channels = () => {
       const setScore = function(currentScore) {
         this.setState(previousState => {
           return { currentScore: currentScore };
@@ -70,7 +71,7 @@ export default class PushTheButtonsScreen extends React.Component {
       }
       // MiniGameScore.broadcastScore(this.state.group_id, setScore);
     }
-    activate_channels()
+    activate_channels();
     return (
       <View style={styles.container}>
         <Text>You are player 1</Text>

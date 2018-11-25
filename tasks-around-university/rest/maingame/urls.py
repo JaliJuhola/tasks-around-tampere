@@ -10,5 +10,4 @@ urlpatterns = [
     path('api/auth/', views.AuthView.as_view()),
     path('api/group/player', views.PlayerGroupView.as_view()),
 
-
 ]
