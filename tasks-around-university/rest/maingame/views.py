@@ -56,13 +56,12 @@ class AuthView(APIView):
            return Response({'message': 'player not found'}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'token': player.token, 'id': player.id, 'name': player.name, 'group': player.group.name})
-  
+
     def post(self, request, format=None):
         serializer = PlayerSerializer(data=request.data)
         token = uuid.uuid1()
-        serializer.token = token
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(token=token)
             return Response({'token': token}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
