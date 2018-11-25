@@ -21,7 +21,6 @@ def hotspot_list(request):
     serializer = HotspotSerializer(hotspots, many=True)
     return Response(serializer.data)
 
-
 @api_view(['POST'])
 def pusher_authentication(request):
   auth = pusher.authenticate(
@@ -34,7 +33,7 @@ def pusher_authentication(request):
       }
     }
   )
-  return json.dumps(auth)
+  return Response(json.dumps(auth))
 
 @api_view(['GET'])
 def hotspot_detail(request, pk):
