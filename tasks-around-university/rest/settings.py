@@ -25,7 +25,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 SECRET_KEY = 'f)+lq0y*cq=ubho$gqku)4m4$9apjxq8e+uz%x5(ifmm4eewo^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 def ip_addresses():
     ip_list = []
