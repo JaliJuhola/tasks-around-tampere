@@ -9,5 +9,5 @@ urlpatterns = [
     path('api/players/locations/<int:pk>/', views.player_location),
     path('api/auth/', views.AuthView.as_view()),
     path('api/group/player', views.PlayerGroupView.as_view()),
-    path('/pusher/auth', views.pusher_authentication),
+    path('pusher/auth', views.pusher_authentication),
 ]
