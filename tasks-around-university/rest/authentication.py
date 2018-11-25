@@ -12,6 +12,7 @@ class TokenAuthentication(authentication.BaseAuthentication):
 
             try:
                 player = Player.objects.get(token=player_token)
+                print(player.__dict__)
             except(Player.DoesNotExist):
                 raise exceptions.AuthenticationFailed('No such user')
 

@@ -59,7 +59,7 @@ export default class PushTheButtonsScreen extends React.Component {
             });
           });
       } else {
-        alert("Wait for signal!")
+        alert("Wait for signal!");
       }
     }
 
