@@ -5,30 +5,6 @@ import { Button, Headline, TextInput } from 'react-native-paper';
 import AliasScreenStyles from '../styles/AliasScreenStyles';
 
 export default class AliasScreen extends React.Component {
-    //const words = ['sininen', 'hääyöaie', 'fileesuikale', 'kanawokki', 'ruutupaperi'];
-    
-    /*
-    words = () => {
-        let list = JSON.parse('{"words":[{"id":0,"word":"sininen"},{"id":1,"word":"hääyöaie"},{"id":2,"word":"fileesuikale"}]}');
-        let key = 0;
-        
-        return list.words.map((entry) => {
-            return ();
-        });
-    }
-    */
-    /*
-    members = () => {
-        Replace this with a connect to server and fetch JSON
-        let list = JSON.parse('{"members":[{"id":0,"name":"Fuksi 777","role":"You","joined":true,"icon":"space-shuttle"},{"id":1,"name":"Koodikoira ","role":"Käpistelijäryhmä","joined":true,"icon":"connectdevelop"},{"id":2,"name":"Sakari ","role":"Käpistelijäryhmä","joined":true,"icon":"soccer-ball-o"},{"id":3,"name":"Jokuvaa ","role":"Käpistelijäryhmä","joined":true,"icon":"space-shuttle"},{"id":4,"name":"TestName ","role":"Käpistelijäryhmä","joined":true,"icon":"space-shuttle"}]}');
-        let key = 0;
-        
-        return list.members.map((item) => {
-            return (<LobbyCard key={item.id} name={item.name} role={item.role} joined={item.joined} icon={item.icon}/>);
-        });
-    }
-    */
-    
     state = {
         words: ['sininen', 'hääyöaie', 'fileesuikale', 'kanawokki', 'ruutupaperi'],
         textInput: '',
