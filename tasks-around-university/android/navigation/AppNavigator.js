@@ -22,6 +22,7 @@ import ScannerScreen from '../maingame/screens/ScannerScreen';
 import PushTheButtonsScreen from '../pushthebuttons/screens/PushTheButtonsScreen';
 import StartScreen from '../maingame/screens/StartScreen';
 import LobbyScreen from '../maingame/screens/LobbyScreen';
+import AliasScreen from '../minigame_alias/screens/AliasScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -108,10 +109,10 @@ const AppNavigator = () => (
                     icon={TabBarIcon}
                   />
                   <Scene
-                    key="scanners"
-                    component={ScannerScreen}
-                    title="scanner"
-                    tabBarLabel="scanner"
+                    key="alias"
+                    component={AliasScreen}
+                    title="Alias"
+                    tabBarLabel="Alias"
                     icon={TabBarIcon}
                   />
                   <Scene
