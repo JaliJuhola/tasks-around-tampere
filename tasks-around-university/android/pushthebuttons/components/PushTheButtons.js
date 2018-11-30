@@ -84,13 +84,13 @@ export default class PushTheButtonsScreen extends React.Component {
         return channel;
 
     }
-    "push-the-buttons-{group_id}" event: push-completed
+    //"push-the-buttons-{group_id}" event: push-completed
 
-{'target_player': target_player, 'player_who_has_event': player_who_has_event}
+//{'target_player': target_player, 'player_who_has_event': player_who_has_event}
 
-"{push-the-buttons}-{group_id}" push-completed
+//"{push-the-buttons}-{group_id}" push-completed
 
-{'player_id': player_who_pushed}
+//{'player_id': player_who_pushed}
 
     activate_channels();
     return (
