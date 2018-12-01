@@ -19,7 +19,10 @@ const auth_socket = new Pusher("9aef7be7bb27baad1641", {
 	  user_id: CommonData.getPlayerId,
     headers: {
       'Authorization': "ac07583a-f0b1-11e8-9826-7e21ba590deb"
-    }
+		},
+		params: {
+			CSRFToken: 'some_csrf_token'
+		}
   }
 });
 var channel = auth_socket.subscribe('presence-lobby-channel');
