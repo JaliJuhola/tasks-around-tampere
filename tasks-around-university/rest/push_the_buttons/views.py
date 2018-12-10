@@ -32,7 +32,7 @@ class PushTheButtonView(APIView):
             group = Group.objects.get(id=group_id)
             game_object = PushTheButtonsMainGame.objects.get_or_create(group=group)
             player = request.user
-            print(player)
+            print(game_object.__dict__)
             if game_object.next_to_click:
                 if player.id != game_object.next_to_click or game_object.game_ended:
                     game_object.game_ended = True
