@@ -2,7 +2,7 @@ import pusher
 from django.conf import settings
 
 
-if not settings.DEBUG:
+if settings.DEBUG:
     class MockPusher:
         def trigger(self, channel, event, data):
             print("event: " + event + " fired to " + channel, flush=True)

@@ -13,10 +13,10 @@ import {
   View,
   Button,
 } from 'react-native';
-import {MiniGameScore} from '../../common/minigame/Score';
-    // Enable pusher logging - don't include this in production
+// import {MiniGameScore} from '../../common/minigame/Score';
 import { Actions } from 'react-native-router-flux';
 import {Http} from '../../core/connections/http';
+import {getSocketConnection} from '../../common/minigame/Connection';
 
 // import Connection from '../../../android/common/minigame/Connection';
 // import {MiniGameScore} from '../../../android/common/minigame/Score';
@@ -31,7 +31,8 @@ export default class PushTheButtonsScreen extends React.Component {
     this.groupId = CommonData.getGroupId();
     this.groupName = CommonData.getGroupName();
     this.playerName = CommonData.getPlayerName();
-    this.scoreHelper = MiniGameScore(CommonData.getGroupId(), MINIGAME_KEY);
+    this.pusher = getSocketConnection()
+    // this.scoreHelper = new MiniGameScore(CommonData.getGroupId(), MINIGAME_KEY);
 
     this.state = {
       playerToClickMessage: "Player 3 should click the button!",
@@ -78,7 +79,7 @@ export default class PushTheButtonsScreen extends React.Component {
         channel.bind('new-push', function(data) {
           console.log(data);
           this.setState(previousState => {
-            // return { currentScore: data['current_score'] };
+            return { currentScore: data['current_score'] };
           });
         });
         return channel;

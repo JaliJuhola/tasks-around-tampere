@@ -8,7 +8,7 @@ export class Auth {
             name: username,
           })
           .then(function (response) {
-            console.log(response);
+            GlobalStorage.setItem("token", response['data']['token']);
             return response;
           })
           .catch(function (error) {
@@ -33,8 +33,10 @@ export class Auth {
             id: status['data']['group_id'],
             name: status['data']['group_name'],
         }
-        GlobalStorage.setItem("player", player);
-        GlobalStorage.setItem("group", group);
+        console.log(player);
+        console.log(group);
+        await GlobalStorage.setItem("player", player);
+        await GlobalStorage.setItem("group", group);
 
         return true;
     }
