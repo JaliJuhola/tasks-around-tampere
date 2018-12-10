@@ -1,4 +1,3 @@
 export default settings = {
-    "rest_api_url": "http://46.101.194.238:8080/",
-    "reauth_automatically": false
+    "rest_api_url": "http://68.183.208.176:8000/"
 }

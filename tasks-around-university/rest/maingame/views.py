@@ -15,46 +15,6 @@ import uuid
 from rest.common.channels import PUSHER_CLIENT
 import json
 
-@api_view(['GET'])
-def hotspot_list(request):
-    hotspots = Hotspot.objects.all()
-    serializer = HotspotSerializer(hotspots, many=True)
-    return Response(serializer.data)
-
-@api_view(['POST'])
-def pusher_authentication(request):
-  auth = PUSHER_CLIENT.authenticate(
-    channel=request.data['channel_name'],
-    socket_id=request.data['socket_id'],
-    custom_data={
-      u'user_id': str(request.user.id),
-      u'user_info': {
-        u'user_name': str(request.user.name)
-      }
-    }
-  )
-  return Response(json.dumps(auth))
-
-@api_view(['GET'])
-def hotspot_detail(request, pk):
-    try:
-        hotspot = Hotspot.objects.get(pk=pk)
-    except Hotspot.DoesNotExist:
-        return Response({'message': 'hotspot not found'}, status=status.HTTP_404_NOT_FOUND)
-
-    serializer = HotspotSerializer(hotspot)
-    return Response(serializer.data)
-
-@api_view(['GET'])
-def player_location(request, pk):
-    try:
-        player = Player.objects.get(pk=pk)
-    except Player.DoesNotExist:
-        return Response({'message': 'Player not found'},status=status.HTTP_404_NOT_FOUND)
-
-    serializer = PlayerLocationSerializer(player)
-    return Response(serializer.data)
-
 class AuthView(APIView):
     """
     List all snippets, or create a new snippet.

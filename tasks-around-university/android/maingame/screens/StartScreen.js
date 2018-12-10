@@ -16,7 +16,7 @@ export default class StartScreen extends React.Component {
 
    async joinGroup(){
     var succeed = await Auth.fetch_or_create_user(this.state.username);
-    if(succeed) {
+    if(succeed['data']['token']) {
       succeed = await Auth.join_group(this.state.groupname);
       if(succeed) {
         alert("joined group");
