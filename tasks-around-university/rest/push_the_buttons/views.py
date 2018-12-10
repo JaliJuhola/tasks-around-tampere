@@ -24,20 +24,24 @@ class PushTheButtonView(APIView):
     serializer_class = PlayerSerializer
 
     def patch(self, request):
-        group_id = request.data['group_id']
+        group_id = request.user.group.id
+        print("1")
         if not group_id:
             return Response({'message': 'both id fields are required!'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             group = Group.objects.get(id=group_id)
             game_object = PushTheButtonsMainGame.objects.get_or_create(group=group)
             player = request.user
+            print(player)
             random_player_1 = Player.objects.order_by('?').first()
             random_player_2 = Player.objects.order_by('?').first()
+            print("2")
             game_object.next_to_click = random_player_1
             game_object.current_score = game_object.current_score + PUSH_THE_BUTTONS_SCORE_TO_ADD
             game_object.save()
             PushTheButtonsChannels.push_completed_event(player.id, group.id, game_object.current_score)
             PushTheButtonsChannels.new_push_available(random_player_1.id, random_player_2.id, group.id, SECONDS_TO_PUSH)
+            print("3")
         except Group.DoesNotExist:
            return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({ 'player_id': request.user.id, 'player_name': request.user.name, 'group_name': request.user.group.name, 'group_id': request.user.group.id}, status=status.HTTP_201_CREATED)

@@ -12,7 +12,6 @@ export class Auth {
             return response;
           })
           .catch(function (error) {
-            console.log(error);
             return error;
         });
         return status
@@ -33,8 +32,6 @@ export class Auth {
             id: status['data']['group_id'],
             name: status['data']['group_name'],
         }
-        console.log(player);
-        console.log(group);
         await GlobalStorage.setItem("player", player);
         await GlobalStorage.setItem("group", group);
 

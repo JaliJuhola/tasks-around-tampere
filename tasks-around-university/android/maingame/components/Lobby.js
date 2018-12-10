@@ -9,14 +9,14 @@ import LobbyScreenStyles from '../styles/LobbyScreenStyles';
 
 
 export default class Lobby extends React.Component {
-	
+
   render() {
     return null;
   }
 }
 
 export class LobbyCard extends React.Component {
-	
+
 	state = {
 		id : this.props.id,
 		name : this.props.name,
@@ -24,7 +24,7 @@ export class LobbyCard extends React.Component {
 		joined : this.props.joined,
 		icon : this.props.icon,
 	}
-	
+
 	render() {
 		return (
 		  <Surface style={[LobbyScreenStyles.lobbyCard, this.state.joined ? LobbyScreenStyles.lobbyCardJoined : LobbyScreenStyles.lobbyCardWaiting,]} >

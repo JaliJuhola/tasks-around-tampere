@@ -9,6 +9,7 @@ export default class App extends React.Component {
   };
 
   render() {
+    console.disableYellowBox = true
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
         <AppLoading
@@ -46,7 +47,7 @@ export default class App extends React.Component {
   _handleLoadingError = error => {
     // In this case, you might want to report the error to your error
     // reporting service, for example Sentry
-    console.warn(error);
+    // console.warn(error);
   };
 
   _handleFinishLoading = () => {

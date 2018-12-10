@@ -51,7 +51,7 @@ export default class PushTheButtonsScreen extends React.Component {
     }
     var playerClickedButton = () => {
       if (this.state.playerToClickMessage != null) {
-        Http.patch('api/push_the_buttons/',{group_id: this.groupId
+        Http.patch('api/push_the_buttons',{group_id: this.groupId
         })
           .then(function (response) {
             console.log(response);
