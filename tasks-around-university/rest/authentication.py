@@ -10,7 +10,7 @@ class TokenAuthentication(authentication.BaseAuthentication):
                 print("no token")
                 raise exceptions.AuthenticationFailed('No authentication token given!')
             try:
-                player = Player.objects.filter(token=str(player_token))
+                player = Player.objects.get(token=player_token)
             except(Player.DoesNotExist):
                 print("no such user")
                 raise exceptions.AuthenticationFailed('No such user')
