@@ -38,7 +38,7 @@ class PushTheButtonView(APIView):
                     game_object.game_ended = True
                     game_object.save()
                     PushTheButtonsChannels.push_completed_event(None, group.id, game_object.current_score)
-                    return return Response({'message': 'game ended'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message': 'game ended'}, status=status.HTTP_400_BAD_REQUEST)
                 game_object.current_score = game_object.current_score + PUSH_THE_BUTTONS_SCORE_TO_ADD
             random_player_1 = Player.objects.order_by('?').first()
             random_player_2 = Player.objects.order_by('?').first()
