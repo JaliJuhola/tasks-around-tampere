@@ -30,10 +30,10 @@ class PushTheButtonView(APIView):
             return Response({'message': 'both id fields are required!'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             group = Group.objects.get(id=group_id)
-            game_object = PushTheButtonsMainGame.objects.get_or_create(group=group)
+            game_object, created = PushTheButtonsMainGame.objects.get_or_create(group=group)
             player = request.user
             print(game_object.__dict__)
-            if game_object.next_to_click:
+            if game_object.next_to_click or created:
                 if player.id != game_object.next_to_click or game_object.game_ended:
                     game_object.game_ended = True
                     game_object.save()
