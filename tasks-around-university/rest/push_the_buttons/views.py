@@ -42,7 +42,7 @@ class PushTheButtonView(APIView):
                 game_object.current_score = game_object.current_score + PUSH_THE_BUTTONS_SCORE_TO_ADD
             random_player_1 = Player.objects.order_by('?').first()
             random_player_2 = Player.objects.order_by('?').first()
-            game_object.next_to_click = random_player_1.id
+            game_object.next_to_click = random_player_1
             game_object.current_score = game_object.current_score + PUSH_THE_BUTTONS_SCORE_TO_ADD
             game_object.save()
             PushTheButtonsChannels.push_completed_event(player.id, group.id, game_object.current_score)
