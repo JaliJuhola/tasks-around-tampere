@@ -71,3 +71,16 @@ class PlayerGroupView(APIView):
            return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({ 'player_id': request.user.id, 'player_name': request.user.name, 'group_name': request.user.group.name, 'group_id': request.user.group.id}, status=status.HTTP_201_CREATED)
 
+class PlayerView(APIView):
+    """
+    List all snippets, or create a new snippet.
+    """
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
+
+    def get(self, request):
+        group_name = request.user.group.name
+        player_name = request.user.name
+        player_id = request.user.id
+        group_id = request.user.group.id
+        return Response({group: {name: group_name, id: group_id} player: {player_name, id: player_id}})

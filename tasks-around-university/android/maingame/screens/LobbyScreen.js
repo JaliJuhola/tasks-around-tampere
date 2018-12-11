@@ -1,41 +1,81 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView} from 'react-native';
 import { Appbar} from 'react-native-paper';
-import Pusher from 'pusher-js/react-native';
-import axios from "axios";
-import {CommonData} from '../../common/CommonData'
-import {Http} from '../../core/connections/http';
-
+import {CommonData} from '../../common/CommonData';
 /*Components*/
 import Lobby, { LobbyCard} from '../components/Lobby';
-
+import {Http} from '../../core/connections/http';
 /*Stylesheets*/
 import LobbyScreenStyles from '../styles/LobbyScreenStyles';
+import { AsyncStorage } from "react-native";
+
 
 export default class LobbyScreen extends React.Component {
-
-
-	async members() {
-	var icons = ["soccer-ball-o", "space-shuttle", "connectdevelop"];
-	var current_icon = 0;
-
-	let list = JSON.parse('{"members1":[{"id":0,"name":"Fuksi 777","role":"You","joined":true,"icon":"space-shuttle"},{"id":1,"name":"Koodikoira ","role":"Käpistelijäryhmä","joined":true,"icon":"connectdevelop"},{"id":2,"name":"Sakari ","role":"Käpistelijäryhmä","joined":true,"icon":"soccer-ball-o"},{"id":3,"name":"Jokuvaa ","role":"Käpistelijäryhmä","joined":true,"icon":"space-shuttle"},{"id":4,"name":"TestName ","role":"Käpistelijäryhmä","joined":true,"icon":"space-shuttle"}]}');
-	return await Http.get('api/group/player').then(function (response) {
-		console.log(response);
-		return list.members1.map((item) => {
-			return (<LobbyCard key={item.id} name={item.name} role={item.role} joined={item.joined} icon={item.icon}/>);
+	async componentDidMount() {
+		var self = this;
+		await AsyncStorage.getItem("player_id").then(function (response) {
+			self.setState(previousState => (
+				{playerId: response}
+			));
+		}).then(function (response) {
+			self.members();
 		});
+		await AsyncStorage.getItem("group_id").then(function (response) {
+			self.setState(previousState => (
+				{groupId: response}
+			));
+		});
+		await AsyncStorage.getItem("group_name").then(function (response) {
+			self.setState(previousState => (
+				{groupName: response}
+			));
+		});
+		await AsyncStorage.getItem("player_name").then(function (response) {
+			self.setState(previousState => (
+				{playerName: response}
+			));
+		});
+  }
+	members = () => {
+	/*Replace this with a connect to server and fetch JSON*/
+	var self = this;
+	var pictures = ["space-shuttle","connectdevelop","soccer-ball-o"]
+	var image_index = 0
+	var members = 0
+
+	Http.get('api/group/player').then(function (response) {
+		var list = [];
+		return response['data'].map((item) => {
+			image_index = image_index + 1;
+			members = members + 1;
+			if(image_index === 3) {
+				image_index = 0
+			}
+			if(item.id === this.state.playerId) {
+				return (<LobbyCard key={item.id} name={item.name} role={"You"} joined={true} icon={pictures[image_index]}/>);
+			}
+			if(members < 4) {
+				 var role = this.state.groupName;
+				 return (<LobbyCard key={item.id} name={item.name} role={role} joined={true} icon={pictures[image_index]}/>);
+			}
+		});
+	}).then(function (response) {
+		console.log(response)
+		self.setState(previousState => (
+			{ cards: response}
+		));
 	})
-
-	}
-
+  }
 
   state = {
-    username: 'Testikäyttäjä',
-    groupname: "Testiryhmä",
-	gamename: 'Testipeli',
-	playercount: 3,
-	groupsize: 4,
+		gamename: 'Testipeli',
+		playercount: 3,
+		groupsize: 4,
+		playerId: undefined,
+		groupId: undefined,
+		groupName: undefined,
+		playerName: undefined,
+		cards: [<LobbyCard key={0} name={"No items fetched"} role={"You"} joined={true} icon={"soccer-ball-o"}/>]
   };
 
   _onNavigation = () => console.log("Navigation");
@@ -53,13 +93,9 @@ export default class LobbyScreen extends React.Component {
 			/>
 		</Appbar.Header>
         <ScrollView contentContainerStyle={LobbyScreenStyles.scrollView}>
-			{this.members()}
+			{this.state.cards}
 		</ScrollView>
       </View>
 	)
-	}
-	add_member(member) {
-		var list = JSON.parse('{"members1":[{"id":5,"name":"Fuksi 777","role":"You","joined":true,"icon":"space-shuttle"}')
-		console.log("USER ADDED WITH ID --------" + member.id)
-	}
+  }
 }

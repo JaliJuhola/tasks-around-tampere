@@ -11,4 +11,5 @@ urlpatterns = [
     path('api/group/player', views.PlayerGroupView.as_view()),
     # path('pusher/auth', views.pusher_authentication),
     path('api/push_the_buttons', PushTheButtonView.as_view())
+    path('api/me', views.PlayerView.as_view())
 ]
