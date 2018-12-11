@@ -83,4 +83,4 @@ class PlayerView(APIView):
         player_name = request.user.name
         player_id = request.user.id
         group_id = request.user.group.id
-        return Response({group: {name: group_name, id: group_id}, player: {player_name, id: player_id}})
+        return Response({group: {name: group_name, id: group_id}, player: {name: player_name, id: player_id}})
