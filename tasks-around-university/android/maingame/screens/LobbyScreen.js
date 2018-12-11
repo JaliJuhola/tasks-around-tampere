@@ -13,27 +13,13 @@ import { AsyncStorage } from "react-native";
 export default class LobbyScreen extends React.Component {
 	async componentDidMount() {
 		var self = this;
-		await AsyncStorage.getItem("player_id").then(function (response) {
+		Http.get('api/me').then(function (response) {
+			console.log(response);
 			self.setState(previousState => (
-				{playerId: response}
+				{groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], gropName: response['data']['group']['name']}
 			));
-		}).then(function (response) {
-			self.members();
-		});
-		await AsyncStorage.getItem("group_id").then(function (response) {
-			self.setState(previousState => (
-				{groupId: response}
-			));
-		});
-		await AsyncStorage.getItem("group_name").then(function (response) {
-			self.setState(previousState => (
-				{groupName: response}
-			));
-		});
-		await AsyncStorage.getItem("player_name").then(function (response) {
-			self.setState(previousState => (
-				{playerName: response}
-			));
+			}).then(() => {
+				this.members()
 		});
   }
 	members = () => {
