@@ -20,20 +20,17 @@ export class Auth {
 
         var status = await Http.post('api/group/player', {
             group_id: group_id,
-        })
+        }).then(function (response) {
+            console.log(response['data'])
+            GlobalStorage.setItem("player_id", response['data']['player_id'] + '');
+            GlobalStorage.setItem("player_name", response['data']['player_name'] + '');
+            GlobalStorage.setItem("group_id", response['data']['group_id']+ '');
+            GlobalStorage.setItem("group_name", response['data']['group_name']+ '');
+            return response;
+          })
         if('error' in status) {
             return false;
         }
-        var player = {
-            id: status['data']['player_id'],
-            name: status['data']['player_name'],
-        }
-        var group = {
-            id: status['data']['group_id'],
-            name: status['data']['group_name'],
-        }
-        await GlobalStorage.setItem("player", player);
-        await GlobalStorage.setItem("group", group);
 
         return true;
     }

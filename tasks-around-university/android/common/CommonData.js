@@ -3,19 +3,15 @@ import {GlobalStorage} from '../core/store/store';
 export class CommonData {
 
     static async getPlayerName(){
-        var player = await GlobalStorage.getItem('player');
-        return player.name;
+        return await GlobalStorage.getItem('player_name');
     }
     static async getGroupName(){
-        var group = await GlobalStorage.getItem('player');
-        return group.name;
+       return await GlobalStorage.getItem('group_name');
     }
     static async getGroupId(){
-        var group = await GlobalStorage.getItem('player');
-        return group.id;
+        return await GlobalStorage.getItem('group_id');
     }
     static async getPlayerId(){
-        var group = await GlobalStorage.getItem('player');
-        return group.id;
+        return await GlobalStorage.getItem('player_id');
     }
 }

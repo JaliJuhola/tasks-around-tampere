@@ -1,7 +1,7 @@
 import React from 'react';
 import { ExpoLinksView } from '@expo/samples';
 import axios from 'axios';
-import {CommonData} from '../../common/CommonData';
+import {GlobalStorage} from '../../core/store/store';
 import {
   Image,
   Platform,
@@ -27,11 +27,11 @@ export default class PushTheButtonsScreen extends React.Component {
   constructor(props) {
     super(props);
     // Common data should be abstracted later
-    this.playerId = CommonData.getPlayerId();
-    this.groupId = CommonData.getGroupId();
-    this.groupName = CommonData.getGroupName();
-    this.playerName = CommonData.getPlayerName();
-    this.pusher = getSocketConnection()
+    this.playerId = undefined;
+    this.groupId = undefined;
+    this.groupName = undefined;
+    this.playerName = undefined;
+    this.pusher = getSocketConnection();
     // this.scoreHelper = new MiniGameScore(CommonData.getGroupId(), MINIGAME_KEY);
 
     this.state = {
@@ -40,59 +40,64 @@ export default class PushTheButtonsScreen extends React.Component {
       currentScore: 0,
     };
   }
+  async componentDidMount() {
+    console.log("Component did mount")
+    GlobalStorage.getItem("player_id").then(function (response) {
+      console.log(response)
+      this.playerId = response;
+    });
+    GlobalStorage.getItem("group_id").then(function (response) {
+      this.groupId = response;
+    });
+    GlobalStorage.getItem("group_name").then(function (response) {
+      this.groupName = response;
+    });
+    GlobalStorage.getItem("player_name").then(function (response) {
+      this.playerName = response;
+    });
+  }
 
   render() {
-    var playerFailed = () => {
-        alert("You lost");
-        Actions.main_home()
-    }
-    var playerSucceed = () => {
-        alert("n1");
+    var that = this;
+    if(!that.playerId || !that.groupId) {
+      return  (<Text>Loading....</Text>)
     }
     var playerClickedButton = () => {
       if (this.state.playerToClickMessage != null) {
         Http.patch('api/push_the_buttons',{group_id: this.groupId
-        })
-          .then(function (response) {
-            console.log(response);
-            this.setState(previousState => {
+        }).then(function (response) {
+            that.setState(previousState => {
               return { playerToClickMessage: null };
-          });
-          })
-          .catch(function (error) {
-            playerFailed()
-          })
+              });
+
+        })
+        .catch(function (error) {
+          console.log(error);
+          playerFailed()
+        })
       } else {
         alert("Wait for signal!");
       }
     }
 
     var activate_channels = () => {
-        var channel = this.pusher.subscribe('push-the-buttons-' + this.group_id);
-
+        var channel = this.pusher.subscribe('push-the-buttons-' + that.groupId);
+        console.log('push-the-buttons-' + that.groupId)
         channel.bind('push-completed', function(data) {
           console.log(data);
-          this.setState(previousState => {
+          that.setState(previousState => {
             return { currentScore: data['current_score']};
           });
         });
         channel.bind('new-push', function(data) {
           console.log(data);
-          this.setState(previousState => {
+          that.setState(previousState => {
             return { currentScore: data['current_score'] };
           });
         });
         return channel;
 
     }
-    //"push-the-buttons-{group_id}" event: push-completed
-
-//{'target_player': target_player, 'player_who_has_event': player_who_has_event}
-
-//"{push-the-buttons}-{group_id}" push-completed
-
-//{'player_id': player_who_pushed}
-
     activate_channels();
     return (
       <View style={styles.container}>

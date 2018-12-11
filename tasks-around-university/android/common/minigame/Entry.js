@@ -22,6 +22,8 @@ class MiniGameEntry {
             case "nada":
                 console.log("nada")
                 break;
+            case "geocache":
+            Actions.geocache()
             default:
                 console.log("invalid minigame_str in static enter_minigame(minigame_str)")
                 Actions.pop()

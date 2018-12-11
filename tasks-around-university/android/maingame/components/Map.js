@@ -69,7 +69,7 @@ export default class Map extends React.Component {
             longitudeDelta: 0.02
           }
         });
-      }, 
+      },
       err => console.log(err));
   }
 
@@ -101,7 +101,7 @@ export default class Map extends React.Component {
       }
     }
   }
-  
+
   displayUserMarker() {
     if(this.state.userLocation != null) {
       return <MapView.Marker coordinate={this.state.userLocation}>
@@ -114,7 +114,7 @@ export default class Map extends React.Component {
     this.updateDistances();
     if(this.state.markers[0].distance != null) {
       return this.state.markers.map((marker, i) => (
-        <MapView.Marker 
+        <MapView.Marker
           key={i}
           coordinate={marker.coordinates}
           pinColor={'#6200ee'}

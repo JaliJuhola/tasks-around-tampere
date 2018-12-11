@@ -21,7 +21,7 @@ import PushTheButtonsScreen from '../pushthebuttons/screens/PushTheButtonsScreen
 import MapScreen from '../maingame/screens/MapScreen';
 import StartScreen from '../maingame/screens/StartScreen';
 import LobbyScreen from '../maingame/screens/LobbyScreen';
-
+import {Geocache} from '../geocache/geocache';
 
 const styles = StyleSheet.create({
   container: {
@@ -130,6 +130,14 @@ const AppNavigator = () => (
                   title="Map"
                   tabBarLabel="Map"
                   icon={TabBarIcon}
+                />
+                <Scene
+                  key="geocache"
+                  component={Geocache}
+                  title="geocache"
+                  tabBarLabel="Geocache"
+                  icon={TabBarIcon}
+                  hideNavBar={true}
                 />
               </Tabs>
             </Scene>
