@@ -79,6 +79,8 @@ class PlayerView(APIView):
     serializer_class = PlayerSerializer
 
     def get(self, request):
+        print(request.user.__dict__)
+        print(request.user.group.__dict__)
         group_name = request.user.group.name
         player_name = request.user.name
         player_id = request.user.id
