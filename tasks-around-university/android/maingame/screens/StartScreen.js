@@ -5,13 +5,14 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Auth} from '../../core/auth/auth';
 /*Stylesheets*/
 import StartScreenStyles from '../styles/StartScreenStyles';
-
+import Modal from "react-native-modal";
 import { Actions } from 'react-native-router-flux';
 
 export default class StartScreen extends React.Component {
   state = {
     username: '',
     groupname: '',
+    groupnameError: ''
   };
 
    async joinGroup(){
@@ -19,16 +20,12 @@ export default class StartScreen extends React.Component {
     if(succeed['data']['token']) {
       succeed = await Auth.join_group(this.state.groupname);
       if(succeed) {
-        alert("joined group");
-        //#TODO message here?
-        Actions.push_the_buttons();
+        Actions.lobby();
       } else {
-        //#TODO auth error message
-        alert("error when joining the group");
+        alert("Virheellinen ryhmännimi");
       }
     } else {
-      //#TODO overall error message
-      alert("Error when joining group");
+      alert("Virhe luodessa käyttäjää!");
     }
   }
   createGroup() {
@@ -39,6 +36,8 @@ export default class StartScreen extends React.Component {
   render() {
     return (
       <View style={StartScreenStyles.container}>
+        <View>
+        </View>
         <Image
           source={require('../../assets/images/tay.jpg')}
           style={StartScreenStyles.backgroundImage}
@@ -66,8 +65,9 @@ export default class StartScreen extends React.Component {
           <TextInput
             label='Ryhmän nimi'
             value={this.state.groupname}
-            onChangeText={text => this.setState({groupname:text})}
+            onChangeText={text => this.setState({groupname:text, groupnameError:""})}
             style={StartScreenStyles.textInput}
+            errorMessage={this.state.groupnameError}
           />
         </View>
         <Button mode="contained" style={[StartScreenStyles.button, StartScreenStyles.violetButton, StartScreenStyles.firstButton]} onPress={() => this.joinGroup()}>

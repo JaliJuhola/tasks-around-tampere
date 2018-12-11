@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, Button } from 'react-native';
 import { MapView } from 'expo';
 import MapStyles from '../styles/MapStyles';
 import CustomMapStyles from '../styles/CustomMapStyles.json';
+import { Actions } from 'react-native-router-flux';
 
 export default class Map extends React.Component {
 
@@ -18,7 +19,7 @@ export default class Map extends React.Component {
           latitude: 61.494138,
           longitude: 23.779433,
         },
-        userNear: false
+        userNear: false,
       },
       {
         title: 'test marker 2',
@@ -113,12 +114,13 @@ export default class Map extends React.Component {
   displayMarkers() {
     this.updateDistances();
     if(this.state.markers[0].distance != null) {
+      var items = [Actions.push_the_buttons, Actions.push_the_buttons, Actions.push_the_buttons, Actions.push_the_buttons, Actions.push_the_buttons, Actions.push_the_buttons,Actions.push_the_buttons];
       return this.state.markers.map((marker, i) => (
         <MapView.Marker
           key={i}
           coordinate={marker.coordinates}
           pinColor={'#6200ee'}
-          onCalloutPress={() => console.log('Pressed')}
+          onCalloutPress={() => items[i]()}
         >
           <MapView.Callout>
             <Text style={{fontWeight: 'bold'}}>{marker.title}</Text>

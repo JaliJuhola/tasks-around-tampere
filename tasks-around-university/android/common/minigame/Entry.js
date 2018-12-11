@@ -4,15 +4,12 @@ import { Actions } from 'react-native-router-flux';
 class MiniGameEntry {
 
     static startMinigame(minigame_str) {
-        let mge = new MinigameEntry()
-        mge.connectLobby();
-        let all_players_connected = false;
-        // Render lobby
+        var mge = true;
+        var all_players_connected = false;
         while(!all_players_connected) {
-            all_players_connected = mge.game_started();
+            all_players_connected = true;
         }
         return MiniGameEntry.enter_minigame(minigame_str);
-
     }
     static enter_minigame(minigame_str) {
         switch(minigame_str) {
@@ -20,14 +17,18 @@ class MiniGameEntry {
                 Actions.push_the_buttons()
                 break;
             case "nada":
-                console.log("nada")
+                console.log("nada");
                 break;
             case "geocache":
-            Actions.geocache()
+                Actions.geocache();
+                break;
+            case "alias":
+                Actions.alias();
             default:
                 console.log("invalid minigame_str in static enter_minigame(minigame_str)")
                 Actions.pop()
         }
     }
+
 }
 export default MiniGameEntry;

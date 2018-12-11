@@ -50,7 +50,7 @@ class PlayerGroupView(APIView):
     serializer_class = PlayerSerializer
 
     def get(self, request):
-        identifier = request.GET["group_id"]
+        identifier = request.user.group.id
         if not identifier:
             return Response({'id': 'This field is required!'}, status=status.HTTP_400_BAD_REQUEST)
         players = Player.objects.filter(group__id=identifier)

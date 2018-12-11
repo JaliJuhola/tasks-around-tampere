@@ -21,7 +21,8 @@ import PushTheButtonsScreen from '../pushthebuttons/screens/PushTheButtonsScreen
 import MapScreen from '../maingame/screens/MapScreen';
 import StartScreen from '../maingame/screens/StartScreen';
 import LobbyScreen from '../maingame/screens/LobbyScreen';
-import {Geocache} from '../geocache/geocache';
+// import {GeocacheScreen} from '../geocache/GeocacheScreen';
+import {AliasScreen} from '../minigame_alias/screens/AliasScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -131,14 +132,21 @@ const AppNavigator = () => (
                   tabBarLabel="Map"
                   icon={TabBarIcon}
                 />
-                <Scene
+                {/* <Scene
                   key="geocache"
-                  component={Geocache}
+                  component={GeocacheScreen}
                   title="geocache"
                   tabBarLabel="Geocache"
                   icon={TabBarIcon}
                   hideNavBar={true}
-                />
+                /> */}
+                {/* <Scene
+                  key="alias"
+                  component={AliasScreen}
+                  title="Alias"
+                  tabBarLabel="Alias"
+                  icon={TabBarIcon}
+                /> */}
               </Tabs>
             </Scene>
           </Stack>
