@@ -97,9 +97,9 @@ DATABASES = {
 }
 
 PUSHER = {
-    'APP_ID': "621958",
-    'KEY': '614d3af919c6a2043258',
-    'SECRET': '3251388dae2b9efeb2c4',
+    'APP_ID': "621956",
+    'KEY': '9001161e48db4e48e5f0',
+    'SECRET': '8870c28ccc452bdf46d3',
     'CLUSTER': 'eu',
     'SSL': True,
 }

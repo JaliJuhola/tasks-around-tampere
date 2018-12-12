@@ -27,10 +27,6 @@ export default class PushTheButtonsScreen extends React.Component {
   constructor(props) {
     super(props);
     // Common data should be abstracted later
-    this.playerId = undefined;
-    this.groupId = undefined;
-    this.groupName = undefined;
-    this.playerName = undefined;
     this.pusher = getSocketConnection();
     // this.scoreHelper = new MiniGameScore(CommonData.getGroupId(), MINIGAME_KEY);
 
@@ -38,10 +34,22 @@ export default class PushTheButtonsScreen extends React.Component {
       playerToClickMessage: "Player 3 should click the button!",
       joinGroupModalVisible: false,
       currentScore: 0,
+      playerId: undefined,
+      groupId: undefined,
+      groupName: undefined,
+      playerName: undefined
     };
   }
   async componentDidMount() {
-    console.log("Component did mount")
+    var self = this;
+    Http.get('api/me').then(function (response) {
+			console.log(response);
+			self.setState(previousState => (
+				{groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
+        ));
+      }).then(() => {
+        this.activate_channels()
+      });
     GlobalStorage.getItem("player_id").then(function (response) {
       console.log(response)
       this.playerId = response;
@@ -56,52 +64,50 @@ export default class PushTheButtonsScreen extends React.Component {
       this.playerName = response;
     });
   }
+  activate_channels = () => {
+    var that = this;
+    var channel = this.pusher.subscribe('push-the-buttons-' + that.state.groupId);
+    channel.bind('push-completed', function(data) {
+      console.log(data);
+      console.log("*****************************************");
+      that.setState(previousState => {
+        return { currentScore: data['current_score']};
+      });
+    });
+    channel.bind('new-push', function(data) {
+      console.log(data);
+      console.log("*****************************************");
+      that.setState(previousState => {
+        return { currentScore: data['current_score'] };
+      });
+    });
+    return channel;
 
+}
   render() {
     var that = this;
-    if(!that.playerId || !that.groupId) {
-      return  (<Text>Loading....</Text>)
-    }
     var playerClickedButton = () => {
       if (this.state.playerToClickMessage != null) {
-        Http.patch('api/push_the_buttons',{group_id: this.groupId
+        Http.patch('api/push_the_buttons',{group_id: this.state.groupId
         }).then(function (response) {
             that.setState(previousState => {
               return { playerToClickMessage: null };
-              });
-
+            });
         })
         .catch(function (error) {
           console.log(error);
-          playerFailed()
+          Actions.pop()
         })
       } else {
         alert("Wait for signal!");
       }
     }
-
-    var activate_channels = () => {
-        var channel = this.pusher.subscribe('push-the-buttons-' + that.groupId);
-        console.log('push-the-buttons-' + that.groupId)
-        channel.bind('push-completed', function(data) {
-          console.log(data);
-          that.setState(previousState => {
-            return { currentScore: data['current_score']};
-          });
-        });
-        channel.bind('new-push', function(data) {
-          console.log(data);
-          that.setState(previousState => {
-            return { currentScore: data['current_score'] };
-          });
-        });
-        return channel;
-
+    if(!that.state.playerId || !that.state.groupId) {
+      return  (<Text>Loading....</Text>)
     }
-    activate_channels();
     return (
       <View style={styles.container}>
-        <Text>You are player 1</Text>
+        <Text>You are player {this.state.playerId}</Text>
         <Text>Current Score {this.state.currentScore}</Text>
         <Text>{this.state.playerToClickMessage || "Wait for new command!"}</Text>
         <Button

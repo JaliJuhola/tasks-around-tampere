@@ -25,14 +25,12 @@ class PushTheButtonView(APIView):
 
     def patch(self, request):
         group_id = request.user.group.id
-        print("1")
         if not group_id:
             return Response({'message': 'both id fields are required!'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             group = Group.objects.get(id=group_id)
             game_object, created = PushTheButtonsMainGame.objects.get_or_create(group=group)
             player = request.user
-            print(game_object.__dict__)
             if game_object.next_to_click or created:
                 if player.id != game_object.next_to_click or game_object.game_ended:
                     game_object.game_ended = True
@@ -47,7 +45,6 @@ class PushTheButtonView(APIView):
             game_object.save()
             PushTheButtonsChannels.push_completed_event(player.id, group.id, game_object.current_score)
             PushTheButtonsChannels.new_push_available(random_player_1.id, random_player_2.id, group.id, SECONDS_TO_PUSH)
-            print("3")
         except Group.DoesNotExist:
            return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({ 'player_id': request.user.id, 'player_name': request.user.name, 'group_name': request.user.group.name, 'group_id': request.user.group.id}, status=status.HTTP_201_CREATED)

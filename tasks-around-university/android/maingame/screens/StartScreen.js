@@ -12,7 +12,7 @@ export default class StartScreen extends React.Component {
   state = {
     username: '',
     groupname: '',
-    groupnameError: ''
+    groupnameError: false
   };
 
    async joinGroup(){
@@ -22,7 +22,7 @@ export default class StartScreen extends React.Component {
       if(succeed) {
         Actions.lobby();
       } else {
-        alert("Virheellinen ryhmännimi");
+        this.setState({groupnameError:true})
       }
     } else {
       alert("Virhe luodessa käyttäjää!");
@@ -65,9 +65,9 @@ export default class StartScreen extends React.Component {
           <TextInput
             label='Ryhmän nimi'
             value={this.state.groupname}
-            onChangeText={text => this.setState({groupname:text, groupnameError:""})}
+            onChangeText={text => this.setState({groupname:text, groupnameError:false})}
             style={StartScreenStyles.textInput}
-            errorMessage={this.state.groupnameError}
+            error={this.state.groupnameError}
           />
         </View>
         <Button mode="contained" style={[StartScreenStyles.button, StartScreenStyles.violetButton, StartScreenStyles.firstButton]} onPress={() => this.joinGroup()}>

@@ -91,7 +91,7 @@ const geoStyles = StyleSheet.create({
 /*
  * Main component of this app.
  */
-export default class GeocacheScreen extends Component {
+export class GeocacheScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {

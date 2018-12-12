@@ -23,6 +23,9 @@ import StartScreen from '../maingame/screens/StartScreen';
 import LobbyScreen from '../maingame/screens/LobbyScreen';
 // import {GeocacheScreen} from '../geocache/GeocacheScreen';
 import {AliasScreen} from '../minigame_alias/screens/AliasScreen';
+import {QuiklashScreen} from '../maingame/components/Quiklash';
+import {GeocacheScreen} from '../geocache/GeocacheScreen';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -92,16 +95,9 @@ const AppNavigator = () => (
                   key="start"
                   component={StartScreen}
                   title="Start"
-                  tabBarLabel="Start Screen"
+                  tabBarLabel="Start"
                   icon={TabBarIcon}
                   hideNavBar={true}
-                />
-                <Scene
-                  key="main_home"
-                  component={HomeScreen}
-                  title="Home"
-                  tabBarLabel="Home"
-                  icon={TabBarIcon}
                 />
                 <Scene
                   key="scanners"
@@ -114,14 +110,14 @@ const AppNavigator = () => (
                   key="push_the_buttons"
                   component={PushTheButtonsScreen}
                   title="push the buttons"
-                  tabBarLabel="button push"
+                  tabBarLabel="push"
                   icon={TabBarIcon}
                 />
                 <Scene
                   key="lobby"
                   component={LobbyScreen}
                   title="Lobby"
-                  tabBarLabel="Lobby Screen"
+                  tabBarLabel="lobby"
                   icon={TabBarIcon}
                   hideNavBar={true}
                 />
@@ -132,21 +128,29 @@ const AppNavigator = () => (
                   tabBarLabel="Map"
                   icon={TabBarIcon}
                 />
-                {/* <Scene
-                  key="geocache"
-                  component={GeocacheScreen}
-                  title="geocache"
-                  tabBarLabel="Geocache"
+                <Scene
+                  key="quiklash"
+                  component={QuiklashScreen}
+                  title="Quiklash"
+                  tabBarLabel="Quiklash"
                   icon={TabBarIcon}
                   hideNavBar={true}
-                /> */}
-                {/* <Scene
+                />
+                <Scene
                   key="alias"
                   component={AliasScreen}
                   title="Alias"
                   tabBarLabel="Alias"
                   icon={TabBarIcon}
-                /> */}
+                />
+                <Scene
+                  key="cache"
+                  component={GeocacheScreen}
+                  title="Geocache"
+                  tabBarLabel="geo"
+                  icon={TabBarIcon}
+                />
+
               </Tabs>
             </Scene>
           </Stack>

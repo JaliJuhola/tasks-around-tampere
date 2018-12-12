@@ -19,7 +19,7 @@ export class Auth {
     }
     static async join_group(group_id) {
 
-        var status = Http.post('api/group/player', {
+        var status = await Http.post('api/group/player', {
             group_id: group_id,
         }).then(function (response) {
             console.log(response['data'])

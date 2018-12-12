@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView} from 'react-native';
-import { Appbar} from 'react-native-paper';
+import { Appbar, Button} from 'react-native-paper';
 import {CommonData} from '../../common/CommonData';
 /*Components*/
 import Lobby, { LobbyCard} from '../components/Lobby';
@@ -8,6 +8,7 @@ import {Http} from '../../core/connections/http';
 /*Stylesheets*/
 import LobbyScreenStyles from '../styles/LobbyScreenStyles';
 import { AsyncStorage } from "react-native";
+import { Actions } from 'react-native-router-flux';
 
 
 export default class LobbyScreen extends React.Component {
@@ -16,13 +17,17 @@ export default class LobbyScreen extends React.Component {
 		Http.get('api/me').then(function (response) {
 			console.log(response);
 			self.setState(previousState => (
-				{groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], gropName: response['data']['group']['name']}
+				{groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
 			));
-			}).then(() => {
-				this.members()
+			return response;
+			}).then((response) => {
+				this.members(response['data']['player']['id'], response['data']['group']['name']);
+				// Fetching group member once in every 8 seconds
+				return setTimeout(() => this.members(response['data']['player']['id'], response['data']['group']['name']), 8000);
+
 		});
-  }
-	members = () => {
+	}
+	members = (player_id, group_name) => {
 	/*Replace this with a connect to server and fetch JSON*/
 	var self = this;
 	var pictures = ["space-shuttle","connectdevelop","soccer-ball-o"]
@@ -37,11 +42,11 @@ export default class LobbyScreen extends React.Component {
 			if(image_index === 3) {
 				image_index = 0
 			}
-			if(item.id === this.state.playerId) {
+			if(item.id === player_id) {
 				return (<LobbyCard key={item.id} name={item.name} role={"You"} joined={true} icon={pictures[image_index]}/>);
 			}
-			if(members < 4) {
-				 var role = this.state.groupName;
+			if(members < 8) {
+				 var role = group_name;
 				 return (<LobbyCard key={item.id} name={item.name} role={role} joined={true} icon={pictures[image_index]}/>);
 			}
 		});
@@ -59,14 +64,17 @@ export default class LobbyScreen extends React.Component {
 		groupsize: 4,
 		playerId: undefined,
 		groupId: undefined,
-		groupName: undefined,
-		playerName: undefined,
+		groupName: "",
+		playerName: "",
 		cards: [<LobbyCard key={0} name={"No items fetched"} role={"You"} joined={true} icon={"soccer-ball-o"}/>]
   };
 
   _onNavigation = () => console.log("Navigation");
 
   render() {
+		var toMap = () => {
+			Actions.main_map()
+		}
     return (
       <View style={LobbyScreenStyles.container}>
         <Appbar.Header style={LobbyScreenStyles.appbar}>
@@ -75,10 +83,13 @@ export default class LobbyScreen extends React.Component {
 				onPress={this._onNavigation}
 			/>
 			<Appbar.Content
-			  title={this.state.groupname}
+			  title={this.state.groupName}
 			/>
 		</Appbar.Header>
-        <ScrollView contentContainerStyle={LobbyScreenStyles.scrollView}>
+			<ScrollView contentContainerStyle={LobbyScreenStyles.scrollView}>
+			<Button icon="add-a-photo" mode="contained" onPress={toMap} disabled={this.state.cards.length < 2}>
+    			Continue
+  		</Button>
 			{this.state.cards}
 		</ScrollView>
       </View>

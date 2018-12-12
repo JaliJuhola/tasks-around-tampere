@@ -114,7 +114,7 @@ export default class Map extends React.Component {
   displayMarkers() {
     this.updateDistances();
     if(this.state.markers[0].distance != null) {
-      var items = [Actions.push_the_buttons, Actions.push_the_buttons, Actions.push_the_buttons, Actions.push_the_buttons, Actions.push_the_buttons, Actions.push_the_buttons,Actions.push_the_buttons];
+      var items = [Actions.push_the_buttons, Actions.alias, Actions.cache, Actions.quiklash, Actions.push_the_buttons, Actions.quiklash,Actions.push_the_buttons];
       return this.state.markers.map((marker, i) => (
         <MapView.Marker
           key={i}

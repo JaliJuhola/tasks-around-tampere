@@ -4,7 +4,7 @@ import { Button, Headline, TextInput } from 'react-native-paper';
 
 import AliasScreenStyles from '../styles/AliasScreenStyles';
 
-export default class AliasScreen extends React.Component {
+export class AliasScreen extends React.Component {
     state = {
         words: ['sininen', 'hääyöaie', 'fileesuikale', 'kanawokki', 'ruutupaperi'],
         textInput: '',
@@ -14,7 +14,7 @@ export default class AliasScreen extends React.Component {
         buttonDisabled: false,
         textInputDisabled: false,
     };
-    
+
     updateText = () => {
         let rnd = Math.floor(Math.random() * 5);
         // backendiin tarkistus ettei tule kahta samaa
@@ -24,7 +24,7 @@ export default class AliasScreen extends React.Component {
         this.setState({currentWord: this.state.words[rnd]});
         this.setState({correctWord: ''});
         //this.setState({currentWord: 'hälytys apua:D'});
-        
+
         /*
         if (this.state.explainer) {
             this.setState({buttonDisabled: true});
@@ -36,7 +36,7 @@ export default class AliasScreen extends React.Component {
         }
         */
     }
-    
+
     checkGuess = () => {
         let guess = this.state.textInput.toLowerCase();
         if (guess == this.state.currentWord) {
@@ -49,7 +49,7 @@ export default class AliasScreen extends React.Component {
             this.setState({correctWord: 'Wrong! :('});
         }
     }
-    
+
     render() {
         return (
             <View style={AliasScreenStyles.container}>
