@@ -39,19 +39,19 @@ export default class PushTheButtonsScreen extends React.Component {
       groupName: undefined,
       playerName: undefined
     };
+    this.playerClickedButton = this.playerClickedButton.bind(this)
   }
   async componentDidMount() {
     var self = this;
     Http.get('api/me').then(function (response) {
-			console.log(response);
 			self.setState(previousState => (
 				{groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
         ));
       }).then(() => {
-        this.activate_channels()
+        this.active_channels_new_push()
+        this.activate_channels_push_completed()
       });
     GlobalStorage.getItem("player_id").then(function (response) {
-      console.log(response)
       this.playerId = response;
     });
     GlobalStorage.getItem("group_id").then(function (response) {
@@ -64,58 +64,58 @@ export default class PushTheButtonsScreen extends React.Component {
       this.playerName = response;
     });
   }
+  active_channels_new_push = () => {
+    var that = this;
+    var channel = this.pusher.subscribe('push-the-buttons-' + that.state.groupId);
+    channel.bind('new-push', function(data) {
+      const target_str = data['player_who_has_event'] + " should click the button";
+      that.setState(previousState => {
+        return { playerToClickMessage: target_str};
+      });
+    });
+    return channel;
+  }
   activate_channels_push_completed = () => {
     var that = this;
     var channel = this.pusher.subscribe('push-the-buttons-' + that.state.groupId);
     channel.bind('push-completed', function(data) {
+      console.log( "******************************************************************");
+      console.log(data)
       if(!data['player_id']){
-        alert("game ended with score " + data['current_score'])
+        alert("game ended with score " + data['current_score']);
         Actions.pop()
       }
       that.setState(previousState => {
         return { currentScore: data['current_score']};
       });
     });
-    channel.bind('new-push', function(data) {
-      console.log(data);
-      console.log("*****************************************");
-      var target_str = data['player_who_has_event'] + " should click the button";
-      console.log(target_str);
-      that.setState(previousState => {
-        return {playerToClickMessage: target_str};
-      });
-    });
     return channel;
 
-}
+  }
+  playerClickedButton = () => {
+    if (this.state.playerToClickMessage !== "Wait for new command!") {
+      Http.patch('api/push_the_buttons',{group_id: this.state.groupId
+      }).then(function (response) {
+          this.setState(previousState => {
+            return { playerToClickMessage: "Wait for new command!" };
+          });
+      })
+    } else {
+      alert("Wait for signal!");
+    }
+  }
   render() {
     var that = this;
-    var playerClickedButton = () => {
-      if (this.state.playerToClickMessage != null) {
-        Http.patch('api/push_the_buttons',{group_id: this.state.groupId
-        }).then(function (response) {
-            that.setState(previousState => {
-              return { playerToClickMessage: null };
-            });
-        })
-        .catch(function (error) {
-          console.log(error);
-          Actions.pop()
-        })
-      } else {
-        alert("Wait for signal!");
-      }
-    }
     if(!that.state.playerId || !that.state.groupId) {
       return  (<Text>Loading....</Text>)
     }
     return (
       <View style={styles.container}>
-        <Text>You are player {this.state.playerId}</Text>
-        <Text>Current Score {this.state.currentScore}</Text>
-        <Text>{this.state.playerToClickMessage || "Wait for new command!"}</Text>
+        <Text>You are player {that.state.playerId}</Text>
+        <Text>Current Score {that.state.currentScore}</Text>
+        <Text>{that.state.playerToClickMessage}</Text>
         <Button
-          onPress={playerClickedButton}
+          onPress={() => this.playerClickedButton()}
           title="Click here when someones says so!"
           color="#841584"
           accessibilityLabel="Learn more about this purple button"
