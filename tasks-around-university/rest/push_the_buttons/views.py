@@ -32,12 +32,11 @@ class PushTheButtonView(APIView):
             game_object, created = PushTheButtonsMainGame.objects.get_or_create(group=group)
             player = request.user
             if game_object.next_to_click and not created:
-                if player.id != game_object.next_to_click or game_object.game_ended:
+                if player.id != game_object.next_to_click.id:
                     game_object.game_ended = True
                     game_object.save()
                     PushTheButtonsChannels.push_completed_event(None, group.id, game_object.current_score)
                     return Response({'message': 'game ended'}, status=status.HTTP_400_BAD_REQUEST)
-                game_object.current_score = game_object.current_score + PUSH_THE_BUTTONS_SCORE_TO_ADD
 
             random_player_1 = Player.objects.filter(group=group).order_by('?').first()
             random_player_2 = Player.objects.filter(group=group).order_by('?').first()
