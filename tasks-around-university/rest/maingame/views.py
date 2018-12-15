@@ -93,7 +93,7 @@ class GroupView(APIView):
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
 
-    def get(self, request):
+    def post(self, request):
         group_name = request.data['group_name']
         player = request.user
         group = Group.objects.create(name=group_name)
