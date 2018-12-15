@@ -33,6 +33,8 @@ class PushTheButtonView(APIView):
             player = request.user
             if game_object.next_to_click and not created:
                 if player.id != game_object.next_to_click.id:
+                    print(player.id)
+                    print(game_object.next_to_click.id)
                     game_object.game_ended = True
                     game_object.save()
                     PushTheButtonsChannels.push_completed_event(None, group.id, game_object.current_score)
