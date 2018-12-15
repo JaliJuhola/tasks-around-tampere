@@ -90,6 +90,9 @@ export default class LobbyScreen extends React.Component {
 			<Button icon="add-a-photo" mode="contained" onPress={toMap} disabled={this.state.cards.length < 2}>
     			Continue
   		</Button>
+			<Button icon="add-a-photo" mode="contained" onPress={this.members(this.state.playerId, this.state.groupName)}>
+    			Refresh
+  		</Button>
 			{this.state.cards}
 		</ScrollView>
       </View>

@@ -38,7 +38,7 @@ export class Auth {
         var status = await Http.post('api/group/create', {
             group_name: group_name,
         }).then(function (response) {
-            console.log(response['data'])
+            alert("your group id is: " + response['data']['group_id']);
             AsyncStorage.setItem("player_id", response['data']['player_id'] + '').then(function (response) {});
             AsyncStorage.setItem("player_name", response['data']['player_name'] + '').then(function (response) {});
             AsyncStorage.setItem("group_id", response['data']['group_id']+ '').then(function (response) {});
