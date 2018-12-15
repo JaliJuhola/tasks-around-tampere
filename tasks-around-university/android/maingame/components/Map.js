@@ -12,8 +12,8 @@ export default class Map extends React.Component {
     userLocation: null,
     markers: [
       {
-        title: 'test marker 1',
-        description: "Distance:",
+        title: 'Push the buttons',
+        description: "Push the buttons:",
         distance: null,
         coordinates: {
           latitude: 61.494138,
@@ -22,8 +22,8 @@ export default class Map extends React.Component {
         userNear: false,
       },
       {
-        title: 'test marker 2',
-        description: "Distance:",
+        title: 'Alias',
+        description: "Alias:",
         distance: null,
         coordinates: {
           latitude: 61.492572,
@@ -32,8 +32,8 @@ export default class Map extends React.Component {
         userNear: false
       },
       {
-        title: 'test marker 3',
-        description: "Distance:",
+        title: 'Geocache',
+        description: "Geocache:",
         distance: null,
         coordinates: {
           latitude: 61.49396,
@@ -42,8 +42,8 @@ export default class Map extends React.Component {
         userNear: false
       },
       {
-        title: 'test marker 4',
-        description: "Distance:",
+        title: 'Quiklash',
+        description: "Quiklash:",
         distance: null,
         coordinates: {
           latitude: 61.495455,

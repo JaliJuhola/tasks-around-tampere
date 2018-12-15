@@ -70,19 +70,22 @@ export default class PushTheButtonsScreen extends React.Component {
     channel.bind('push-completed', function(data) {
       console.log(data);
       console.log("*****************************************");
+      if(!data['player_id']){
+        alert("game ended with score " + data['current_score'])
+        Actions.pop()
+      }
       that.setState(previousState => {
         return { currentScore: data['current_score']};
       });
     });
+    var self = this;
     channel.bind('new-push', function(data) {
       console.log(data);
       console.log("*****************************************");
-      var target_str = null;
-      if (data['player_who_has_event'] === that.state.playerId) {
-        target_str = data['player_who_has_event'] + " should click the button";
-      }
-      that.setState(previousState => {
-        return { currentScore: data['current_score'], playerToClickMessage: target_str};
+      var target_str = data['player_who_has_event'] + " should click the button";
+      console.log(target_str);
+      self.setState(previousState => {
+        return {playerToClickMessage: target_str};
       });
     });
     return channel;
