@@ -78,11 +78,25 @@ class PlayerView(APIView):
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
 
-    def get(self, request):
-        print(request.user.__dict__)
-        print(request.user.group.__dict__)
+    def post(self, request):
         group_name = request.user.group.name
         player_name = request.user.name
         player_id = request.user.id
         group_id = request.user.group.id
         return Response({'group': {'name': group_name, 'id': group_id}, 'player': {'name': player_name, 'id': player_id}})
+
+
+class GroupView(APIView):
+    """
+    List all snippets, or create a new snippet.
+    """
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
+
+    def get(self, request):
+        group_name = request.data['group_name']
+        player = request.user
+        group = Group.objects.create(name=group_name)
+        player.group = group
+        player.save()
+        return Response({ 'player_id': request.user.id, 'player_name': request.user.name, 'group_name': group.name, 'group_id': group.id}, status=status.HTTP_201_CREATED)
