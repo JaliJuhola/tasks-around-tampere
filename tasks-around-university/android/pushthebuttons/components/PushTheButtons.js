@@ -64,12 +64,10 @@ export default class PushTheButtonsScreen extends React.Component {
       this.playerName = response;
     });
   }
-  activate_channels = () => {
+  activate_channels_push_completed = () => {
     var that = this;
     var channel = this.pusher.subscribe('push-the-buttons-' + that.state.groupId);
     channel.bind('push-completed', function(data) {
-      console.log(data);
-      console.log("*****************************************");
       if(!data['player_id']){
         alert("game ended with score " + data['current_score'])
         Actions.pop()
@@ -78,13 +76,12 @@ export default class PushTheButtonsScreen extends React.Component {
         return { currentScore: data['current_score']};
       });
     });
-    var self = this;
     channel.bind('new-push', function(data) {
       console.log(data);
       console.log("*****************************************");
       var target_str = data['player_who_has_event'] + " should click the button";
       console.log(target_str);
-      self.setState(previousState => {
+      that.setState(previousState => {
         return {playerToClickMessage: target_str};
       });
     });

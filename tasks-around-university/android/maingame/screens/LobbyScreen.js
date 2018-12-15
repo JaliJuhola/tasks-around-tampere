@@ -23,11 +23,9 @@ export default class LobbyScreen extends React.Component {
 			}).then((response) => {
 				this.members(response['data']['player']['id'], response['data']['group']['name']);
 				// Fetching group member once in every 8 seconds
-				return setTimeout(() => this.members(response['data']['player']['id'], response['data']['group']['name']), 8000);
-
 		});
 	}
-	members = (player_id, group_name) => {
+	members(player_id, group_name){
 	/*Replace this with a connect to server and fetch JSON*/
 	var self = this;
 	var pictures = ["space-shuttle","connectdevelop","soccer-ball-o"]
@@ -90,7 +88,7 @@ export default class LobbyScreen extends React.Component {
 			<Button icon="add-a-photo" mode="contained" onPress={toMap} disabled={this.state.cards.length < 2}>
     			Continue
   		</Button>
-			<Button icon="add-a-photo" mode="contained" onPress={this.members(this.state.playerId, this.state.groupName)}>
+			<Button icon="add-a-photo" mode="contained" onPress={() =>{this.members(this.state.playerId, this.state.groupName)}}>
     			Refresh
   		</Button>
 			{this.state.cards}
