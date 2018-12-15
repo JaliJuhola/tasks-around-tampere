@@ -28,9 +28,18 @@ export default class StartScreen extends React.Component {
       alert("Virhe luodessa käyttäjää!");
     }
   }
-  createGroup() {
-    //#TODO this should be done (how?)
-    console.log('Luo Ryhmä: ' + this.state.groupname);
+  async createGroup() {
+    var succeed = await Auth.fetch_or_create_user(this.state.username);
+    if(succeed['data']['token']) {
+      succeed = await Auth.create_group(this.state.groupname);
+      if(succeed) {
+        Actions.lobby();
+      } else {
+        this.setState({groupnameError:true})
+      }
+    } else {
+      alert("Virhe luodessa käyttäjää!");
+    }
   }
 
   render() {
