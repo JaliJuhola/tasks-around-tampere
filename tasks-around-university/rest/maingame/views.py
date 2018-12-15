@@ -78,7 +78,7 @@ class PlayerView(APIView):
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
 
-    def post(self, request):
+    def get(self, request):
         group_name = request.user.group.name
         player_name = request.user.name
         player_id = request.user.id
