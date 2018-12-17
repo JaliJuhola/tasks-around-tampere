@@ -5,8 +5,8 @@ const styles = StyleSheet.create({
     container:{
         flex: 1,
         flexDirection: 'column',
-        //paddingTop: 10,
-        justifyContent: 'center',
+        paddingTop: '10%',
+        //justifyContent: 'center',
         alignItems: 'center',
     }, 
     button:{
@@ -26,7 +26,15 @@ const styles = StyleSheet.create({
     textInput:{
         width: '90%',
         marginBottom: 20,
-    }
+    },
+    progressBar:{
+        width: '90%',
+        marginBottom: 20,
+    },
+    debug:{
+        alignItems: 'center',
+        marginBottom: 20,
+    },
 });
 
 export default styles;
