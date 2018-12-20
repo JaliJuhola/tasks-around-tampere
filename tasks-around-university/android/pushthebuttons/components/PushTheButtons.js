@@ -1,6 +1,7 @@
 import React from 'react';
 import { ExpoLinksView } from '@expo/samples';
 import axios from 'axios';
+import {CommonData} from '../../common/CommonData';
 import {
   Image,
   Platform,
@@ -12,68 +13,90 @@ import {
   View,
   Button,
 } from 'react-native';
+import {MiniGameScore} from '../../common/minigame/Score';
     // Enable pusher logging - don't include this in production
 import { Actions } from 'react-native-router-flux';
+import {Http} from '../../core/connections/http';
+
 // import Connection from '../../../android/common/minigame/Connection';
 // import {MiniGameScore} from '../../../android/common/minigame/Score';
 
+const SCORE_TO_ADD = 1;
+const MINIGAME_KEY = 'push_the_buttons';
 export default class PushTheButtonsScreen extends React.Component {
   constructor(props) {
     super(props);
-    // this.pusher = Connection.getSocketConnection()
+    // Common data should be abstracted later
+    this.playerId = CommonData.getPlayerId();
+    this.groupId = CommonData.getGroupId();
+    this.groupName = CommonData.getGroupName();
+    this.playerName = CommonData.getPlayerName();
+    this.scoreHelper = MiniGameScore(CommonData.getGroupId(), MINIGAME_KEY);
+
     this.state = {
       playerToClickMessage: "Player 3 should click the button!",
       joinGroupModalVisible: false,
-      player_id: 1,
-      group_id: 1,
       currentScore: 0,
     };
   }
 
   render() {
-    playerFailed = () => {
+    var playerFailed = () => {
         alert("You lost");
         Actions.main_home()
     }
-    playerSucceed = () => {
+    var playerSucceed = () => {
         alert("n1");
     }
-    playerClickedButton = () => {
+    var playerClickedButton = () => {
       if (this.state.playerToClickMessage != null) {
-        axios.patch('http://localhost:8000/push_the_buttons/button_clicked', {
-            params: {
-              id: 1, // My player id
-              group_id: 1 // My group id
-            }
-          })
+        Http.patch('api/push_the_buttons/',{group_id: this.groupId
+        })
           .then(function (response) {
             console.log(response);
+            this.setState(previousState => {
+              return { playerToClickMessage: null };
+          });
           })
           .catch(function (error) {
             playerFailed()
           })
-          .then(function () {
-            this.setState(previousState => {
-                return { playerToClickMessage: null };
-            });
-          });
       } else {
-        alert("Wait for signal!")
+        alert("Wait for signal!");
       }
     }
 
-    activate_channels = () => {
-      const setScore = function(currentScore) {
-        this.setState(previousState => {
-          return { currentScore: currentScore };
+    var activate_channels = () => {
+        var channel = this.pusher.subscribe('push-the-buttons-' + this.group_id);
+
+        channel.bind('push-completed', function(data) {
+          console.log(data);
+          this.setState(previousState => {
+            return { currentScore: data['current_score']};
+          });
         });
-      }
-      // MiniGameScore.broadcastScore(this.state.group_id, setScore);
+        channel.bind('new-push', function(data) {
+          console.log(data);
+          this.setState(previousState => {
+            // return { currentScore: data['current_score'] };
+          });
+        });
+        return channel;
+
     }
-    activate_channels()
+    //"push-the-buttons-{group_id}" event: push-completed
+
+//{'target_player': target_player, 'player_who_has_event': player_who_has_event}
+
+//"{push-the-buttons}-{group_id}" push-completed
+
+//{'player_id': player_who_pushed}
+
+    activate_channels();
     return (
       <View style={styles.container}>
         <Text>You are player 1</Text>
+        <Text>Current Score {this.state.currentScore}</Text>
         <Text>{this.state.playerToClickMessage || "Wait for new command!"}</Text>
         <Button
           onPress={playerClickedButton}

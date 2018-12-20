@@ -6,7 +6,7 @@ export default class GlobalStorage {
         AsyncStorage.setItem(key, value);
     }
     static getItem(key) {
-        AsyncStorage.getItem(key);
+        return AsyncStorage.getItem(key);
     }
 
 }

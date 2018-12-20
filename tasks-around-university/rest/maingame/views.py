@@ -12,12 +12,28 @@ from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
 from rest.maingame.channels import WaitingPlayersToJoinChannels
 import uuid
+from rest.common.channels import PUSHER_CLIENT
+import json
 
 @api_view(['GET'])
 def hotspot_list(request):
     hotspots = Hotspot.objects.all()
     serializer = HotspotSerializer(hotspots, many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+def pusher_authentication(request):
+  auth = PUSHER_CLIENT.authenticate(
+    channel=request.data['channel_name'],
+    socket_id=request.data['socket_id'],
+    custom_data={
+      u'user_id': str(request.user.id),
+      u'user_info': {
+        u'user_name': str(request.user.name)
+      }
+    }
+  )
+  return Response(json.dumps(auth))
 
 @api_view(['GET'])
 def hotspot_detail(request, pk):
@@ -38,7 +54,6 @@ def player_location(request, pk):
 
     serializer = PlayerLocationSerializer(player)
     return Response(serializer.data)
-
 
 class AuthView(APIView):
     """
@@ -61,10 +76,8 @@ class AuthView(APIView):
     def post(self, request, format=None):
         serializer = PlayerSerializer(data=request.data)
         token = uuid.uuid1()
-        serializer.token = token
-
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(token=token)
             return Response({'token': token}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -85,7 +98,7 @@ class PlayerGroupView(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        identifier = request.GET["group_id"]
+        identifier = request.data['group_id']
         if not identifier:
             return Response({'id': 'This field is required!'}, status=status.HTTP_400_BAD_REQUEST)
         try:
@@ -96,4 +109,5 @@ class PlayerGroupView(APIView):
             WaitingPlayersToJoinChannels.new_push_available(request.user.name, players_on_game, group.id, group.name)
         except Group.DoesNotExist:
            return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'message': request.user.name + " Succesfully joined group " + group.name}, status=status.HTTP_201_CREATED)
+        return Response({ 'player_id': request.user.id, 'player_name': request.user.name, 'group_name': request.user.group.name, 'group_id': request.user.group.id}, status=status.HTTP_201_CREATED)
+

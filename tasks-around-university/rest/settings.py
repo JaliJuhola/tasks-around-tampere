@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import netifaces
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,9 +27,20 @@ SECRET_KEY = 'f)+lq0y*cq=ubho$gqku)4m4$9apjxq8e+uz%x5(ifmm4eewo^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+def ip_addresses():
+    ip_list = []
+    for interface in netifaces.interfaces():
+        addrs = netifaces.ifaddresses(interface)
+        for x in (netifaces.AF_INET, netifaces.AF_INET6):
+            if x in addrs:
+                ip_list.append(addrs[x][0]['addr'])
+    return ip_list
+
+ALLOWED_HOSTS = ip_addresses()
+print(ALLOWED_HOSTS)
 
 # Application definition
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -54,6 +67,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'rest.urls'
 
 WSGI_APPLICATION = 'rest.wsgi.application'
+
 
 TEST_SERVER_DOMAIN = "http://localhost:8081/"
 
@@ -84,20 +98,19 @@ TEMPLATES = [
 ]
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'tester',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'django',
+        'USER': 'django',
+        'PASSWORD': 'aab11f9002bcdac508c68d50a0d2d56e',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
-
 PUSHER = {
-    'APP_ID': '******',
-    'KEY': '*******',
-    'SECRET': '*******',
+    'APP_ID': "621956",
+    'KEY': '9001161e48db4e48e5f0',
+    'SECRET': '8870c28ccc452bdf46d3',
     'CLUSTER': 'eu',
     'SSL': True,
 }

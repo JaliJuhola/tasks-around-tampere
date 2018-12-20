@@ -9,8 +9,8 @@ class PushTheButtonsChannels:
     EVENT_PUSH_COMPLETED = "push-completed"
 
     @classmethod
-    def push_completed_event(cls, player_who_pushed, group_id):
-        push_event_to_channel("{}-{}".format(cls.CHANNEL_NAME, group_id) , cls.EVENT_PUSH_COMPLETED, {'player_id': player_who_pushed})
+    def push_completed_event(cls, player_who_pushed, group_id, current_score):
+        push_event_to_channel("{}-{}".format(cls.CHANNEL_NAME, group_id) , cls.EVENT_PUSH_COMPLETED, {'player_id': player_who_pushed, 'current_score': current_score})
 
     @classmethod
     def new_push_available(cls, target_player, player_who_has_event, group_id):

@@ -10,3 +10,4 @@ psycopg2==2.7.5
 pusher==2.0.1
 requests==2.19.1
 django-cors-headers==2.4.0
+docker-compose
