@@ -14,8 +14,6 @@ import {
   Lightbox,
 } from 'react-native-router-flux';
 import TabBarIcon from '../maingame/components/TabBarIcon';
-import MenuIcon from './MenuIcon';
-import HomeScreen from '../maingame/screens/HomeScreen';
 import ScannerScreen from '../maingame/screens/ScannerScreen';
 import PushTheButtonsScreen from '../pushthebuttons/screens/PushTheButtonsScreen';
 import MapScreen from '../maingame/screens/MapScreen';
@@ -75,7 +73,9 @@ const AppNavigator = () => (
     createReducer={reducerCreate}
     onStateChange={stateHandler}
     getSceneStyle={getSceneStyle}
-    uriPrefix={prefix}>
+    uriPrefix={prefix}
+    showNavigationBar={false}
+    >
     <Overlay key="overlay">
       <Modal key="modal" hideNavBar transitionConfig={transitionConfig}>
         <Lightbox key="lightbox">
@@ -150,7 +150,6 @@ const AppNavigator = () => (
                   tabBarLabel="geo"
                   icon={TabBarIcon}
                 />
-
               </Tabs>
             </Scene>
           </Stack>

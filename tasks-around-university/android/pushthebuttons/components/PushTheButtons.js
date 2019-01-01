@@ -21,7 +21,6 @@ import {getSocketConnection} from '../../common/minigame/Connection';
 // import Connection from '../../../android/common/minigame/Connection';
 // import {MiniGameScore} from '../../../android/common/minigame/Score';
 
-const SCORE_TO_ADD = 1;
 const MINIGAME_KEY = 'push_the_buttons';
 export default class PushTheButtonsScreen extends React.Component {
   constructor(props) {
@@ -51,18 +50,16 @@ export default class PushTheButtonsScreen extends React.Component {
         this.active_channels_new_push()
         this.activate_channels_push_completed()
       });
-    GlobalStorage.getItem("player_id").then(function (response) {
-      this.playerId = response;
-    });
-    GlobalStorage.getItem("group_id").then(function (response) {
-      this.groupId = response;
-    });
-    GlobalStorage.getItem("group_name").then(function (response) {
-      this.groupName = response;
-    });
-    GlobalStorage.getItem("player_name").then(function (response) {
-      this.playerName = response;
-    });
+      Http.get('api/me').then(function (response) {
+        console.log(response);
+        self.setState(previousState => (
+          {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
+        ));
+        return response;
+        }).then((response) => {
+          this.members(response['data']['player']['id'], response['data']['group']['name']);
+          // Fetching group member once in every 8 seconds
+      });
   }
   active_channels_new_push = () => {
     var that = this;
@@ -70,7 +67,7 @@ export default class PushTheButtonsScreen extends React.Component {
     channel.bind('new-push', function(data) {
       const target_str = data['player_who_has_event'] + " should click the button";
       that.setState(previousState => {
-        return { playerToClickMessage: target_str};
+      return { playerToClickMessage: target_str};
       });
     });
     return channel;
@@ -79,11 +76,9 @@ export default class PushTheButtonsScreen extends React.Component {
     var that = this;
     var channel = this.pusher.subscribe('push-the-buttons-' + that.state.groupId);
     channel.bind('push-completed', function(data) {
-      console.log( "******************************************************************");
-      console.log(data)
       if(!data['player_id']){
         alert("game ended with score " + data['current_score']);
-        Actions.pop()
+        return Actions.pop()
       }
       that.setState(previousState => {
         return { currentScore: data['current_score']};
@@ -93,12 +88,16 @@ export default class PushTheButtonsScreen extends React.Component {
 
   }
   playerClickedButton = () => {
+    var self = this;
     if (this.state.playerToClickMessage !== "Wait for new command!") {
-      Http.patch('api/push_the_buttons',{group_id: this.state.groupId
+      Http.patch('api/push_the_buttons',{group_id: self.state.groupId
       }).then(function (response) {
-          this.setState(previousState => {
+          self.setState(previousState => {
             return { playerToClickMessage: "Wait for new command!" };
           });
+      }).catch(function (error) {
+        console.log(error);
+        console.log(error.status);
       })
     } else {
       alert("Wait for signal!");

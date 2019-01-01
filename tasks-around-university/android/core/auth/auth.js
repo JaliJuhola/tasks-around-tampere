@@ -22,10 +22,10 @@ export class Auth {
             group_id: group_id,
         }).then(function (response) {
             console.log(response['data'])
-            AsyncStorage.setItem("player_id", response['data']['player_id'] + '').then(function (response) {});
-            AsyncStorage.setItem("player_name", response['data']['player_name'] + '').then(function (response) {});
-            AsyncStorage.setItem("group_id", response['data']['group_id']+ '').then(function (response) {});
-            AsyncStorage.setItem("group_name", response['data']['group_name']+ '').then(function (response) {});
+            AsyncStorage.setItem("player_id", response['data']['player_id']).then(function (response) {});
+            AsyncStorage.setItem("player_name", response['data']['player_name']).then(function (response) {});
+            AsyncStorage.setItem("group_id", response['data']['group_id']).then(function (response) {});
+            AsyncStorage.setItem("group_name", response['data']['group_name']).then(function (response) {});
             return response;
           })
         if('error' in status) {

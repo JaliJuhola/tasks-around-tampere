@@ -13,6 +13,7 @@ import { Actions } from 'react-native-router-flux';
 
 export default class LobbyScreen extends React.Component {
 	async componentDidMount() {
+		this.target_action = this.props.target_action;
 		var self = this;
 		Http.get('api/me').then(function (response) {
 			console.log(response);
@@ -70,8 +71,8 @@ export default class LobbyScreen extends React.Component {
   _onNavigation = () => console.log("Navigation");
 
   render() {
-		var toMap = () => {
-			Actions.main_map()
+		var toTarget = () => {
+			this.target_action()
 		}
     return (
       <View style={LobbyScreenStyles.container}>
@@ -85,7 +86,7 @@ export default class LobbyScreen extends React.Component {
 			/>
 		</Appbar.Header>
 			<ScrollView contentContainerStyle={LobbyScreenStyles.scrollView}>
-			<Button icon="add-a-photo" mode="contained" onPress={toMap} disabled={this.state.cards.length < 2}>
+			<Button icon="add-a-photo" mode="contained" onPress={toTarget} disabled={this.state.cards.length < 2}>
     			Continue
   		</Button>
 			<Button icon="add-a-photo" mode="contained" onPress={() =>{this.members(this.state.playerId, this.state.groupName)}}>

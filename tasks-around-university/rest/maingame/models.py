@@ -18,7 +18,6 @@ class Group(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(default=timezone.now)
 
-
 class Player(models.Model):
     id = models.AutoField(primary_key=True)
     x = models.IntegerField(default=0)
@@ -27,4 +26,5 @@ class Player(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(default=timezone.now)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, null=True)
+    leader = models.BooleanField(default=False)
     token = models.CharField(max_length=128)

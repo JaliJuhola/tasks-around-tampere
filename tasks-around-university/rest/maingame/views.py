@@ -98,5 +98,6 @@ class GroupView(APIView):
         player = request.user
         group = Group.objects.create(name=group_name)
         player.group = group
+        player.leader = True
         player.save()
         return Response({ 'player_id': request.user.id, 'player_name': request.user.name, 'group_name': group.name, 'group_id': group.id}, status=status.HTTP_201_CREATED)

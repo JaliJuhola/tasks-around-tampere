@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'rest.hello_world.apps.HelloWorldConfig',
     'rest.maingame.apps.MaingameConfig',
     'rest.push_the_buttons.apps.PushTheButtonsConfig',
+    'rest.quiklash.apps.QuiklashConfig',
+    'rest.alias.apps.AliasConfig',
     'corsheaders'
     ]
 
