@@ -115,8 +115,8 @@ class LobbyView(APIView):
         minigame_name = request.data['minigame_name']
         group = request.user.group
         player = request.user
-        lobby = Lobby.objects.get_or_create(group=group, minigame=minigame_name, closed=False)
-        lobby_player = LobbyPlayer.objects.get_or_create(lobby=lobby, player=player)
+        lobby, created = Lobby.objects.get_or_create(group=group, minigame=minigame_name, closed=False)
+        lobby_player, created = LobbyPlayer.objects.get_or_create(lobby=lobby, player=player)
         lobby_player.joined_since = timezone.now() + timezone.timedelta(seconds=20)
         lobby_player.save()
         return Response({'lobby_id': lobby.id})
@@ -124,8 +124,8 @@ class LobbyView(APIView):
     def patch(self, request):
         lobby_id = request.data['lobby_id']
         player = request.user
-        lobby = Lobby.objects.get(id=lobby_id)
-        lobby_player = LobbyPlayer.objects.get(lobby=lobby, player=player)
+        lobby, created = Lobby.objects.get(id=lobby_id)
+        lobby_player, created = LobbyPlayer.objects.get(lobby=lobby, player=player)
         lobby_player.joined_since = timezone.now() + timezone.timedelta(seconds=20)
         lobby_player.save()
         players_in_lobby = LobbyPlayer.objects.filter(lobby=lobby, joined_since__gte=timezone.now())
