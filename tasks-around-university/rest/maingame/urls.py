@@ -14,4 +14,5 @@ urlpatterns = [
     path('api/me', views.PlayerView.as_view()),
     path('api/group/create', views.GroupView.as_view()),
     path('api/lobby', views.LobbyView.as_view()),
+    path('api/avatar', views.AvatarView.as_view()),
 ]

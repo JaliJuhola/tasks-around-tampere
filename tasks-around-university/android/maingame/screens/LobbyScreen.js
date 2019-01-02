@@ -48,11 +48,11 @@ export default class LobbyScreen extends React.Component {
 					image_index = 0
 				}
 				if(item.id === player_id) {
-					return (<LobbyCard key={item.id} name={item.name} role={"You"} joined={true} icon={pictures[image_index]}/>);
+					return (<LobbyCard key={item.id} name={item.name} role={"You"} joined={true} icon={item.avatar}/>);
 				}
 				if(members < 8) {
 					var role = group_name;
-					return (<LobbyCard key={item.id} name={item.name} role={role} joined={true} icon={pictures[image_index]}/>);
+					return (<LobbyCard key={item.id} name={item.name} role={role} joined={true} icon={item.avatar}/>);
 				}
 			});
 		}).then(function (response) {

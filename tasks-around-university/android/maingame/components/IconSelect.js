@@ -7,6 +7,8 @@ import {Auth} from '../../core/auth/auth';
 import StartScreenStyles from '../styles/StartScreenStyles';
 import Modal from "react-native-modal";
 import { Actions } from 'react-native-router-flux';
+import {Http} from '../../core/connections/http';
+
 
 class SelectIcon extends React.Component {
   state = {
@@ -14,11 +16,18 @@ class SelectIcon extends React.Component {
   };
 
   selectIcon(){
-    Actions.main_map();
+    Http.post('api/avatar',{
+        icon_name: this.state.selectIcon,
+    }).then(function (response) {
+        Actions.main_map();
+    }).catch(function (error) {
+        alert("failed to set avatar!");
+    });
+
   }
 
   static navigationOptions = {
-    title: 'Valitso ikonisi',
+    title: 'Valitse avatar',
   };
   render() {
     return (
