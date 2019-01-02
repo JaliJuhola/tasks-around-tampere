@@ -23,6 +23,8 @@ import LobbyScreen from '../maingame/screens/LobbyScreen';
 import {AliasScreen} from '../minigame_alias/screens/AliasScreen';
 import {QuiklashScreen} from '../maingame/components/Quiklash';
 import {GeocacheScreen} from '../geocache/GeocacheScreen';
+import IconSelect from '../maingame/components/IconSelect';
+
 
 
 const styles = StyleSheet.create({
@@ -49,7 +51,8 @@ const reducerCreate = params => {
 };
 
 const stateHandler = (prevState, newState, action) => {
-  console.log('onStateChange: ACTION:', action);
+  console.log(prevState);
+  console.log(newState);
 };
 
 const getSceneStyle = () => ({
@@ -87,6 +90,7 @@ const AppNavigator = () => (
                 tabBarLabel="Start"
                 icon={TabBarIcon}
                 hideNavBar={true}
+                type="replace"
               />
               <Scene
                 key="scanners"
@@ -94,6 +98,7 @@ const AppNavigator = () => (
                 title="scanner"
                 tabBarLabel="scanner"
                 icon={TabBarIcon}
+                type="replace"
               />
               <Scene
                 key="push_the_buttons"
@@ -101,6 +106,7 @@ const AppNavigator = () => (
                 title="push the buttons"
                 tabBarLabel="push"
                 icon={TabBarIcon}
+                type="replace"
               />
               <Scene
                 key="lobby"
@@ -109,6 +115,7 @@ const AppNavigator = () => (
                 tabBarLabel="lobby"
                 icon={TabBarIcon}
                 hideNavBar={true}
+                type="replace"
               />
               <Scene
                 key="main_map"
@@ -116,6 +123,7 @@ const AppNavigator = () => (
                 title="Map"
                 tabBarLabel="Map"
                 icon={TabBarIcon}
+                type="replace"
               />
               <Scene
                 key="quiklash"
@@ -124,6 +132,7 @@ const AppNavigator = () => (
                 tabBarLabel="Quiklash"
                 icon={TabBarIcon}
                 hideNavBar={true}
+                type="replace"
               />
               <Scene
                 key="alias"
@@ -131,6 +140,7 @@ const AppNavigator = () => (
                 title="Alias"
                 tabBarLabel="Alias"
                 icon={TabBarIcon}
+                type="replace"
               />
               <Scene
                 key="cache"
@@ -138,6 +148,15 @@ const AppNavigator = () => (
                 title="Geocache"
                 tabBarLabel="geo"
                 icon={TabBarIcon}
+                type="replace"
+              />
+              <Scene
+                key="icon_select"
+                component={IconSelect}
+                title="IconSelect"
+                tabBarLabel="icos"
+                icon={TabBarIcon}
+                type="replace"
               />
             </Scene>
           </Stack>

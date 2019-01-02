@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '90%',
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    
+
     borderTopLeftRadius: 0,
   },
   smallText: {
@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   backgroundImage: {
+    justifyContent: 'center',
     position: 'absolute',
     top: 0,
     bottom: 0,

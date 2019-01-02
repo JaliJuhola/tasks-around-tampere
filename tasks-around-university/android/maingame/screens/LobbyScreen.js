@@ -1,7 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView} from 'react-native';
+import { StyleSheet, View, ScrollView, Image} from 'react-native';
 import { Appbar, Button, IconButton, Caption} from 'react-native-paper';
-import {CommonData} from '../../common/CommonData';
 /*Components*/
 import Lobby, { LobbyCard} from '../components/Lobby';
 import {Http} from '../../core/connections/http';
@@ -9,24 +8,31 @@ import {Http} from '../../core/connections/http';
 import LobbyScreenStyles from '../styles/LobbyScreenStyles';
 import MiniGameEntry from '../../common/minigame/Entry';
 import { Actions } from 'react-native-router-flux';
-import Icon from 'react-native-vector-icons/Ionicons';
-
+import {StartScreenStyles} from '../styles/StartScreenStyles';
 export default class LobbyScreen extends React.Component {
-	async componentDidMount() {
+	componentDidMount() {
 		this.target_action = this.props.target_str;
 		this.lobby_id = this.props.lobby_id;
+		this.callcount = 0;
 		var self = this;
+		this.interval = undefined;
 		Http.get('api/me').then(function (response) {
-			console.log(response);
 			self.setState(previousState => (
 				{groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name'], isLeader: response['data']['player']['leader']}
 			));
 			return response;
 			}).then((response) => {
 				this.members(response['data']['player']['id'], response['data']['group']['name'], true);
-				// Fetching group member once in every 8 seconds
-		});
+				this.interval = setInterval(() => {
+						this.members(response['data']['player']['id'], response['data']['group']['name'], false);
+				}, 5000);
+			});
 	}
+
+	componentWillUnmount() {
+		clearInterval(this.interval);
+	}
+
 	members(player_id, group_name, first_load) {
 		/*Replace this with a connect to server and fetch JSON*/
 		var self = this;
@@ -81,13 +87,27 @@ export default class LobbyScreen extends React.Component {
 			MiniGameEntry.enter_minigame(this.target_action);
 		}
 		let warningMessage = '';
-		if (this.state.group) {
-			warningMessage = <Caption  style={{flexDirection: "row", marginBottom: "5%", fontSize: 20, textAlign: "center", color: "#721c24", elevation: 4}} height={40}>Pelissä tulee olla vähintään 2 pelaajaa</Caption>;
+		let buttonColor = '';
+		let buttonPress = undefined;
+		let buttonOpacity = 1;
+		if (this.state.cards.length < 2) {
+			buttonColor = "#ff0033";
+			buttonPress = undefined;
+			buttonOpacity = 0.5;
+			warningMessage = <Caption  style={{flexDirection: "row", marginBottom: "5%", fontSize: 20, textAlign: "center", color: "#ff0033", elevation: 4}} height={40}>Pelissä tulee olla vähintään 2 pelaajaa</Caption>;
 		} else {
 			warningMessage = <Caption></Caption>
+			buttonColor = "#00FF00"
+			buttonPress = toTarget;
+			buttonOpacity = 1;
 		}
     return (
       <View style={LobbyScreenStyles.container}>
+		<Image
+          source={require('../../assets/images/tay.jpg')}
+		  style={{    justifyContent: 'center',position: 'absolute',top: 0,bottom: 0,zIndex: 0,height:'100%',width:'100%'}}
+		  blurRadius={1}
+        />
         <Appbar.Header style={LobbyScreenStyles.appbar}>
 			<Appbar.BackAction
 				onPress={() => Actions.main_map()}
@@ -117,7 +137,7 @@ export default class LobbyScreen extends React.Component {
 			</ScrollView>
 			{warningMessage}
 			<View style={{flexDirection: "row", marginBottom: "5%"}} height="8%">
-				<Button mode="contained" onPress={toTarget} disabled={this.state.cards.length < 1} color="#00FF00" style={{marginLeft: "20%", width: "60%", elevation: 1}}>Aloita
+				<Button mode="contained" onPress={buttonPress} color={buttonColor} style={{marginLeft: "20%", width: "60%", elevation: 1, opacity: buttonOpacity}}>Aloita
 				</Button>
 			</View>
       </View>

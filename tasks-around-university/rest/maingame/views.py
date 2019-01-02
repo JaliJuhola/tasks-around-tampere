@@ -124,7 +124,6 @@ class LobbyView(APIView):
     def patch(self, request):
         lobby_id = request.data['lobby_id']
         player = request.user
-        print(lobby_id)
         lobby = Lobby.objects.get(id=int(lobby_id))
         lobby_player = LobbyPlayer.objects.get(lobby=lobby, player=player)
         lobby_player.joined_since = timezone.now() + timezone.timedelta(seconds=20)
@@ -133,6 +132,19 @@ class LobbyView(APIView):
         response_array = []
         for player_in_lobby in players_in_lobby:
             player = player_in_lobby.player
-            response_array.append({'id': player.id, 'name': player.name, 'x': player.x, 'y': player.y, 'group_id': player.group.id})
+            response_array.append({'id': player.id, 'name': player.name, 'x': player.x, 'y': player.y, 'group_id': player.group.id, 'avatar': player.icon_name})
 
         return Response({'players': response_array})
+
+class AvatarView(APIView):
+    """
+    List all snippets, or create a new snippet.
+    """
+    queryset = Lobby.objects.all()
+    serializer_class = PlayerSerializer
+
+    def post(self, request):
+        icon_name = request.data['icon_name']
+        request.user.icon_name = icon_name
+        request.user.save()
+        return Response({'status': True})

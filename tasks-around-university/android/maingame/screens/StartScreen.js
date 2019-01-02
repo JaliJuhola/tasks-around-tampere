@@ -20,7 +20,7 @@ export default class StartScreen extends React.Component {
     if(succeed['data']['token']) {
       succeed = await Auth.join_group(this.state.groupname);
       if(succeed) {
-        Actions.main_map();
+        Actions.icon_select();
       } else {
         this.setState({groupnameError:true})
       }
@@ -33,7 +33,7 @@ export default class StartScreen extends React.Component {
     if(succeed['data']['token']) {
       succeed = await Auth.create_group(this.state.groupname);
       if(succeed) {
-        Actions.main_map();
+        Actions.icon_select();
       } else {
         this.setState({groupnameError:true})
       }
