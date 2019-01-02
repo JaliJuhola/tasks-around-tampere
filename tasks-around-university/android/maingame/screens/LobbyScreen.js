@@ -13,7 +13,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 export default class LobbyScreen extends React.Component {
 	async componentDidMount() {
-		this.target_action = this.props.target_action;
+		this.target_action = this.props.target_str;
+		this.lobby_id = this.props.lobby_id;
 		var self = this;
 		Http.get('api/me').then(function (response) {
 			console.log(response);
@@ -26,41 +27,40 @@ export default class LobbyScreen extends React.Component {
 				// Fetching group member once in every 8 seconds
 		});
 	}
-	members(player_id, group_name, first_load){
-	/*Replace this with a connect to server and fetch JSON*/
-	var self = this;
-	var pictures = ["space-shuttle","connectdevelop","soccer-ball-o"]
-	var image_index = 0
-	var members = 0
+	members(player_id, group_name, first_load) {
+		/*Replace this with a connect to server and fetch JSON*/
+		var self = this;
+		var pictures = ["space-shuttle","connectdevelop","soccer-ball-o"]
+		var image_index = 0
+		var members = 0
 
-	Http.get('api/group/player').then(function (response) {
-		var list = [];
-		return response['data'].map((item) => {
-			image_index = image_index + 1;
-			members = members + 1;
-			if(image_index === 3) {
-				image_index = 0
-			}
-			if(item.id === player_id) {
-				return (<LobbyCard key={item.id} name={item.name} role={"You"} joined={true} icon={pictures[image_index]}/>);
-			}
-			if(members < 8) {
-				 var role = group_name;
-				 return (<LobbyCard key={item.id} name={item.name} role={role} joined={true} icon={pictures[image_index]}/>);
+		Http.patch('api/lobby',{lobby_id: this.lobby_id}).then(function (response) {
+			return response['data']['players'].map((item) => {
+				image_index = image_index + 1;
+				members = members + 1;
+				if(image_index === 3) {
+					image_index = 0
+				}
+				if(item.id === player_id) {
+					return (<LobbyCard key={item.id} name={item.name} role={"You"} joined={true} icon={pictures[image_index]}/>);
+				}
+				if(members < 8) {
+					var role = group_name;
+					return (<LobbyCard key={item.id} name={item.name} role={role} joined={true} icon={pictures[image_index]}/>);
+				}
+			});
+		}).then(function (response) {
+			if(!first_load){
+				self.setState(previousState => (
+					{ cards: response, loadingColor: "#28a745"}
+				));
+			} else {
+				self.setState(previousState => (
+					{ cards: response}
+				));
 			}
 		});
-	}).then(function (response) {
-		if(!first_load){
-			self.setState(previousState => (
-				{ cards: response, loadingColor: "#28a745"}
-			));
-		} else {
-			self.setState(previousState => (
-				{ cards: response}
-			));
-		}
-	})
-  }
+	}
 
   state = {
 		gamename: 'Testipeli',

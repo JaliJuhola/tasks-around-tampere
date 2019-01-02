@@ -1,15 +1,17 @@
 import {MinigameEntry} from '../minigame/Channels';
 import { Actions } from 'react-native-router-flux';
+import {Http} from '../../core/connections/http';
 
 class MiniGameEntry {
 
-    static startMinigame(minigame_str) {
-        var mge = true;
-        var all_players_connected = false;
-        while(!all_players_connected) {
-            all_players_connected = true;
-        }
-        return MiniGameEntry.enter_minigame(minigame_str);
+    static enter_lobby(minigame_str) {
+        Http.post('api/lobby',{
+            minigame_name: minigame_str
+        }).then(function (response) {
+            Actions.lobby({lobby_id: response['data']['lobby_id'], target_str: minigame_str});
+        }).catch(function (error) {
+            alert("failed to conenct lobby!");
+        });
     }
     static enter_minigame(minigame_str) {
         switch(minigame_str) {
@@ -28,6 +30,5 @@ class MiniGameEntry {
                 Actions.pop()
         }
     }
-
 }
 export default MiniGameEntry;

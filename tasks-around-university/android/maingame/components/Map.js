@@ -4,6 +4,7 @@ import { MapView } from 'expo';
 import MapStyles from '../styles/MapStyles';
 import CustomMapStyles from '../styles/CustomMapStyles.json';
 import { Actions } from 'react-native-router-flux';
+import MiniGameEntry from '../../common/minigame/Entry';
 
 export default class Map extends React.Component {
 
@@ -120,7 +121,8 @@ export default class Map extends React.Component {
           key={i}
           coordinate={marker.coordinates}
           pinColor={'#6200ee'}
-          onCalloutPress={() => Actions.lobby({target_action: items[i]})}
+          onCalloutPress={() => MiniGameEntry.enter_lobby(items[i])}
+
           >
           <MapView.Callout>
             <Text style={{fontWeight: 'bold'}}>{marker.title}</Text>
