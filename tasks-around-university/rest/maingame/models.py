@@ -28,3 +28,14 @@ class Player(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE, null=True)
     leader = models.BooleanField(default=False)
     token = models.CharField(max_length=128)
+
+class Lobby(models.Model):
+    id = models.AutoField(primary_key=True)
+    minigame = models.CharField(max_length=128)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, null=False)
+    closed = models.BooleanField()
+
+class LobbyPlayer(models.Model):
+    lobby = models.ForeignKey(Lobby, on_delete=models.CASCADE, null=False)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=False)
+    joined_since = models.DateTimeField(auto_now_add=True)

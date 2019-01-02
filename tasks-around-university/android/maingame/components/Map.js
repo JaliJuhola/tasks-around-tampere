@@ -114,13 +114,13 @@ export default class Map extends React.Component {
   displayMarkers() {
     this.updateDistances();
     if(this.state.markers[0].distance != null) {
-      var items = [Actions.push_the_buttons, Actions.alias, Actions.cache, Actions.quiklash, Actions.push_the_buttons, Actions.quiklash,Actions.push_the_buttons];
+      var items = ['push_the_buttons', 'alias', 'geocache', 'quiklash', 'push_the_buttons', 'quiklash','push_the_buttons'];
       return this.state.markers.map((marker, i) => (
         <MapView.Marker
           key={i}
           coordinate={marker.coordinates}
           pinColor={'#6200ee'}
-          onCalloutPress={() => Actions.lobby({target_action: items[i]()})}
+          onCalloutPress={() => Actions.lobby({target_action: items[i]})}
           >
           <MapView.Callout>
             <Text style={{fontWeight: 'bold'}}>{marker.title}</Text>
@@ -130,7 +130,6 @@ export default class Map extends React.Component {
       ))
     }
   }
-
   render() {
     return (
       <MapView

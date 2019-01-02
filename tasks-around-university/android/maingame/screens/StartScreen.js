@@ -33,7 +33,7 @@ export default class StartScreen extends React.Component {
     if(succeed['data']['token']) {
       succeed = await Auth.create_group(this.state.groupname);
       if(succeed) {
-        Actions.lobby();
+        Actions.main_map();
       } else {
         this.setState({groupnameError:true})
       }

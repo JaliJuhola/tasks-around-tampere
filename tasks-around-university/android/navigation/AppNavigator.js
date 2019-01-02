@@ -74,83 +74,71 @@ const AppNavigator = () => (
     onStateChange={stateHandler}
     getSceneStyle={getSceneStyle}
     uriPrefix={prefix}
-    showNavigationBar={false}
     >
     <Overlay key="overlay">
       <Modal key="modal" hideNavBar transitionConfig={transitionConfig}>
-        <Lightbox key="lightbox">
-          <Stack key="root" hideNavBar titleStyle={{ alignSelf: 'center' }}>
-            <Scene hideNavBar>
-              <Tabs
-                key="tabbar"
-                backToInitial
-                onTabOnPress={() => {
-                  console.log('Back to initial and also print this');
-                }}
-                swipeEnabled
-                tabBarStyle={styles.tabBarStyle}
-                activeBackgroundColor="white"
-                inactiveBackgroundColor="rgba(255, 0, 0, 0.5)">
-                <Scene
-                  key="start"
-                  component={StartScreen}
-                  title="Start"
-                  tabBarLabel="Start"
-                  icon={TabBarIcon}
-                  hideNavBar={true}
-                />
-                <Scene
-                  key="scanners"
-                  component={ScannerScreen}
-                  title="scanner"
-                  tabBarLabel="scanner"
-                  icon={TabBarIcon}
-                />
-                <Scene
-                  key="push_the_buttons"
-                  component={PushTheButtonsScreen}
-                  title="push the buttons"
-                  tabBarLabel="push"
-                  icon={TabBarIcon}
-                />
-                <Scene
-                  key="lobby"
-                  component={LobbyScreen}
-                  title="Lobby"
-                  tabBarLabel="lobby"
-                  icon={TabBarIcon}
-                  hideNavBar={true}
-                />
-                <Scene
-                  key="main_map"
-                  component={MapScreen}
-                  title="Map"
-                  tabBarLabel="Map"
-                  icon={TabBarIcon}
-                />
-                <Scene
-                  key="quiklash"
-                  component={QuiklashScreen}
-                  title="Quiklash"
-                  tabBarLabel="Quiklash"
-                  icon={TabBarIcon}
-                  hideNavBar={true}
-                />
-                <Scene
-                  key="alias"
-                  component={AliasScreen}
-                  title="Alias"
-                  tabBarLabel="Alias"
-                  icon={TabBarIcon}
-                />
-                <Scene
-                  key="cache"
-                  component={GeocacheScreen}
-                  title="Geocache"
-                  tabBarLabel="geo"
-                  icon={TabBarIcon}
-                />
-              </Tabs>
+        <Lightbox key="lightbox" hideNavBar={true} >
+          <Stack key="root" hideNavBar={true} titleStyle={{ alignSelf: 'center' }}>
+            <Scene hideNavBar hideTabBar>
+              <Scene
+                key="start"
+                component={StartScreen}
+                title="Start"
+                tabBarLabel="Start"
+                icon={TabBarIcon}
+                hideNavBar={true}
+              />
+              <Scene
+                key="scanners"
+                component={ScannerScreen}
+                title="scanner"
+                tabBarLabel="scanner"
+                icon={TabBarIcon}
+              />
+              <Scene
+                key="push_the_buttons"
+                component={PushTheButtonsScreen}
+                title="push the buttons"
+                tabBarLabel="push"
+                icon={TabBarIcon}
+              />
+              <Scene
+                key="lobby"
+                component={LobbyScreen}
+                title="Lobby"
+                tabBarLabel="lobby"
+                icon={TabBarIcon}
+                hideNavBar={true}
+              />
+              <Scene
+                key="main_map"
+                component={MapScreen}
+                title="Map"
+                tabBarLabel="Map"
+                icon={TabBarIcon}
+              />
+              <Scene
+                key="quiklash"
+                component={QuiklashScreen}
+                title="Quiklash"
+                tabBarLabel="Quiklash"
+                icon={TabBarIcon}
+                hideNavBar={true}
+              />
+              <Scene
+                key="alias"
+                component={AliasScreen}
+                title="Alias"
+                tabBarLabel="Alias"
+                icon={TabBarIcon}
+              />
+              <Scene
+                key="cache"
+                component={GeocacheScreen}
+                title="Geocache"
+                tabBarLabel="geo"
+                icon={TabBarIcon}
+              />
             </Scene>
           </Stack>
         </Lightbox>

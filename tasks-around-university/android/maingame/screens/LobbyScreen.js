@@ -1,15 +1,15 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView} from 'react-native';
-import { Appbar, Button} from 'react-native-paper';
+import { Appbar, Button, IconButton, Caption} from 'react-native-paper';
 import {CommonData} from '../../common/CommonData';
 /*Components*/
 import Lobby, { LobbyCard} from '../components/Lobby';
 import {Http} from '../../core/connections/http';
 /*Stylesheets*/
 import LobbyScreenStyles from '../styles/LobbyScreenStyles';
-import { AsyncStorage } from "react-native";
+import MiniGameEntry from '../../common/minigame/Entry';
 import { Actions } from 'react-native-router-flux';
-
+import Icon from 'react-native-vector-icons/Ionicons';
 
 export default class LobbyScreen extends React.Component {
 	async componentDidMount() {
@@ -18,15 +18,15 @@ export default class LobbyScreen extends React.Component {
 		Http.get('api/me').then(function (response) {
 			console.log(response);
 			self.setState(previousState => (
-				{groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
+				{groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name'], isLeader: response['data']['player']['leader']}
 			));
 			return response;
 			}).then((response) => {
-				this.members(response['data']['player']['id'], response['data']['group']['name']);
+				this.members(response['data']['player']['id'], response['data']['group']['name'], true);
 				// Fetching group member once in every 8 seconds
 		});
 	}
-	members(player_id, group_name){
+	members(player_id, group_name, first_load){
 	/*Replace this with a connect to server and fetch JSON*/
 	var self = this;
 	var pictures = ["space-shuttle","connectdevelop","soccer-ball-o"]
@@ -50,50 +50,76 @@ export default class LobbyScreen extends React.Component {
 			}
 		});
 	}).then(function (response) {
-		console.log(response)
-		self.setState(previousState => (
-			{ cards: response}
-		));
+		if(!first_load){
+			self.setState(previousState => (
+				{ cards: response, loadingColor: "#28a745"}
+			));
+		} else {
+			self.setState(previousState => (
+				{ cards: response}
+			));
+		}
 	})
   }
 
   state = {
 		gamename: 'Testipeli',
 		playercount: 3,
+		loadingColor: "#17a2b8",
 		groupsize: 4,
 		playerId: undefined,
-		groupId: undefined,
+		groupId: 0,
 		groupName: "",
 		playerName: "",
-		cards: [<LobbyCard key={0} name={"No items fetched"} role={"You"} joined={true} icon={"soccer-ball-o"}/>]
+		cards: [<LobbyCard key={0} name={"Pelaajia ei ole haettu"} role={"You"} joined={true}/>]
   };
 
   _onNavigation = () => console.log("Navigation");
 
   render() {
 		var toTarget = () => {
-			this.target_action()
+			MiniGameEntry.enter_minigame(this.target_action);
+		}
+		let warningMessage = '';
+		if (this.state.group) {
+			warningMessage = <Caption  style={{flexDirection: "row", marginBottom: "5%", fontSize: 20, textAlign: "center", color: "#721c24", elevation: 4}} height={40}>Pelissä tulee olla vähintään 2 pelaajaa</Caption>;
+		} else {
+			warningMessage = <Caption></Caption>
 		}
     return (
       <View style={LobbyScreenStyles.container}>
         <Appbar.Header style={LobbyScreenStyles.appbar}>
-			<Appbar.Action
-				icon="menu"
-				onPress={this._onNavigation}
-			/>
+			<Appbar.BackAction
+				onPress={() => Actions.main_map()}
+			>
+			</Appbar.BackAction>
 			<Appbar.Content
-			  title={this.state.groupName}
+			  title={this.state.groupName + "(" + this.state.groupId + ")" }
+			  subtitle="Aula"
+			  subtitleStyle={{marginTop: -5, opacity: 1}}
 			/>
 		</Appbar.Header>
-			<ScrollView contentContainerStyle={LobbyScreenStyles.scrollView}>
-			<Button icon="add-a-photo" mode="contained" onPress={toTarget} disabled={this.state.cards.length < 2}>
-    			Continue
-  		</Button>
-			<Button icon="add-a-photo" mode="contained" onPress={() =>{this.members(this.state.playerId, this.state.groupName)}}>
-    			Refresh
-  		</Button>
-			{this.state.cards}
-		</ScrollView>
+		<View style={{flexDirection: "row"}}>
+			<IconButton
+				icon="update"
+				color={this.state.loadingColor}
+				onPress={() => {
+					this.setState(previousState => (
+						{loadingColor: "#ffc107", cards: []}
+					));
+					this.members(this.state.playerId, this.state.groupName, false)
+				}}
+				style={{elevation: 3}}
+			/>
+		</View>
+			<ScrollView contentContainerStyle={LobbyScreenStyles.scrollView} height="92%">
+				{this.state.cards}
+			</ScrollView>
+			{warningMessage}
+			<View style={{flexDirection: "row", marginBottom: "5%"}} height="8%">
+				<Button mode="contained" onPress={toTarget} disabled={this.state.cards.length < 1} color="#00FF00" style={{marginLeft: "20%", width: "60%", elevation: 1}}>Aloita
+				</Button>
+			</View>
       </View>
 	)
   }

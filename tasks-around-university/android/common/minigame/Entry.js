@@ -16,14 +16,13 @@ class MiniGameEntry {
             case "push_the_buttons":
                 Actions.push_the_buttons()
                 break;
-            case "nada":
-                console.log("nada");
-                break;
             case "geocache":
                 Actions.geocache();
                 break;
             case "alias":
                 Actions.alias();
+            case "quiklash":
+                Actions.quiklash();
             default:
                 console.log("invalid minigame_str in static enter_minigame(minigame_str)")
                 Actions.pop()

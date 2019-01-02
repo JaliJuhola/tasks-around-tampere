@@ -3,8 +3,8 @@ from django.http import HttpResponse, JsonResponse
 #from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from rest.maingame.models import Hotspot, Player, Group
-from rest.maingame.serializers import HotspotSerializer, PlayerSerializer, PlayerLocationSerializer
+from rest.maingame.models import Hotspot, Player, Group, Lobby, LobbyPlayer
+from rest.maingame.serializers import HotspotSerializer, PlayerSerializer, PlayerLocationSerializer, PlayerLobbySerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,6 +14,7 @@ from rest.maingame.channels import WaitingPlayersToJoinChannels
 import uuid
 from rest.common.channels import PUSHER_CLIENT
 import json
+from django.utils import timezone
 
 class AuthView(APIView):
     """
@@ -81,9 +82,10 @@ class PlayerView(APIView):
     def get(self, request):
         group_name = request.user.group.name
         player_name = request.user.name
+        is_leader = request.user.leader
         player_id = request.user.id
         group_id = request.user.group.id
-        return Response({'group': {'name': group_name, 'id': group_id}, 'player': {'name': player_name, 'id': player_id}})
+        return Response({'group': {'name': group_name, 'id': group_id}, 'player': {'name': player_name, 'id': player_id, 'leader': is_leader}})
 
 
 class GroupView(APIView):
@@ -101,3 +103,42 @@ class GroupView(APIView):
         player.leader = True
         player.save()
         return Response({ 'player_id': request.user.id, 'player_name': request.user.name, 'group_name': group.name, 'group_id': group.id}, status=status.HTTP_201_CREATED)
+
+class LobbyView(APIView):
+    """
+    List all snippets, or create a new snippet.
+    """
+    queryset = Lobby.objects.all()
+    serializer_class = PlayerSerializer
+
+    def post(self, request):
+        minigame_name = request.data['minigame_name']
+        group = request.user.group
+        player = request.user
+        lobby = Lobby.objects.get_or_create(group=group, minigame=minigame_name, closed=False)
+        lobby_player = LobbyPlayer.get_or_create(lobby=lobby, player=player)
+        lobby_player.joined_since = timezone.now() + timezone.timedelta(seconds=20)
+        lobby_player.save()
+        players_in_lobby = LobbyPlayer.objects.filter(lobby=lobby, joined_since__gte=timezone.now())
+        response_array = []
+        for player_in_lobby in players_in_lobby:
+            player = player_in_lobby.player
+            response_array.append({PlayerLobbySerializer(player)})
+
+        return Response({'lobby_id': lobby.id, 'players': response_array})
+
+    def patch(self, request):
+        minigame_name = request.data['minigame_name']
+        group = request.user.group
+        player = request.user
+        lobby = Lobby.objects.get(group=group, minigame=minigame_name, closed=False)
+        lobby_player = LobbyPlayer.get(lobby=lobby, player=player)
+        lobby_player.joined_since = timezone.now() + timezone.timedelta(seconds=20)
+        lobby_player.save()
+        players_in_lobby = LobbyPlayer.objects.filter(lobby=lobby, joined_since__gte=timezone.now())
+        response_array = []
+        for player_in_lobby in players_in_lobby:
+            player = player_in_lobby.player
+            response_array.append({PlayerLobbySerializer(player)})
+
+        return Response({'lobby_id': lobby.id, 'players': response_array})
