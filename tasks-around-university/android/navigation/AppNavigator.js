@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StyleSheet, Text, View, BackHandler } from 'react-native';
+import { Platform, StyleSheet, Alert, Text, View, BackHandler } from 'react-native'
 import { StackViewStyleInterpolator } from 'react-navigation-stack';
 import {
   Scene,
@@ -80,8 +80,32 @@ const onBackAndroid = () => {
     console.log("main_map scene asd");
   }
   if(Actions.currentScene === "start") {
-    console.log("START SCREEN");
+    Alert.alert(
+      'Quit?',
+      'Do you want to close the game?',
+      [
+        {
+          text: 'Yes',
+          onPress: () => BackHandler.exitApp(),
+        },
+        { text: 'No', onPress: () => {} },
+      ],
+      { cancellable: false }
+    );
   }
+  if(Actions.currentScene === "IconSelect") {
+    Actions.StartScreen();
+  }
+  if(Actions.currentScene === "Lobby") {
+    //-> map
+  }
+  if(Actions.currentScene === "Minigame") {
+    //-> map
+  }
+  if(Actions.currentScene === "scanner") {
+    //-> map
+  }
+  
   console.log("*************************************************");
   return true;
 }
