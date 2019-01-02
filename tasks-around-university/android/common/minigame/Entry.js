@@ -8,6 +8,7 @@ class MiniGameEntry {
         Http.post('api/lobby',{
             minigame_name: minigame_str
         }).then(function (response) {
+            console.log(response['data']['lobby_id'])
             Actions.lobby({lobby_id: response['data']['lobby_id'], target_str: minigame_str});
         }).catch(function (error) {
             alert("failed to conenct lobby!");

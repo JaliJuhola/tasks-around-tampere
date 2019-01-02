@@ -124,7 +124,7 @@ class LobbyView(APIView):
     def patch(self, request):
         lobby_id = request.data['lobby_id']
         player = request.user
-        lobby, created = Lobby.objects.get(id=lobby_id)
+        lobby, created = Lobby.objects.get(id=int(lobby_id))
         lobby_player, created = LobbyPlayer.objects.get(lobby=lobby, player=player)
         lobby_player.joined_since = timezone.now() + timezone.timedelta(seconds=20)
         lobby_player.save()
