@@ -12,9 +12,11 @@ from rest.maingame.channels import WaitingPlayersToJoinChannels
 import uuid
 from rest.push_the_buttons.channels import PushTheButtonsChannels
 from rest.push_the_buttons.models import PushTheButtonsMainGame
+from django.utils import timezone
 
 PUSH_THE_BUTTONS_SCORE_TO_ADD = 1
-SECONDS_TO_PUSH = 5
+SECONDS_TO_PUSH = 6
+TIME_DECREASES_MILLISECONDS = 180
 
 class PushTheButtonView(APIView):
     """
@@ -32,7 +34,7 @@ class PushTheButtonView(APIView):
             game_object, created = PushTheButtonsMainGame.objects.get_or_create(group=group)
             player = request.user
             if game_object.next_to_click and not created:
-                if player.id != game_object.next_to_click.id:
+                if player.id != game_object.next_to_click.id or game_object.next_push_before < timezone.now():
                     game_object.game_ended = True
                     game_object.save()
                     PushTheButtonsChannels.push_completed_event(None, group.id, game_object.current_score)
@@ -41,10 +43,11 @@ class PushTheButtonView(APIView):
             random_player_1 = Player.objects.filter(group=group).order_by('?').first()
             random_player_2 = Player.objects.filter(group=group).order_by('?').first()
             game_object.next_to_click = random_player_1
+            game_object.next_push_before = timezone.now() + timezone.timedelta(seconds=SECONDS_TO_PUSH) - timezone.timedelta(milliseconds=game_object.current_score*TIME_DECREASES_MILLISECONDS)
             game_object.current_score = game_object.current_score + PUSH_THE_BUTTONS_SCORE_TO_ADD
             game_object.save()
             PushTheButtonsChannels.push_completed_event(player.id, group.id, game_object.current_score)
-            PushTheButtonsChannels.new_push_available(random_player_1.id, random_player_2.id, group.id, SECONDS_TO_PUSH)
+            PushTheButtonsChannels.new_push_available(random_player_1.id, random_player_2.id, group.id, (((SECONDS_TO_PUSH * 1000) - TIME_DECREASES_MILLISECONDS * game_object.current_score) / 1000))
         except Group.DoesNotExist:
            return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({ 'player_id': request.user.id, 'player_name': request.user.name, 'group_name': request.user.group.name, 'group_id': request.user.group.id}, status=status.HTTP_201_CREATED)

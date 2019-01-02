@@ -5,6 +5,7 @@ class PushTheButtonsMainGame(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now=True)
+    next_push_before = models.DateTimeField(null=True)
     current_score = models.IntegerField(default=0)
     next_to_click = models.ForeignKey(Player, on_delete=models.CASCADE, null=True)
     game_ended = models.BooleanField(default=False)

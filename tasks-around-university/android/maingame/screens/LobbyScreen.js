@@ -41,6 +41,9 @@ export default class LobbyScreen extends React.Component {
 		var members = 0
 
 		Http.patch('api/lobby',{lobby_id: this.lobby_id}).then(function (response) {
+			if(response['data']['closed']) {
+				return MiniGameEntry.enter_minigame(this.target_action);
+			}
 			return response['data']['players'].map((item) => {
 				image_index = image_index + 1;
 				members = members + 1;
@@ -84,13 +87,15 @@ export default class LobbyScreen extends React.Component {
 
   render() {
 		var toTarget = () => {
-			MiniGameEntry.enter_minigame(this.target_action);
+			Http.patch('api/lobby/close',{lobby_id: this.lobby_id}).then(function (response) {
+				return MiniGameEntry.enter_minigame(this.target_action);
+			})
 		}
 		let warningMessage = '';
 		let buttonColor = '';
 		let buttonPress = undefined;
 		let buttonOpacity = 1;
-		if (this.state.cards.length < 2) {
+		if (this.state.cards.length < 1) {
 			buttonColor = "#ff0033";
 			buttonPress = undefined;
 			buttonOpacity = 0.5;
@@ -101,6 +106,7 @@ export default class LobbyScreen extends React.Component {
 			buttonPress = toTarget;
 			buttonOpacity = 1;
 		}
+
     return (
       <View style={LobbyScreenStyles.container}>
 		<Image

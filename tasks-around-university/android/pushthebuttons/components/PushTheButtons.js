@@ -30,7 +30,8 @@ export default class PushTheButtonsScreen extends React.Component {
     // this.scoreHelper = new MiniGameScore(CommonData.getGroupId(), MINIGAME_KEY);
 
     this.state = {
-      playerToClickMessage: "Player 3 should click the button!",
+      playerToClickMessage: "Peli alkaa kuin joku pelaaja painaa tästä!",
+      secondsToPush: 999999,
       joinGroupModalVisible: false,
       currentScore: 0,
       playerId: undefined,
@@ -51,7 +52,6 @@ export default class PushTheButtonsScreen extends React.Component {
         this.activate_channels_push_completed()
       });
       Http.get('api/me').then(function (response) {
-        console.log(response);
         self.setState(previousState => (
           {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
         ));
@@ -66,6 +66,12 @@ export default class PushTheButtonsScreen extends React.Component {
     var channel = this.pusher.subscribe('push-the-buttons-' + that.state.groupId);
     channel.bind('new-push', function(data) {
       const target_str = data['player_who_has_event'] + " should click the button";
+      const time_to_push = data['seconds_to_push'];
+      if(this.state.playerId === data['player_who_has_event']) {
+        that.setState(previousState => {
+          return { secondsToPush: time_to_push / 1000};
+          });
+      }
       that.setState(previousState => {
       return { playerToClickMessage: target_str};
       });
@@ -78,7 +84,7 @@ export default class PushTheButtonsScreen extends React.Component {
     channel.bind('push-completed', function(data) {
       if(!data['player_id']){
         alert("game ended with score " + data['current_score']);
-        return Actions.pop()
+        return Actions.main_map()
       }
       that.setState(previousState => {
         return { currentScore: data['current_score']};
@@ -90,11 +96,11 @@ export default class PushTheButtonsScreen extends React.Component {
   playerClickedButton = () => {
     var self = this;
     if (this.state.playerToClickMessage !== "Wait for new command!") {
+      self.setState(previousState => {
+        return { playerToClickMessage: "Wait for new command!" };
+      });
       Http.patch('api/push_the_buttons',{group_id: self.state.groupId
       }).then(function (response) {
-          self.setState(previousState => {
-            return { playerToClickMessage: "Wait for new command!" };
-          });
       }).catch(function (error) {
         console.log(error);
         console.log(error.status);
@@ -110,8 +116,9 @@ export default class PushTheButtonsScreen extends React.Component {
     }
     return (
       <View style={styles.container}>
-        <Text>You are player {that.state.playerId}</Text>
-        <Text>Current Score {that.state.currentScore}</Text>
+        <Text>Olet pelaaja numero{that.state.playerId}</Text>
+        <Text>Tämän hetkiset pisteet{that.state.currentScore}</Text>
+        <Text>Aikaa painaa nappia{that.state.secondsToPush}</Text>
         <Text>{that.state.playerToClickMessage}</Text>
         <Button
           onPress={() => this.playerClickedButton()}

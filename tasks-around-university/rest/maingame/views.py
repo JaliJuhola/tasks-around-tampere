@@ -134,7 +134,21 @@ class LobbyView(APIView):
             player = player_in_lobby.player
             response_array.append({'id': player.id, 'name': player.name, 'x': player.x, 'y': player.y, 'group_id': player.group.id, 'avatar': player.icon_name})
 
-        return Response({'players': response_array})
+        return Response({'players': response_array, 'closed': lobby.closed})
+
+class LobbyExitView(APIView):
+    """
+    List all snippets, or create a new snippet.
+    """
+    queryset = Lobby.objects.all()
+    serializer_class = PlayerSerializer
+
+    def post(self, request):
+        lobby_id = request.data['lobby_id']
+        lobby = Lobby.objects.get(id=int(lobby_id))
+        lobby.closed = True
+        lobby.save()
+        return Response({'status': True})
 
 class AvatarView(APIView):
     """
