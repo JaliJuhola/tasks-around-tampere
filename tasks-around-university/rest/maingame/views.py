@@ -125,8 +125,8 @@ class LobbyView(APIView):
         lobby_id = request.data['lobby_id']
         player = request.user
         print(lobby_id)
-        lobby, created = Lobby.objects.get(id=int(lobby_id))
-        lobby_player, created = LobbyPlayer.objects.get(lobby=lobby, player=player)
+        lobby = Lobby.objects.get(id=int(lobby_id))
+        lobby_player = LobbyPlayer.objects.get(lobby=lobby, player=player)
         lobby_player.joined_since = timezone.now() + timezone.timedelta(seconds=20)
         lobby_player.save()
         players_in_lobby = LobbyPlayer.objects.filter(lobby=lobby, joined_since__gte=timezone.now())
