@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest.maingame.models import Hotspot, Player, Group, Lobby, LobbyPlayer
-from rest.maingame.serializers import HotspotSerializer, PlayerSerializer, PlayerLocationSerializer, PlayerLobbySerializer
+from rest.maingame.serializers import HotspotSerializer, PlayerSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -133,6 +133,6 @@ class LobbyView(APIView):
         response_array = []
         for player_in_lobby in players_in_lobby:
             player = player_in_lobby.player
-            response_array.append({PlayerLobbySerializer(player)})
+            response_array.append({'id': player.id, 'name': player.name, 'x': player.x, 'y': player.y, 'group_id': player.group.id})
 
         return Response({'players': response_array})

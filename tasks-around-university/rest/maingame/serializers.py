@@ -64,19 +64,3 @@ class PlayerSerializer(serializers.ModelSerializer):
     name = serializers.CharField()
     group_id = serializers.IntegerField(source="group.id", required=False)
     token = serializers.CharField(required=False)
-
-class PlayerLobbySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Player
-        fields = ('id', 'x', 'y', 'group_id', 'name')
-    id = serializers.IntegerField(read_only=True)
-    x = serializers.IntegerField(default=0)
-    y = serializers.IntegerField(default=0)
-    name = serializers.CharField()
-    group_id = serializers.IntegerField(source="group.id", required=False)
-
-class LobbySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Player
-        fields = ('players', 'lobby_id')
-        tracks = PlayerLobbySerializer(many=True, read_only=True)
