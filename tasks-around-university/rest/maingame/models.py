@@ -28,6 +28,7 @@ class Player(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE, null=True)
     leader = models.BooleanField(default=False)
     token = models.CharField(max_length=128)
+    icon_name = models.CharField(max_length=40, default="space-shuttle")
 
 class Lobby(models.Model):
     id = models.AutoField(primary_key=True)
