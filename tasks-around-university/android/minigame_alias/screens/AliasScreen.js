@@ -7,84 +7,161 @@ import MinigameComponent from '../../common/MinigameComponent';
 
 export default class AliasScreen extends React.Component {
     
+    /*
+    TODO:
+    -metodi sille, jossa kysytään backendiltä joko siirrytään seuraavaan sanaan progressNext(); wordsIndex +1
+    -checkGuess() jos arvas oikein, lähetä true backendiin, tällöin n. sekunnin päästä kaikki tietää onko joku arvannu
+    -jaa updateText() ehkä pariin osaan, uus timer backend tarkistukselle joka rundilla startNewRound();
+    -poista nextword painike, tai saa se laittamaan ready backendiin?
+    -nextword miinus pisteitä, selittäjälle yhtä paljon pisteitä kuin arvaajalle?
+    
+    -ready pitää olla vain yhdellä että päästään eteenpäin, selittäjä false jos ei paina next word
+    
+    
+    -peli loppuu kesken sanan
+    -progressbarissa fixed values
+    -next word onPress readyForNext
+    -checkReadyStatus interval clear, tai pidä huoli että vaan yks intervalli menossa samaan aikaan
+    
+    */
+    
     constructor(props) {
         super(props);
         this.state = {
-            words: ['sininen', 'fileesuikale', 'kanawokki', 'taskulaskin', 'ruutupaperi'],
+            words: '',
+            wordsIndex: 0,
             textInput: '',
             currentWord: ' ',
             correctWord: ' ',
             explainer: true,
             buttonDisabled: false,
             textInputDisabled: false,
+            nextWordDisabled: false,
             timeElapsed: 0,
+            totalTimeElapsed: 0,
             score: 0,
             latestScore: 0,
             scoreTimer: '',
             wordTimeout: '',
+            readyCheck: '',
+            roundTimeout: '',
+            remainingTimeout: '',
             debug: '',
             
         };
     }
-
+    
     // This function first clears previous timers, requests a new JSON,
     // and sets the state accordingly to the new role. At the end this starts new timers.
     updateText = () => {
-        clearTimeout(this.state.wordTimeout);
+        
+        //clearTimeout(this.state.wordTimeout);
         this.setState({timeElapsed: 0});
-        clearInterval(this.state.scoreTimer);
+        //clearInterval(this.state.scoreTimer);
+        //clearInterval(this.state.readyCheck);
         
-        // call for json();
+        // GET api/words
         
-        let rnd = Math.floor(Math.random() * 5);
+        let rnd = Math.floor(Math.random() * 3);
         // backendiin tarkistus ettei tule kahta samaa
-        while (this.state.words[rnd] == this.state.currentWord) {
-            rnd = Math.floor(Math.random() * 5);
-        }
         
         let parsable = '';
         switch(rnd) {
             case 0:
-                parsable = JSON.parse('{"word":"sininen","explainer":true}');
+                parsable = JSON.parse('{"words":"kalakukko","explainer":true}');
                 break;
             case 1:
-                parsable = JSON.parse('{"word":"fileesuikale","explainer":false}');
+                parsable = JSON.parse('{"words":"munakas","explainer":false}');
                 break;
             case 2:
-                parsable = JSON.parse('{"word":"kanawokki","explainer":false}');
-                break;
-            case 3:
-                parsable = JSON.parse('{"word":"taskulaskin","explainer":false}');
-                break;
-            case 4:
-                parsable = JSON.parse('{"word":"ruutupaperi","explainer":true}');
+                parsable = JSON.parse('{"words":"kovalevy","explainer":false}');
                 break;
             default:
                 break;
         }
         
-        //this.setState({explainer: parsable["explainer"]});
-        this.setState({currentWord: parsable["word"]});
+        // GET api/words ends here
+        
         this.setState({correctWord: ' '});
+        this.setState({words: parsable["words"]});
         
         if (parsable["explainer"] == true) {
+            this.setState({currentWord: parsable["words"]});
             this.setState({buttonDisabled: true});
             this.setState({textInputDisabled: true});
+            this.setState({nextWordDisabled: false});
         }
         else {
+            this.setState({currentWord: "Another player is explaining now!"});
             this.setState({buttonDisabled: false});
             this.setState({textInputDisabled: false});
+            this.setState({nextWordDisabled: true});
         }
         
-        // settimeout call for json päivitä kaikille hae uus taulukollinen sanoja
-        this.setState({wordTimeout: setTimeout(this.updateText, 20000)});
+        this.setState({roundTimeout: setTimeout(this.endRound, 60000)});
+        this.setState({wordTimeout: setTimeout(this.waitForNewWord, 20000)});
         this.setState({scoreTimer: setInterval(this.updateScoreTimer, 500)});
+        //this.setState({readyCheck: setInterval(this.checkReadyStatus, 1000)});
+    }
+    
+    endRound = () => {
+        
+        clearTimeout(this.state.wordTimeout);
+        clearInterval(this.state.scoreTimer);
+        //clearInterval(this.state.readyCheck);
+        this.setState({currentWord: 'Game over!'});
+        
+        /*
+        clearTimeout(this.state.wordTimeout);
+        let remaining = (20 - this.state.timeElapsed) * 1000;
+        this.setState({remainingTimeout: setTimeout(this.waitForWordToFinish, remaining)});
+        */
+    }
+    
+    /*
+    waitForWordToFinish = () => {
+        clearTimeout(this.state.wordTimeout);
+        clearInterval(this.state.scoreTimer);
+        //clearInterval(this.state.readyCheck);
+        this.setState({currentWord: 'Game over!'});
+    }
+    */
+    
+    waitForNewWord = () => {
+        clearTimeout(this.state.wordTimeout);
+        clearInterval(this.state.scoreTimer);
+        this.setState({currentWord: 'Prepare for a new word...'});
+        let t = setTimeout(this.updateText, 3000);
+    }
+        
+    // this will be our every second check to backend
+    // normally execute the stuff in here only if return value is true
+    checkReadyStatus = () => {
+        // if ready AND explainer true -> give points
+        // this way explainer gets some points as well
+        
+        // GET api/ready
+        this.waitForNewWord();
+        // clearTimeout(remaining)
+    }
+    
+    readyForNext = () => {
+        // POST api/ready
+        // either from first guess or if explainer presses next word
+        // if state.explainer true -> reduce points
+        
     }
     
     // This function keeps track of time elapsed on the current word
     updateScoreTimer = () => {
         this.setState(prevState => ({
             timeElapsed: prevState.timeElapsed + 0.5
+        }));
+    }
+    
+    updateTotalTimer = () => {
+        this.setState(prevState => ({
+            totalTimeElapsed: prevState.totalTimeElapsed + 0.5
         }));
     }
     
@@ -106,19 +183,24 @@ export default class AliasScreen extends React.Component {
     
     // This function checks if user's guess was right or wrong and updates things accordingly
     checkGuess = () => {
-        let guess = this.state.textInput.toLowerCase();
-        if (guess == this.state.currentWord) {
-            clearTimeout(this.state.wordTimeout);
-            clearInterval(this.state.scoreTimer);
-            this.updateScore();
-            this.updateText();
-            this.setState({textInput: ''});
-            this.setState({correctWord: 'Correct!'});
-        }
-        else {
-            this.setState({textInput: ''});
-            this.setState({correctWord: 'Wrong! :('});
-            this.setState({latestScore: 0});
+        if (this.state.currentWord != "Game over!") {
+            let guess = this.state.textInput.toLowerCase();
+            if (guess == this.state.words) {
+                clearInterval(this.state.scoreTimer);
+                this.updateScore();
+                this.setState({textInput: ''});
+                this.setState({correctWord: 'Correct!'});
+                //this.readyForNext();
+                
+                // this will be moved into interval checker
+                // replaced with readyForNext() ?
+                this.waitForNewWord();
+            }
+            else {
+                this.setState({textInput: ''});
+                this.setState({correctWord: 'Wrong! :('});
+                this.setState({latestScore: 0});
+            }
         }
     }
     
@@ -146,7 +228,7 @@ export default class AliasScreen extends React.Component {
                 <Button mode='contained' disabled={this.state.buttonDisabled} style={AliasScreenStyles.button} dark='true' onPress={() => this.checkGuess()}>
                   Submit your guess
                 </Button>
-                <Button mode='contained' style={AliasScreenStyles.button} dark='true' onPress={() => this.updateText()}>
+                <Button mode='contained' disabled={this.state.nextWordDisabled} style={AliasScreenStyles.button} dark='true' onPress={() => this.waitForNewWord()}>
                   Next word
                 </Button>
             </View>
