@@ -145,7 +145,7 @@ export default class Map extends React.Component {
   }
 
   updateUsersLocation = () => {
-
+    var self = this;
     //User's location
     navigator.geolocation.getCurrentPosition(
       position => {
@@ -160,19 +160,17 @@ export default class Map extends React.Component {
       },
       err => console.log(err));
       //Team members' locations
-      if(this.state.userLocation != null) {
-        newTeam = this.state.team.slice();
-        newTeam[this.state.currentUser].location = this.state.userLocation;
+      if(self.state.userLocation != null) {
         Http.post('api/location', {
-          x: this.state.userLocation.longitude,
-          y: this.state.userLocation.latitude
+          x: self.state.userLocation.longitude,
+          y: self.state.userLocation.latitude
         }.then(function (response) {
-          this.setState({
+          self.setState({
             team: response['data']['players'],
           })
         }))
         }
-        this.updateDistances();
+        self.updateDistances();
   }
 
   //Updates distances between users and markers

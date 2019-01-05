@@ -182,7 +182,8 @@ class PlayerLocationView(APIView):
         for player_in_lobby in players_in_lobby:
             player = player_in_lobby.player
             response_array.append({'id': player.id, 'name': player.name, 'location': {'x': player.x, 'y': player.y, 'latitudeDelta': 0.01,'latitudeDelta': 0.02}, 'avatar': "../assets/testmarker.png"})
-
+        for item in response_array:
+            print(item)
         return Response({'players': response_array})
 
 
