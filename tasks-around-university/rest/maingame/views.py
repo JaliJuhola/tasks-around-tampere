@@ -115,19 +115,23 @@ class LobbyView(APIView):
         minigame_name = request.data['minigame_name']
         group = request.user.group
         player = request.user
+        player.last_connection = timezone.now() + timezone.timedelta(seconds=20)
         lobby, created = Lobby.objects.get_or_create(group=group, minigame=minigame_name, closed=False)
         lobby_player, created = LobbyPlayer.objects.get_or_create(lobby=lobby, player=player)
         lobby_player.joined_since = timezone.now() + timezone.timedelta(seconds=20)
         lobby_player.save()
+        player.save()
         return Response({'lobby_id': lobby.id})
 
     def patch(self, request):
         lobby_id = request.data['lobby_id']
         player = request.user
+        player.last_connection = timezone.now() + timezone.timedelta(seconds=20)
         lobby = Lobby.objects.get(id=int(lobby_id))
         lobby_player = LobbyPlayer.objects.get(lobby=lobby, player=player)
         lobby_player.joined_since = timezone.now() + timezone.timedelta(seconds=20)
         lobby_player.save()
+        player.save()
         players_in_lobby = LobbyPlayer.objects.filter(lobby=lobby, joined_since__gte=timezone.now())
         response_array = []
         for player_in_lobby in players_in_lobby:
@@ -162,3 +166,24 @@ class AvatarView(APIView):
         request.user.icon_name = icon_name
         request.user.save()
         return Response({'status': True})
+
+
+class PlayerLocationView(APIView):
+    def post(self, request):
+        x_cord = request.data['x']
+        y_cord = request.data['y']
+        player = request.user
+        player.last_connection = timezone.now() + timezone.timedelta(seconds=20)
+        player.x = x_cord
+        player.y = y_cord
+        player.save()
+        players_in_lobby = Player.objects.filter(group=player.group, last_connection__gte=timezone.now())
+        response_array = []
+        for player_in_lobby in players_in_lobby:
+            player = player_in_lobby.player
+            response_array.append({'id': player.id, 'name': player.name, 'location': {'x': player.x, 'y': player.y, 'latitudeDelta': 0.01,'latitudeDelta': 0.02} 'avatar': "../assets/testmarker.png"})
+
+        return Response({'players': response_array})
+
+
+

@@ -18,10 +18,6 @@ import { Actions } from 'react-native-router-flux';
 import {Http} from '../../core/connections/http';
 import {getSocketConnection} from '../../common/minigame/Connection';
 
-// import Connection from '../../../android/common/minigame/Connection';
-// import {MiniGameScore} from '../../../android/common/minigame/Score';
-
-const MINIGAME_KEY = 'push_the_buttons';
 export default class PushTheButtonsScreen extends React.Component {
   constructor(props) {
     super(props);

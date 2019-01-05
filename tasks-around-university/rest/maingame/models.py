@@ -29,6 +29,7 @@ class Player(models.Model):
     leader = models.BooleanField(default=False)
     token = models.CharField(max_length=128)
     icon_name = models.CharField(max_length=40, default="space-shuttle")
+    last_connection = models.DateTimeField(default=timezone.now)
 
 class Lobby(models.Model):
     id = models.AutoField(primary_key=True)

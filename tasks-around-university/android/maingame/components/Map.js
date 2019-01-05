@@ -7,131 +7,143 @@ import MapStyles from '../styles/MapStyles';
 import CustomMapStyles from '../styles/CustomMapStyles.json';
 import RandomQuestions from './RandomQuestions';
 import TimerMixin from 'react-timer-mixin';
+import {Http} from '../../core/connections/http';
+import {getSocketConnection} from '../../common/minigame/Connection';
+
+
 
 export default class Map extends React.Component {
+  constructor(props) {
+    super(props);
+    // Common data should be abstracted later
+    this.pusher = getSocketConnection();
+    // this.scoreHelper = new MiniGameScore(CommonData.getGroupId(), MINIGAME_KEY);
 
-  state = {
-    markerModalVisible: false,
-    markerNearUser: false,
-    mapUpdateInterval: 10000,
-    currentUser: 0,
-    userLocation: null,
-    currentMarker: 0,
-    teamProgress: 0,
-    teamScore: 0,
-    team: [
-      {
-        name: "You",
-        avatar: '../assets/testmarker.png',
-        location: null,
-      },
-      {
-        name: "team_member_2",
-        avatar: '../assets/testmarker.png',
-        location: {
-          latitude: 61.492372,
-          longitude: 23.778839,
+    this.state = {
+      markerModalVisible: false,
+      markerNearUser: false,
+      mapUpdateInterval: 3000,
+      currentUser: 0,
+      userLocation: null,
+      currentMarker: 0,
+      teamProgress: 0,
+      teamScore: 0,
+      team: [
+        {
+          name: "You",
+          avatar: '../assets/testmarker.png',
+          location: null,
         },
-      },
-      {
-        name: "team_member_3",
-        avatar: '../assets/testmarker.png',
-        location: {
-          latitude: 61.492772,
-          longitude: 23.778539,
+        {
+          name: "team_member_2",
+          avatar: '../assets/testmarker.png',
+          location: {
+            latitude: 61.492372,
+            longitude: 23.778839,
+          },
         },
-      },
-      {
-        name: "team_member_4",
-        avatar: '../assets/testmarker.png',
-        location: {
-          latitude: 61.492572,
-          longitude: 23.778939,
+        {
+          name: "team_member_3",
+          avatar: '../assets/testmarker.png',
+          location: {
+            latitude: 61.492772,
+            longitude: 23.778539,
+          },
         },
-      },
-    ],
-    markers: [
-      {
-        title: 'Push the Buttons',
-        description: "Distance:",
-        target_str: 'push_the_buttons',
-        difficulty: "Easy",
-        score: 0,
-        hiscore: 0,
-        timesPlayed: 0,
-        completed: false,
-        distance: null,
-        coordinates: {
-          latitude: 61.494138,
-          longitude: 23.779433,
+        {
+          name: "team_member_4",
+          avatar: '../assets/testmarker.png',
+          location: {
+            latitude: 61.492572,
+            longitude: 23.778939,
+          },
         },
-        userNear: false
-      },
-      {
-        title: 'Alias',
-        description: "Distance:",
-        target_str: 'alias',
-        difficulty: "Easy",
-        score: 0,
-        hiscore: 0,
-        timesPlayed: 0,
-        completed: false,
-        distance: null,
-        coordinates: {
-          latitude: 61.492572,
-          longitude: 23.778139,
+      ],
+      markers: [
+        {
+          title: 'Push the Buttons',
+          description: "Distance:",
+          target_str: 'push_the_buttons',
+          difficulty: "Easy",
+          score: 0,
+          hiscore: 0,
+          timesPlayed: 0,
+          completed: false,
+          distance: null,
+          coordinates: {
+            latitude: 61.494138,
+            longitude: 23.779433,
+          },
+          userNear: false
         },
-        userNear: false
-      },
-      {
-        title: 'Quiklash',
-        description: "Distance:",
-        target_str: 'quiklash',
-        difficulty: "Normal",
-        score: 25,
-        hiscore: 0,
-        timesPlayed: 0,
-        completed: true,
-        distance: null,
-        coordinates: {
-          latitude: 61.49396,
-          longitude: 23.777845,
+        {
+          title: 'Alias',
+          description: "Distance:",
+          target_str: 'alias',
+          difficulty: "Easy",
+          score: 0,
+          hiscore: 0,
+          timesPlayed: 0,
+          completed: false,
+          distance: null,
+          coordinates: {
+            latitude: 61.492572,
+            longitude: 23.778139,
+          },
+          userNear: false
         },
-        userNear: false
-      },
-      {
-        title: 'GeoCache',
-        description: "Distance:",
-        target_str: 'cache',
-        difficulty: "Hard",
-        score: 0,
-        hiscore: 0,
-        timesPlayed: 0,
-        completed: false,
-        distance: null,
-        coordinates: {
-          latitude: 61.495455,
-          longitude: 23.778125,
+        {
+          title: 'Quiklash',
+          description: "Distance:",
+          target_str: 'quiklash',
+          difficulty: "Normal",
+          score: 25,
+          hiscore: 0,
+          timesPlayed: 0,
+          completed: true,
+          distance: null,
+          coordinates: {
+            latitude: 61.49396,
+            longitude: 23.777845,
+          },
+          userNear: false
         },
-        userNear: false
-      }
-    ]
-  };
+        {
+          title: 'GeoCache',
+          description: "Distance:",
+          target_str: 'cache',
+          difficulty: "Hard",
+          score: 0,
+          hiscore: 0,
+          timesPlayed: 0,
+          completed: false,
+          distance: null,
+          coordinates: {
+            latitude: 61.495455,
+            longitude: 23.778125,
+          },
+          userNear: false
+        }
+      ]
+    };
+
+  }
 
   componentDidMount() {
-    this.updateMap();
+    // Initial map update
+    this.updateUsersLocation();
+    // updating map every interval
+    this.map_updater = this.updateMap();
     this.updateOverallScore();
   }
 
   //Updates map every interval
   updateMap = () => {
-    this.updateUsersLocation();
-    intervalId = TimerMixin.setInterval(() => {
+    return TimerMixin.setInterval(() => {
       this.updateUsersLocation();
     }, this.state.mapUpdateInterval);
   }
 
-  //Updates locations on map
   updateUsersLocation = () => {
 
     //User's location
@@ -147,17 +159,20 @@ export default class Map extends React.Component {
         });
       },
       err => console.log(err));
-
       //Team members' locations
       if(this.state.userLocation != null) {
         newTeam = this.state.team.slice();
         newTeam[this.state.currentUser].location = this.state.userLocation;
-
-        //Add other team members here
-
-        this.setState({team: newTeam});
+        Http.post('api/location', {
+          x: this.state.userLocation.longitude,
+          y: this.state.userLocation.latitude
+        }.then(function (response) {
+          this.setState({
+            team: response['data']['players'],
+          })
+        }))
+        }
         this.updateDistances();
-      }
   }
 
   //Updates distances between users and markers

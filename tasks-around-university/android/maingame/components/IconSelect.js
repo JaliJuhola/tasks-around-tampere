@@ -17,7 +17,7 @@ class SelectIcon extends React.Component {
 
   selectIcon(){
     Http.post('api/avatar',{
-        icon_name: this.state.selectIcon,
+        icon_name: this.state.selectedIcon,
     }).then(function (response) {
         Actions.main_map();
     }).catch(function (error) {
