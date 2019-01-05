@@ -39,7 +39,10 @@ export default class PushTheButtonsScreen extends React.Component {
       groupName: undefined,
       playerName: undefined
     };
-    this.playerClickedButton = this.playerClickedButton.bind(this)
+    this.playerClickedButton = this.playerClickedButton.bind(this);
+    this.activate_channels_push_completed = this.activate_channels_push_completed.bind(this);
+    this.active_channels_new_push = this.active_channels_new_push.bind(this);
+
   }
   async componentDidMount() {
     var self = this;
@@ -67,7 +70,7 @@ export default class PushTheButtonsScreen extends React.Component {
     channel.bind('new-push', function(data) {
       const target_str = data['player_who_has_event'] + " should click the button";
       const time_to_push = data['seconds_to_push'];
-      if(this.state.playerId === data['player_who_has_event']) {
+      if(that.state.playerId === data['player_who_has_event']) {
         that.setState(previousState => {
           return { secondsToPush: time_to_push / 1000};
           });

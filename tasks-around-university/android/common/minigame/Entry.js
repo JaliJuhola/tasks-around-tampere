@@ -4,21 +4,20 @@ import {Http} from '../../core/connections/http';
 
 class MiniGameEntry {
 
-    static enter_lobby(minigame_str) {
+    static enter_lobby(minigame_target_str) {
         Http.post('api/lobby',{
-            minigame_name: minigame_str
+            minigame_name: minigame_target_str
         }).then(function (response) {
-            console.log(response['data']['lobby_id'])
-            Actions.lobby({lobby_id: response['data']['lobby_id'], target_str: minigame_str});
+            Actions.lobby({data : {lobby_id: response['data']['lobby_id'], minigame_target_str: minigame_target_str}});
         }).catch(function (error) {
             alert("failed to conenct lobby!");
         });
     }
     static enter_minigame(minigame_str) {
+        console.log("minigame str is " + minigame_str)
         switch(minigame_str) {
             case "push_the_buttons":
                 Actions.push_the_buttons()
-                break;
             case "geocache":
                 Actions.geocache();
                 break;
@@ -28,7 +27,6 @@ class MiniGameEntry {
                 Actions.quiklash();
             default:
                 console.log("invalid minigame_str in static enter_minigame(minigame_str)")
-                Actions.pop()
         }
     }
 }

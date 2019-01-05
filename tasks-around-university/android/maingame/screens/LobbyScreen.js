@@ -8,14 +8,32 @@ import {Http} from '../../core/connections/http';
 import LobbyScreenStyles from '../styles/LobbyScreenStyles';
 import MiniGameEntry from '../../common/minigame/Entry';
 import { Actions } from 'react-native-router-flux';
-import {StartScreenStyles} from '../styles/StartScreenStyles';
+
 export default class LobbyScreen extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			lobby_id: props['data']['lobby_id'],
+			target_action: props['data']['minigame_target_str'],
+			gamename: 'Testipeli',
+			playercount: 3,
+			loadingColor: "#17a2b8",
+			groupsize: 4,
+			playerId: undefined,
+			groupId: 0,
+			groupName: "",
+			playerName: "",
+			cards: [<LobbyCard key={0} name={"Pelaajia ei ole haettu"} role={"You"} joined={true}/>]
+	    };
+		this.interval = undefined;
+		this.members = this.members.bind(this);
+		this.toTarget = this.toTarget.bind(this);
+
+	}
+
 	componentDidMount() {
-		this.target_action = this.props.target_str;
-		this.lobby_id = this.props.lobby_id;
 		this.callcount = 0;
 		var self = this;
-		this.interval = undefined;
 		Http.get('api/me').then(function (response) {
 			self.setState(previousState => (
 				{groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name'], isLeader: response['data']['player']['leader']}
@@ -23,7 +41,7 @@ export default class LobbyScreen extends React.Component {
 			return response;
 			}).then((response) => {
 				this.members(response['data']['player']['id'], response['data']['group']['name'], true);
-				this.interval = setInterval(() => {
+				return this.interval = setInterval(() => {
 						this.members(response['data']['player']['id'], response['data']['group']['name'], false);
 				}, 5000);
 			});
@@ -32,17 +50,22 @@ export default class LobbyScreen extends React.Component {
 	componentWillUnmount() {
 		clearInterval(this.interval);
 	}
-
+	toTarget = () => {
+		console.log("datat");
+		console.log(this.target_action);
+		var self = this;
+		Http.post('api/lobby/close',{lobby_id: this.state.lobby_id}).then(function (response) {
+			MiniGameEntry.enter_minigame(self.state.target_action);
+		});
+	}
 	members(player_id, group_name, first_load) {
 		/*Replace this with a connect to server and fetch JSON*/
 		var self = this;
-		var pictures = ["space-shuttle","connectdevelop","soccer-ball-o"]
 		var image_index = 0
 		var members = 0
-
-		Http.patch('api/lobby',{lobby_id: this.lobby_id}).then(function (response) {
-			if(response['data']['closed']) {
-				return MiniGameEntry.enter_minigame(this.target_action);
+		Http.patch('api/lobby',{lobby_id: this.state.lobby_id}).then(function (response) {
+			if(response['data']['closed'] && self.target_action) {
+				return MiniGameEntry.enter_minigame(self.state.target_action);
 			}
 			return response['data']['players'].map((item) => {
 				image_index = image_index + 1;
@@ -69,28 +92,11 @@ export default class LobbyScreen extends React.Component {
 				));
 			}
 		});
+
 	}
 
-  state = {
-		gamename: 'Testipeli',
-		playercount: 3,
-		loadingColor: "#17a2b8",
-		groupsize: 4,
-		playerId: undefined,
-		groupId: 0,
-		groupName: "",
-		playerName: "",
-		cards: [<LobbyCard key={0} name={"Pelaajia ei ole haettu"} role={"You"} joined={true}/>]
-  };
-
   _onNavigation = () => console.log("Navigation");
-
   render() {
-		var toTarget = () => {
-			Http.patch('api/lobby/close',{lobby_id: this.lobby_id}).then(function (response) {
-				return MiniGameEntry.enter_minigame(this.target_action);
-			})
-		}
 		let warningMessage = '';
 		let buttonColor = '';
 		let buttonPress = undefined;
@@ -103,7 +109,7 @@ export default class LobbyScreen extends React.Component {
 		} else {
 			warningMessage = <Caption></Caption>
 			buttonColor = "#00FF00"
-			buttonPress = toTarget;
+			buttonPress = this.toTarget;
 			buttonOpacity = 1;
 		}
 
