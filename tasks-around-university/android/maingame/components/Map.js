@@ -164,11 +164,11 @@ export default class Map extends React.Component {
         Http.post('api/location', {
           x: self.state.userLocation.longitude,
           y: self.state.userLocation.latitude
-        }.then(function (response) {
+        }).then(function (response) {
           self.setState({
             team: response['data']['players'],
           })
-        }))
+        });
         }
         self.updateDistances();
   }

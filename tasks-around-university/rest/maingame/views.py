@@ -177,10 +177,9 @@ class PlayerLocationView(APIView):
         player.x = x_cord
         player.y = y_cord
         player.save()
-        players_in_lobby = Player.objects.filter(group=player.group, last_connection__gte=timezone.now())
+        players = Player.objects.filter(group=player.group, last_connection__gte=timezone.now())
         response_array = []
-        for player_in_lobby in players_in_lobby:
-            player = player_in_lobby.player
+        for player in players:
             response_array.append({'id': player.id, 'name': player.name, 'location': {'x': player.x, 'y': player.y, 'latitudeDelta': 0.01,'latitudeDelta': 0.02}, 'avatar': "../assets/testmarker.png"})
         for item in response_array:
             print(item)
