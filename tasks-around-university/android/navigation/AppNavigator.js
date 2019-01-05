@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Alert, Text, View, BackHandler } from 'react-native'
 import { StackViewStyleInterpolator } from 'react-navigation-stack';
 import {
   Scene,
@@ -50,6 +50,7 @@ const reducerCreate = params => {
   };
 };
 
+
 const stateHandler = (prevState, newState, action) => {
   console.log(prevState);
   console.log(newState);
@@ -71,11 +72,49 @@ const transitionConfig = () => ({
     StackViewStyleInterpolator.forFadeFromBottomAndroid,
 });
 
+//Android's back button, need logic here. Adding them later on.
+const onBackAndroid = () => {
+  console.log("*************************************************");
+  console.log("Back Handler");
+  if(Actions.currentScene === "main_map") {
+    console.log("main_map scene asd");
+  }
+  if(Actions.currentScene === "start") {
+    Alert.alert(
+      'Quit?',
+      'Do you want to close the game?',
+      [
+        {
+          text: 'Yes',
+          onPress: () => BackHandler.exitApp(),
+        },
+        { text: 'No', onPress: () => {} },
+      ],
+      { cancellable: false }
+    );
+  }
+  if(Actions.currentScene === "IconSelect") {
+    Actions.StartScreen();
+  }
+  if(Actions.currentScene === "Lobby") {
+    //-> map
+  }
+  if(Actions.currentScene === "Minigame") {
+    //-> map
+  }
+  if(Actions.currentScene === "scanner") {
+    //-> map
+  }
+  
+  console.log("*************************************************");
+  return true;
+}
 const AppNavigator = () => (
   <Router
     createReducer={reducerCreate}
     onStateChange={stateHandler}
     getSceneStyle={getSceneStyle}
+    backAndroidHandler={onBackAndroid}
     uriPrefix={prefix}
     >
     <Overlay key="overlay">
