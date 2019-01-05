@@ -9,9 +9,9 @@ export default class MapScreen extends React.Component {
   };
   render() {
     return (
-    <View style={MapStyles.container}>
-      <Map></Map>
-    </View>
+      <View>
+        <Map/>
+      </View>
     );
   }
 }
