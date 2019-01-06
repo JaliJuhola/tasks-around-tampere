@@ -28,6 +28,8 @@ export default class Map extends React.Component {
       currentMarker: 0,
       teamProgress: 0,
       teamScore: 0,
+      minigameMarkers: undefined,
+      userMarkers: undefined,
       team: [
         {
           name: "You",
@@ -153,8 +155,6 @@ export default class Map extends React.Component {
           userLocation: {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-            latitudeDelta: 0.01,
-            latitudeDelta: 0.02,
           }
         });
       },
@@ -167,10 +167,12 @@ export default class Map extends React.Component {
         }).then(function (response) {
           self.setState({
             team: response['data']['players'],
-          })
+          });
+          self.displayUserMarkers();
+          self.displayMinigameMarkers();
+          self.updateDistances();
         });
         }
-        self.updateDistances();
   }
 
   //Updates distances between users and markers
@@ -212,7 +214,10 @@ export default class Map extends React.Component {
   //Returns user-markers
   displayUserMarkers() {
     if(this.state.userLocation != null) {
-      return this.state.team.map((user, i) => {
+      console.log("moiiiii")
+      console.log(this.state.team);
+      var userMarkers =  this.state.team.map((user, i) => {
+        console.log(user.location);
         if(user.location != null) {
           return(
             <MapView.Marker
@@ -232,13 +237,16 @@ export default class Map extends React.Component {
           )
         }
       })
+      this.setState({
+        userMarkers: userMarkers
+      })
     }
   }
 
   //Returns minigame-markers
   displayMinigameMarkers() {
     if(this.state.markers[0].distance != null) {
-      return this.state.markers.map((marker, i) =>  {
+      var markers = this.state.markers.map((marker, i) =>  {
         color = '#6200ee';
         if(marker.completed) {
           color = '#0EDA16';
@@ -252,6 +260,9 @@ export default class Map extends React.Component {
           >
           </MapView.Marker>
         )
+      })
+      this.setState({
+        minigameMarkers: markers
       })
     }
   }
@@ -310,8 +321,8 @@ export default class Map extends React.Component {
           minZoomLevel={10}
           customMapStyle={CustomMapStyles}
         >
-          {this.displayMinigameMarkers()}
-          {this.displayUserMarkers()}
+          {this.state.minigameMarkers}
+          {this.state.userMarkers}
         </MapView>
         <RandomQuestions markerNearUser={this.state.markerNearUser}></RandomQuestions>
         <Modal
