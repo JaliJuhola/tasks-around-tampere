@@ -12,4 +12,5 @@ urlpatterns = [
     path('api/lobby', views.LobbyView.as_view()),
     path('api/avatar', views.AvatarView.as_view()),
     path('api/location', views.PlayerLocationView.as_view()),
+    path('api/minigame/progression', views.MinigameProgressionView.as_view()),
 ]

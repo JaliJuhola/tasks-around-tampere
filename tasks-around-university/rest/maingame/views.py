@@ -189,7 +189,7 @@ class PlayerLocationView(APIView):
             response_array.append({'name': player.name, 'type': player_type, 'location': {'longitude': player.x, 'latitude': player.y}, 'avatar': "../assets/testmarker.png"})
         return Response({'players': response_array})
 
-class MinigameView(APIView):
+class MinigameProgressionView(APIView):
     def get(self, request):
         TOTAL_MINIGAMES = 4
         total_score = 0
