@@ -28,8 +28,8 @@ export default class Map extends React.Component {
       currentMarker: 0,
       teamProgress: 0,
       teamScore: 0,
-      minigameMarkers: undefined,
-      userMarkers: undefined,
+      minigameMarkers: [],
+      userMarkers: [],
       team: [
         {
           name: "You",
@@ -214,18 +214,23 @@ export default class Map extends React.Component {
   //Returns user-markers
   displayUserMarkers() {
     if(this.state.userLocation != null) {
-      console.log("moiiiii")
-      console.log(this.state.team);
       var userMarkers =  this.state.team.map((user, i) => {
-        console.log(user.location);
+        var color = "#0000FF";
+        if(user.type === 3) {
+          color = "#FF0000";
+        } else if(user.type === 2) {
+          color = "#0000A0"
+       }
         if(user.location != null) {
           return(
             <MapView.Marker
-              key={i}
+              id={Date.now() + i}
+              key={Date.now() + i}
               coordinate={user.location}
               onPress={(e) => {e.stopPropagation();}}
+              pinColor={color}
             >
-              <Image source={require('../assets/testmarker.png')} style={MapStyles.userMarkerImage} />
+              {/* <Image source={require('../../maingame/assets/testmarker.png')} style={MapStyles.userMarkerImage} /> */}
               <MapView.Callout tooltip={true}>
                 <View style={MapStyles.userNameContainer}>
                   <Text style={MapStyles.userName}>
@@ -236,7 +241,7 @@ export default class Map extends React.Component {
             </MapView.Marker>
           )
         }
-      })
+      });
       this.setState({
         userMarkers: userMarkers
       })
@@ -247,13 +252,14 @@ export default class Map extends React.Component {
   displayMinigameMarkers() {
     if(this.state.markers[0].distance != null) {
       var markers = this.state.markers.map((marker, i) =>  {
-        color = '#6200ee';
+        var color = '#6200ee';
         if(marker.completed) {
           color = '#0EDA16';
         }
         return(
           <MapView.Marker
-            key={i}
+            id={Date.now() + i}
+            key={Date.now() + i}
             coordinate={marker.coordinates}
             pinColor={color}
             onPress={(e) => {e.stopPropagation(); this.showModalWindow(i);}}

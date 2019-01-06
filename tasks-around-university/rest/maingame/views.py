@@ -180,5 +180,10 @@ class PlayerLocationView(APIView):
         players = Player.objects.filter(group=player.group, last_connection__gte=timezone.now())
         response_array = []
         for player in players:
-            response_array.append({'id': player.id, 'name': player.name, 'location': {'longitude': player.x, 'latitude': player.y}, 'avatar': "../assets/testmarker.png"})
+            player_type = 1
+            if player.leader:
+                player_type = 2
+            if player === request.user:
+                player_type= 3
+            response_array.append({'name': player.name, 'type': player_type 'location': {'longitude': player.x, 'latitude': player.y}, 'avatar': "../assets/testmarker.png"})
         return Response({'players': response_array})
