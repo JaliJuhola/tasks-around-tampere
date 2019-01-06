@@ -19,6 +19,7 @@ export default class LobbyScreen extends React.Component {
 			playercount: 3,
 			loadingColor: "#17a2b8",
 			groupsize: 4,
+			isLeader: false,
 			playerId: undefined,
 			groupId: 0,
 			groupName: "",
@@ -55,7 +56,7 @@ export default class LobbyScreen extends React.Component {
 		console.log(this.target_action);
 		var self = this;
 		Http.post('api/lobby/close',{lobby_id: this.state.lobby_id}).then(function (response) {
-			MiniGameEntry.enter_minigame(self.state.target_action);
+			MiniGameEntry.enter_minigame(self.state.target_action, true);
 		});
 	}
 	members(player_id, group_name, first_load) {
@@ -65,7 +66,7 @@ export default class LobbyScreen extends React.Component {
 		var members = 0
 		Http.patch('api/lobby',{lobby_id: this.state.lobby_id}).then(function (response) {
 			if(response['data']['closed'] && self.target_action) {
-				return MiniGameEntry.enter_minigame(self.state.target_action);
+				return MiniGameEntry.enter_minigame(self.state.target_action, false);
 			}
 			return response['data']['players'].map((item) => {
 				image_index = image_index + 1;
@@ -101,7 +102,12 @@ export default class LobbyScreen extends React.Component {
 		let buttonColor = '';
 		let buttonPress = undefined;
 		let buttonOpacity = 1;
-		if (this.state.cards.length < 1) {
+		if(!this.state.isLeader) {
+			buttonColor = "#ff0033";
+			buttonPress = undefined;
+			buttonOpacity = 0.5;
+			warningMessage = <Caption  style={{flexDirection: "row", marginBottom: "5%", fontSize: 20, textAlign: "center", color: "#ff0033", elevation: 4}} height={40}>Vain ryhmän johtaja voi aloittaa pelin!</Caption>;
+		} else if (this.state.cards.length < 1) {
 			buttonColor = "#ff0033";
 			buttonPress = undefined;
 			buttonOpacity = 0.5;

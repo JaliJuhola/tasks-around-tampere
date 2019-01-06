@@ -64,7 +64,7 @@ export default class Map extends React.Component {
       ],
       markers: [
         {
-          title: 'Push the Buttons',
+          title: 'Push the buttons',
           description: "Distance:",
           target_str: 'push_the_buttons',
           difficulty: "Easy",
@@ -303,8 +303,10 @@ export default class Map extends React.Component {
 
   //Updates minigame score
   updateMinigameScore(markerIndex, newScore) {
+    var self = this;
     Http.get('api/minigame/progression').then(function (response) {
-      var newMarkers = this.state.markers.map((marker, i) =>  {
+      var newMarkers = self.state.markers.map((marker, i) =>  {
+        console.log(marker);
         marker.score = response['data'][marker['title']]['group'];
         marker.hiscore = response['data'][marker['title']]['world'];
         if(marker.score > 0) {
@@ -312,7 +314,7 @@ export default class Map extends React.Component {
         }
         return marker;
       });
-      this.setState({markers: newMarkers, teamProgress: response['data']['completion_percentage'], teamScore: response['data']['total_score']});
+      self.setState({markers: newMarkers, teamProgress: parseFloat(response['data']['completion_percentage'] * 100).toFixed(1), teamScore: response['data']['total_score']});
     });
   }
 

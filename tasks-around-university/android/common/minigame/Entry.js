@@ -13,11 +13,18 @@ class MiniGameEntry {
             alert("failed to conenct lobby!");
         });
     }
-    static enter_minigame(minigame_str) {
+    static enter_minigame(minigame_str, closing) {
         console.log("minigame str is " + minigame_str)
         switch(minigame_str) {
             case "push_the_buttons":
+            if(closing) {
+                Http.post('api/push_the_buttons', {}).then(function(){
+                    return Actions.push_the_buttons()
+                })
+            } else {
                 Actions.push_the_buttons()
+            }
+                break
             case "geocache":
                 Actions.geocache();
                 break;

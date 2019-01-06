@@ -27,13 +27,11 @@ class PushTheButtonView(APIView):
 
     def patch(self, request):
         group_id = request.user.group.id
-        if not group_id:
-            return Response({'message': 'both id fields are required!'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             group = Group.objects.get(id=group_id)
-            game_object, created = PushTheButtonsMainGame.objects.get_or_create(group=group)
+            game_object = PushTheButtonsMainGame.objects.filter(group=group, game_ended=False).last()
             player = request.user
-            if game_object.next_to_click and not created:
+            if game_object.next_to_click:
                 if player.id != game_object.next_to_click.id or game_object.next_push_before < timezone.now():
                     game_object.game_ended = True
                     game_object.save()
@@ -54,30 +52,17 @@ class PushTheButtonView(APIView):
 
     def get(self, request):
         group_id = request.user.group.id
-        if not group_id:
-            return Response({'message': 'both id fields are required!'}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            group = Group.objects.get(id=group_id)
-            game_object = PushTheButtonsMainGame.objects.get_or_create(group=group)
-            game_object.game_ended = True
-            game_object.save()
-            PushTheButtonsChannels.push_completed_event(None, group.id, game_object.current_score)
-        except Group.DoesNotExist:
-           return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
+        group = Group.objects.get(id=group_id)
+        game_object = PushTheButtonsMainGame.objects.get_or_create(group=group)
+        game_object.game_ended = True
+        game_object.save()
+        PushTheButtonsChannels.push_completed_event(None, group.id, game_object.current_score)
         return Response({status: True})
 
-    def get(self, request):
+    def post(self, request):
         group_id = request.user.group.id
-        if not group_id:
-            return Response({'message': 'both id fields are required!'}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            group = Group.objects.get(id=group_id)
-            game_object = PushTheButtonsMainGame.objects.get_or_create(group=group)
-            game_object.game_ended = True
-            game_object.save()
-            PushTheButtonsChannels.push_completed_event(None, group.id, game_object.current_score)
-        except Group.DoesNotExist:
-           return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
+        group = Group.objects.get(id=group_id)
+        PushTheButtonsMainGame.objects.create(group=group)
         return Response({status: True})
 
 class PushTheButtonStartView(APIView):
@@ -93,7 +78,7 @@ class PushTheButtonStartView(APIView):
             return Response({'message': 'both id fields are required!'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             group = Group.objects.get(id=group_id)
-            game_object = PushTheButtonsMainGame.objects.get_or_create(group=group)
+            game_object = PushTheButtonsMainGame.objects.create()
             game_object.game_ended = False
             game_object.save()
             PushTheButtonsChannels.push_completed_event(None, group.id)
