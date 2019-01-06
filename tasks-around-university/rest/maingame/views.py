@@ -203,7 +203,7 @@ class MinigameProgressionView(APIView):
         geocache_group_max = 0
         geocache_max = 0
 
-        ptbmg = PushTheButtonsMainGame.objects.filter(game_ended=True).order_by('-current_score').first()
+        ptbmg = PushTheButtonsMainGame.objects.filter(game_ended=True).order_by('-current_score')
         ptbmg_group = ptbmg.filter(group=request.user.group).order_by('-current_score').first()
         if ptbmg_group:
             push_the_buttons_group_max = ptbmg_group.current_score

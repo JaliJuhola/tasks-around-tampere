@@ -144,6 +144,7 @@ export default class Map extends React.Component {
   updateMap = () => {
     return TimerMixin.setInterval(() => {
       this.updateUsersLocation();
+      this.updateMinigameScore();
     }, this.state.mapUpdateInterval);
   }
 
@@ -302,19 +303,17 @@ export default class Map extends React.Component {
 
   //Updates minigame score
   updateMinigameScore(markerIndex, newScore) {
-
-    newMarkers = this.state.markers.slice();
-    if(newMarkers[markerIndex].score < newScore) {
-      newMarkers[markerIndex].score = newScore;
-    }
-    if(newMarkers[markerIndex].hiscore < newScore) {
-      newMarkers[markerIndex].hiscore = newScore;
-    }
-    newMarkers[markerIndex].timesPlayed++;
-    newMarkers[markerIndex].completed = true;
-
-    this.setState({markers: newMarkers});
-
+    Http.get('api/minigame/progression').then(function (response) {
+      var newMarkers = this.state.markers.map((marker, i) =>  {
+        marker.score = response['data'][marker['title']]['group'];
+        marker.hiscore = response['data'][marker['title']]['world'];
+        if(marker.score > 0) {
+          marker.completed = true;
+        }
+        return marker;
+      });
+      this.setState({markers: newMarkers, teamProgress: response['data']['completion_percentage'], teamScore: response['data']['total_score']});
+    });
   }
 
   render() {
