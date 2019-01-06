@@ -181,9 +181,9 @@ class PlayerLocationView(APIView):
         response_array = []
         for player in players:
             player_type = 1
-            if player.leader:
-                player_type = 2
-            if player === request.user:
+            if player == request.user:
                 player_type= 3
+            else if player.leader:
+                player_type = 2
             response_array.append({'name': player.name, 'type': player_type 'location': {'longitude': player.x, 'latitude': player.y}, 'avatar': "../assets/testmarker.png"})
         return Response({'players': response_array})
