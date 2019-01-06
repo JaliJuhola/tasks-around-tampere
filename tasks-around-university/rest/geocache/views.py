@@ -33,8 +33,7 @@ class GeoCacheMainView(APIView):
         return Response({'status': status})
 
     def get(self, request):
-        game_object = GeocacheMainGame.objects.filter(group=request.user.group).last()
-        print(game_object.__dict__)
+        game_object= GeocacheMainGame.objects.filter(group=request.user.group).last()
         riddle = GeocacheRiddles.objects.get(id=(game_object.riddles_solved + 1))
         return Response({'riddle': riddle.riddle, 'group_id': request.user.group.id})
 

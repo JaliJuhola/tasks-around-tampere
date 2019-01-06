@@ -115,8 +115,10 @@ export class GeocacheScreen extends Component {
       var self = this;
       Http.get('api/geocache/',{answer: self.state.answer_str
       }).then(function (response) {
+        console.log("RESPONSE IS");
+        console.log(response['data']);
         this.setState({
-          riddle: response['data']['riddle'],
+          currentRiddle: response['data']['riddle'],
           groupId: response['data']['group_id']
         });
         this.activate_channels_new_riddle();
@@ -127,7 +129,7 @@ export class GeocacheScreen extends Component {
     var that = this;
     var channel = this.pusher.subscribe('geocache-' + that.state.groupId);
     channel.bind('new-riddle', function(data) {
-      const riddle = data['riddle'] + " should click the button";
+      const riddle = data['riddle'];
       const current_score = data['current_score'];
       that.setState(previousState => {
       return { currentRiddle: riddle, currentScore: current_score};
@@ -164,7 +166,7 @@ export class GeocacheScreen extends Component {
           <View style={geoStyles.widget}>
             <View></View>
             <Text style={geoStyles.text}>
-              {this.state.riddle}
+              {this.state.currentRiddle}
             </Text>
             <View></View>
           </View>
