@@ -20,8 +20,8 @@ class Group(models.Model):
 
 class Player(models.Model):
     id = models.AutoField(primary_key=True)
-    x = models.IntegerField(default=0)
-    y = models.IntegerField(default=0)
+    x = models.DecimalField(max_digits=10, decimal_places=8, default=0.0)
+    y = models.DecimalField(max_digits=10, decimal_places=8, default=0.0)
     name = models.CharField(max_length=128)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(default=timezone.now)
