@@ -27,7 +27,7 @@ class MiniGameEntry {
                 break
             case "cache":
                 Http.post('api/geocache/', {}).then(function(){
-                    return Actions.push_the_buttons()
+                    return Actions.cache()
                 })
                 Actions.cache();
                 break;
