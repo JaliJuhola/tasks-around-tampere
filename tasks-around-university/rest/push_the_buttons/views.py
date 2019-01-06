@@ -53,17 +53,17 @@ class PushTheButtonView(APIView):
     def get(self, request):
         group_id = request.user.group.id
         group = Group.objects.get(id=group_id)
-        game_object = PushTheButtonsMainGame.objects.get_or_create(group=group)
+        game_object = PushTheButtonsMainGame.objects.filter(group=group, game_ended=False).last()
         game_object.game_ended = True
         game_object.save()
         PushTheButtonsChannels.push_completed_event(None, group.id, game_object.current_score)
-        return Response({status: True})
+        return Response({'status': True})
 
     def post(self, request):
         group_id = request.user.group.id
         group = Group.objects.get(id=group_id)
         PushTheButtonsMainGame.objects.create(group=group)
-        return Response({status: True})
+        return Response({'status': True})
 
 class PushTheButtonStartView(APIView):
     """
@@ -84,4 +84,4 @@ class PushTheButtonStartView(APIView):
             PushTheButtonsChannels.push_completed_event(None, group.id)
         except Group.DoesNotExist:
            return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({status: True})
+        return Response({'status': True})
