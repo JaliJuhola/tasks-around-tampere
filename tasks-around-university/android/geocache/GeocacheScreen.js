@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import {Http} from '../common/minigame/Connection';
+import {Http} from '../core/connections/http';
 
 /*
  * A simple timer component that displays time elapsed since component mounting.
@@ -30,7 +30,7 @@ class Timer extends Component {
   }
 
   componentWillUnmount() {
-    this.clearInterval(this.interval);
+    clearInterval(this.interval);
   }
 
   render() {
@@ -113,7 +113,7 @@ export class GeocacheScreen extends Component {
 
   componentDidMount() {
       var self = this;
-      Http.patch('api/geocache',{answer: self.state.answer_str
+      Http.get('api/geocache/',{answer: self.state.answer_str
       }).then(function (response) {
         this.setState({
           riddle: response['data']['riddle'],
@@ -140,7 +140,7 @@ export class GeocacheScreen extends Component {
   // Uses time (time), fails (int) and hintsUsed (int) for calculation.
   sendQuess = () => {
     var self = this;
-    Http.patch('api/geocache',{answer: self.state.answer_str
+    Http.patch('api/geocache/',{answer: self.state.answer_str
     }).then(function (response) {
       if(!response['data']['status']) {
         self.setState({fails: self.state.fails + 1, answer_str: ""});
