@@ -191,25 +191,30 @@ class PlayerLocationView(APIView):
 
 class MinigameProgressionView(APIView):
     def get(self, request):
-        TOTAL_MINIGAMES = 5
+        TOTAL_MINIGAMES = 4
         total_score = 0
         minigames_completed = 0
         push_the_buttons_group_max = 0
         push_the_buttons_max = 0
+        push_the_buttons_group_count = 0
         alias_group_max = 0
         alias_max = 0
+        alias_group_count = 0
         quiklash_group_max = 0
         quiklash_max = 0
+        quiklash_group_count = 0
         geocache_group_max = 0
         geocache_max = 0
+        geocache_group_count = 0
 
         ptbmg = PushTheButtonsMainGame.objects.filter(game_ended=True).order_by('-current_score')
-        ptbmg_group = ptbmg.filter(group=request.user.group).order_by('-current_score').first()
-        if ptbmg_group:
-            push_the_buttons_group_max = ptbmg_group.current_score
+        ptbmg_group = ptbmg.filter(group=request.user.group).order_by('-current_score')
+        if ptbmg_group.first():
+            push_the_buttons_group_max = ptbmg_group.first().current_score
+            push_the_buttons_group_count = ptbmg_group.count()
             minigames_completed = minigames_completed + 1
             total_score = total_score + push_the_buttons_group_max
         if ptbmg.first():
             push_the_buttons_max = ptbmg.first().current_score
 
-        return Response({'Push the buttons': {'group': push_the_buttons_group_max, 'world': push_the_buttons_max}, 'Alias': {'group': alias_group_max, 'world': alias_max}, 'Quiklash': {'group': quiklash_group_max, 'world': quiklash_max}, 'GeoCache': {'group': geocache_group_max, 'world': geocache_max}, 'total_score': total_score, 'completion_percentage': minigames_completed/TOTAL_MINIGAMES})
+        return Response({'Push the buttons': {'group': push_the_buttons_group_max, 'world': push_the_buttons_max, 'count': push_the_buttons_group_count}, 'Alias': {'group': alias_group_max, 'world': alias_max, 'count': alias_group_count}, 'Quiklash': {'group': quiklash_group_max, 'world': quiklash_max, 'count': quiklash_group_count}, 'GeoCache': {'group': geocache_group_max, 'world': geocache_max, 'count': geocache_group_count}, 'total_score': total_score, 'completion_percentage': minigames_completed/TOTAL_MINIGAMES})

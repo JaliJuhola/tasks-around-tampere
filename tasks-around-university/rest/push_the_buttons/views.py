@@ -15,7 +15,7 @@ from rest.push_the_buttons.models import PushTheButtonsMainGame
 from django.utils import timezone
 
 PUSH_THE_BUTTONS_SCORE_TO_ADD = 1
-SECONDS_TO_PUSH = 6
+SECONDS_TO_PUSH = 10
 TIME_DECREASES_MILLISECONDS = 180
 
 class PushTheButtonView(APIView):
@@ -63,25 +63,4 @@ class PushTheButtonView(APIView):
         group_id = request.user.group.id
         group = Group.objects.get(id=group_id)
         PushTheButtonsMainGame.objects.create(group=group)
-        return Response({'status': True})
-
-class PushTheButtonStartView(APIView):
-    """
-    List all snippets, or create a new snippet.
-    """
-    queryset = Player.objects.all()
-    serializer_class = PlayerSerializer
-
-    def post(self, request):
-        group_id = request.data['group_id']
-        if not group_id:
-            return Response({'message': 'both id fields are required!'}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            group = Group.objects.get(id=group_id)
-            game_object = PushTheButtonsMainGame.objects.create()
-            game_object.game_ended = False
-            game_object.save()
-            PushTheButtonsChannels.push_completed_event(None, group.id)
-        except Group.DoesNotExist:
-           return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'status': True})
