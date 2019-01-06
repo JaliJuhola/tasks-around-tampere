@@ -14,35 +14,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    redButton:{
-        //borderWidth: 1,
-        //borderColor: 'black',
+    coloredButton:{
         width: 100,
         height: 100,
-        backgroundColor: 'red',
+        backgroundColor: 'orange',
         // borderRadius: 50?
-        borderRadius: 100,
-        margin: '3%',
-        //underlayColor
-    },
-    blueButton:{
-        width: 100,
-        height: 100,
-        backgroundColor: 'blue',
-        borderRadius: 100,
-        margin: '3%',
-    },
-    greenButton:{
-        width: 100,
-        height: 100,
-        backgroundColor: 'limegreen',
-        borderRadius: 100,
-        margin: '3%',
-    },
-    yellowButton:{
-        width: 100,
-        height: 100,
-        backgroundColor: 'gold',
         borderRadius: 100,
         margin: '3%',
     },
