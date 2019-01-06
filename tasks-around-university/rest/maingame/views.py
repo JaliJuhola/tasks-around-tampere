@@ -191,7 +191,7 @@ class PlayerLocationView(APIView):
 
 class MinigameProgressionView(APIView):
     def get(self, request):
-        TOTAL_MINIGAMES = 4
+        TOTAL_MINIGAMES = 5
         total_score = 0
         minigames_completed = 0
         push_the_buttons_group_max = 0
