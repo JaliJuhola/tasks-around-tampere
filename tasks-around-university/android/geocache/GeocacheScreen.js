@@ -106,11 +106,21 @@ export class GeocacheScreen extends Component {
     };
     this.activate_channels_new_riddle = this.activate_channels_new_riddle.bind(this);
     this.sendQuess = this.sendQuess.bind(this);
-    // This is where QR-code data should be used. Fetch cache data form JSON.
-    this.cache = this.getCache(this.getCode());
 
     // Save the starting time of the game (used in scoring).
     this.startTime = new Date().getTime();
+  }
+
+  componentDidMount() {
+      var self = this;
+      Http.patch('api/geocache',{answer: self.state.answer_str
+      }).then(function (response) {
+        this.setState({
+          riddle: response['data']['riddle'],
+          groupId: response['data']['group_id']
+        });
+        this.activate_channels_new_riddle();
+      })
   }
 
   activate_channels_new_riddle = () => {

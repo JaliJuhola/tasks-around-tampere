@@ -26,6 +26,9 @@ class MiniGameEntry {
             }
                 break
             case "cache":
+                Http.post('api/geocache', {}).then(function(){
+                    return Actions.push_the_buttons()
+                })
                 Actions.cache();
                 break;
             case "alias":
