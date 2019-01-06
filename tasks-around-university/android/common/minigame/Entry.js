@@ -25,8 +25,8 @@ class MiniGameEntry {
                 Actions.push_the_buttons()
             }
                 break
-            case "geocache":
-                Actions.geocache();
+            case "cache":
+                Actions.cache();
                 break;
             case "alias":
                 Actions.alias();

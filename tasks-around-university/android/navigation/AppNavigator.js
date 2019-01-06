@@ -105,7 +105,7 @@ const onBackAndroid = () => {
   if(Actions.currentScene === "scanner") {
     //-> map
   }
-  
+
   console.log("*************************************************");
   return true;
 }
@@ -137,7 +137,6 @@ const AppNavigator = () => (
                 title="scanner"
                 tabBarLabel="scanner"
                 icon={TabBarIcon}
-                type="replace"
               />
               <Scene
                 key="push_the_buttons"

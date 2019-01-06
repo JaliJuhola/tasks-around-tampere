@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest.push_the_buttons.apps.PushTheButtonsConfig',
     'rest.quiklash.apps.QuiklashConfig',
     'rest.alias.apps.AliasConfig',
+    'rest.geocache.apps.GeocacheConfig',
     'corsheaders'
     ]
 

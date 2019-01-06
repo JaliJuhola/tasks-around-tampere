@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
-
+import {Http} from '../common/minigame/Connection';
 
 /*
  * A simple timer component that displays time elapsed since component mounting.
@@ -10,8 +10,8 @@ class Timer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      secs: 0,
-      mins: 0,
+      secs: this.props.secs,
+      mins: this.props.mins,
     };
   }
 
@@ -95,11 +95,17 @@ export class GeocacheScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      text: '',
+      answer_str: '',
       fails: 0,
-      hintsUsed: 0
-    };
+      hintsUsed: 0,
+      currentRiddle: "",
+      current_score: 0,
+      seconds: 0,
+      minutes: 0,
 
+    };
+    this.activate_channels_new_riddle = this.activate_channels_new_riddle.bind(this);
+    this.sendQuess = this.sendQuess.bind(this);
     // This is where QR-code data should be used. Fetch cache data form JSON.
     this.cache = this.getCache(this.getCode());
 
@@ -107,32 +113,32 @@ export class GeocacheScreen extends Component {
     this.startTime = new Date().getTime();
   }
 
-  /* Mock function for QR-code input.
-   * The return value in this is given by the main app.
-   */
-  getCode() {
-    return "UTAPinniBLobby";
-  }
-
-  /*
-   * Returns the cache data for the game.
-   * This function should connect to the database to fetch the cache data.
-   */
-  getCache(room_id) {
-    // Get the caches for this room from the server.
-    var caches = JSON.parse('{"UTAPinniBLobby":{"Q1":{"Question":"PinniB question sample #1","Hints":["Hint 1", "Hint 2", "Hint 3"],"Answer":"PinniB answer #1"}, "Q2": {"Question":"Question sample #2","Hints":["Hint 1", "Hint 2", "Hint3"],"Answer":"PinniB answer #2"}},"UTAMainLobby": {"Q1": {"Question":"MainB question sample #1","Hints:":["Hint 1", "Hint 2", "Hint 3"],"Answer":"MainB answer #1"}}}')[room_id];
-
-    // Get a random cache.
-    var i = Math.floor(Math.random() * (Object.keys(caches).length)) + 1;
-
-    var key = "Q" + i;
-    return caches[key];
+  activate_channels_new_riddle = () => {
+    var that = this;
+    var channel = this.pusher.subscribe('geocache-' + that.state.groupId);
+    channel.bind('new-riddle', function(data) {
+      const riddle = data['riddle'] + " should click the button";
+      const current_score = data['current_score'];
+      that.setState(previousState => {
+      return { currentRiddle: riddle, currentScore: current_score};
+      });
+    });
+    return channel;
   }
 
   // TODO: send score to server.
   // Uses time (time), fails (int) and hintsUsed (int) for calculation.
-  sendScore(time, fails, hintsUsed) {
-    Alert.alert("Correct! Time elapsed: " + time + "ms, wrong answers: " + fails + ", hints used: " + hintsUsed);
+  sendQuess = () => {
+    var self = this;
+    Http.patch('api/geocache',{answer: self.state.answer_str
+    }).then(function (response) {
+      if(!response['data']['status']) {
+        self.setState({fails: self.state.fails + 1, answer_str: ""});
+      } else {
+        self.setState({answer_str: ""});
+        alert("You are correct");
+      }
+    })
   }
 
   render() {
@@ -148,14 +154,14 @@ export class GeocacheScreen extends Component {
           <View style={geoStyles.widget}>
             <View></View>
             <Text style={geoStyles.text}>
-              {this.cache["Question"]}
+              {this.state.riddle}
             </Text>
             <View></View>
           </View>
           <View style={geoStyles.widget}>
             <TextInput
               placeholder="Type your answer here!"
-              onChangeText={(text) => this.setState({ text })}
+              onChangeText={(text) => this.setState({ answer_str: text })}
               style={geoStyles.text}
             />
             <View style={geoStyles.buttonContainer}>
@@ -163,34 +169,14 @@ export class GeocacheScreen extends Component {
                 style={geoStyles.button}
                 color={geoStyles.button.color}
                 onPress={() => {
-                  // Check if user input was correct.
-                  if (this.state.text === this.cache["Answer"]) {
-                    // Calculate time elapsed.
-                    var timeElapsed = (new Date().getTime()) - this.startTime;
-                    // Get fails-count.
-                    var fails = this.state.fails;
-
-                    // Get amount of hints used.
-                    var hints = this.state.hintsUsed;
-
-                    // Send score to server.
-                    this.sendScore(timeElapsed, fails, hints);
-                  }
-                  else {
-                    Alert.alert("Wrong!");
-                    // Track fails.
-                    this.setState(previousState => (
-                      { fails: fails + 1 }
-                    ));
-                  }
-
+                  this.sendQuess()
                 }}
                 title="Submit"
               />
             </View>
           </View>
           <View style={geoStyles.widget}>
-            <Timer style={geoStyles.text} />
+            <Timer style={geoStyles.text} secs={this.state.seconds} mins={this.state.minutes}/>
           </View>
 
         </View>
