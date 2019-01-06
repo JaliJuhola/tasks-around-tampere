@@ -9,6 +9,7 @@ import RandomQuestions from './RandomQuestions';
 import TimerMixin from 'react-timer-mixin';
 import {Http} from '../../core/connections/http';
 import {getSocketConnection} from '../../common/minigame/Connection';
+import {Loading} from './Loading';
 
 
 
@@ -216,10 +217,13 @@ export default class Map extends React.Component {
     if(this.state.userLocation != null) {
       var userMarkers =  this.state.team.map((user, i) => {
         var color = "#0000FF";
+        var name = user.name;
         if(user.type === 3) {
           color = "#FF0000";
+          name = "You";
         } else if(user.type === 2) {
           color = "#0000A0"
+          name = "Leader " + user.name;
        }
         if(user.location != null) {
           return(
@@ -234,7 +238,7 @@ export default class Map extends React.Component {
               <MapView.Callout tooltip={true}>
                 <View style={MapStyles.userNameContainer}>
                   <Text style={MapStyles.userName}>
-                    {user.name}
+                    {name}
                   </Text>
                 </View>
               </MapView.Callout>
@@ -314,6 +318,11 @@ export default class Map extends React.Component {
   }
 
   render() {
+    if(this.state.minigameMarkers.length < 1 || this.state.userMarkers.length < 1) {
+      return (
+        <Loading message="Luodaan karttaa"></Loading>
+      );
+    }
     return (
       <View>
         <MapView

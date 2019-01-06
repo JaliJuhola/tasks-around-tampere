@@ -15,6 +15,7 @@ import uuid
 from rest.common.channels import PUSHER_CLIENT
 import json
 from django.utils import timezone
+from rest.push_the_buttons.models import PushTheButtonsMainGame
 
 class AuthView(APIView):
     """
@@ -187,3 +188,28 @@ class PlayerLocationView(APIView):
                 player_type = 2
             response_array.append({'name': player.name, 'type': player_type, 'location': {'longitude': player.x, 'latitude': player.y}, 'avatar': "../assets/testmarker.png"})
         return Response({'players': response_array})
+
+class MinigameView(APIView):
+    def get(self, request):
+        TOTAL_MINIGAMES = 4
+        total_score = 0
+        minigames_completed = 0
+        push_the_buttons_group_max = 0
+        push_the_buttons_max = 0
+        alias_group_max = 0
+        alias_max = 0
+        quiklash_group_max = 0
+        quiklash_max = 0
+        geocache_group_max = 0
+        geocache_max = 0
+
+        ptbmg = PushTheButtonsMainGame.objects.filter(game_ended=True).order_by('-current_score').first()
+        ptbmg_group = ptbmg.filter(group=request.user.group).order_by('-current_score').first()
+        if ptbmg_group:
+            push_the_buttons_group_max = ptbmg_group.current_score
+            minigames_completed = minigames_completed + 1
+            total_score = total_score + push_the_buttons_group_max
+        if ptbmg.first():
+            push_the_buttons_max = ptbmg.first().current_score
+
+        return Response({'Push the buttons': {'group': push_the_buttons_group_max, 'world': push_the_buttons_max}, 'Alias': {'group': alias_group_max, 'world': alias_max}, 'Quiklash': {'group': quiklash_group_max, 'world': quiklash_max}, 'GeoCache': {'group': geocache_group_max, 'world': geocache_max}, 'total_score': total_score, 'completion_percentage': minigames_completed/TOTAL_MINIGAMES})
