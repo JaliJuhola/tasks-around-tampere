@@ -4,15 +4,17 @@ import { IconButton } from 'react-native-paper';
 
 import PTB2Styles from '../styles/PTB2Styles';
 
-// TouchableHighlight has empty Text element as its child as it requires
-// exactly one child
+// TouchableHighlight in ColoredButton class has empty Text element
+// as its child as it requires exactly one child
 
-// todo tarkista että yksikään if tai else lause ei ole ilman {}
+// todo
 // -tee ajasta jotenkin nopeentuva liukuvasti käytä pisteitä tai taulukon pituutta jollain 0.02 kertoimella
-// -randomoi sequence
-// -pisteet
-// -backendistä tulee rooli ja sequence
-// -huolehdi että explainer ei saa pisteitä omista painalluksista eikä peli lopu niistä
+
+// Backend hommat:
+// -startNewRound() :ssa hae painikejärjestys backendistä
+// -endTheGame() :ssa lähetä backendiin että peli on päättynyt
+// -checkEndStatus() :ssa tarkistetaan backendistä onko peli päättynyt (joku pelaajista lähettänyt tiedon siitä)
+// -endTheGame() :ssa lähetä pisteet backendiin, tarviiko niitä?
 
 class ColoredButton extends React.Component {
     constructor(props) {
@@ -22,13 +24,11 @@ class ColoredButton extends React.Component {
         }
     }
     
-    // flatten PTB2Styles.coloredButton ja se mikä tulee parametrinä
-    
     render() {
-        const { backgroundColor } = this.props;
+        const { backgroundColor, disabled } = this.props;
         const combined = StyleSheet.flatten([PTB2Styles.coloredButton, backgroundColor]);
         return (
-            <TouchableHighlight style={ combined } onPress={this.props.action}>
+            <TouchableHighlight disabled={ disabled } style={ combined } onPress={this.props.action}>
                 <Text></Text>
             </TouchableHighlight>
         );
@@ -36,9 +36,6 @@ class ColoredButton extends React.Component {
 }
 
 export default class PTB2Screen extends React.Component {
-
-    // NOTES:
-    // -remove startNewRound from button
     
     constructor(props) {
         super(props);
@@ -47,41 +44,32 @@ export default class PTB2Screen extends React.Component {
             buttonsPressed: [],
             hasGameEnded: false,
             explainer: false,
+            buttonsDisabled: false,
+            startButtonDisabled: true,
+            gameMessage: 'Game starts in 5 seconds!',
+            score: 0,
             debug: '',
-            buttonFlashInterval: '',
+            endCheck: '',
             redButtonStyle: {backgroundColor: 'darkred'},
             blueButtonStyle: {backgroundColor: 'blue'},
             greenButtonStyle: {backgroundColor: 'limegreen'},
-            yellowButtonStyle: {backgroundColor: 'gold'},
-            
+            yellowButtonStyle: {backgroundColor: 'gold'},            
         };
+        this.waitBeforeStarting();
     }
     
-    changeWord = () => {
-        this.setState({debug: 'deeebuug'});
-    }
-    
-    startNewRound = () => {
-        // random 5 integers from 0-3
-        /*
-        newButtons = [];
-        let i;
-        for (i = 0; i < 5; i++) {
-            let rnd = Math.floor(Math.random() * 4);
-            newButtons[i] = rnd;
-        }
-        this.setState({buttonOrder: newButtons});
-        */
-        
-        // GET api/sequence
+    startNewRound = () => {        
+        // GET api/buttons, ota ne talteen parsable muuttujaan
+        this.setState({gameMessage: ''});
         let parsable = JSON.parse('{"explainer":true,"buttons":[0, 3, 2, 1]}');
-        //let order = [0, 3, 2, 1];
         let order = parsable["buttons"];
         this.setState({buttonOrder: order});
         if (parsable["explainer"]) {
+            this.setState({buttonsDisabled: true});
             let i = 0;
             this.repeatOrder(order, 0);
         }
+        this.setState({endCheck: setInterval(this.checkEndStatus, 1000)});
     }
     
     turnOffLight = (button, k, buttonID) => {
@@ -101,7 +89,6 @@ export default class PTB2Screen extends React.Component {
             default:
                 break;
         }
-        //this.setState({yellowButtonStyle: {backgroundColor: 'gold'}});
         if (k < button.length && !this.state.hasGameEnded) {
             var t = setTimeout(this.repeatOrder.bind(null, button, k), 200);
         }
@@ -135,52 +122,64 @@ export default class PTB2Screen extends React.Component {
             default:
                 break;
         }
-            //start flash at [i] startFlash()
-            //end flash at [i] endFlash()
-            //settimeout jolla odotetaan hetki ennen uutta kierrosta, tee siitä flexible nopeuttaaksesi
-            
-            //repeatorder = (order[], i) => {}
-            
-            //turnofflight huolehtis repeatorderin uudelleenkäytöstä? parametrinä myös order[i] 
     }
     
-    toggleColor = () => {
-        
+    waitBeforeStarting = () => {
+        var start = setTimeout(this.startNewRound, 5000);
     }
     
     checkOrder = (buttonPressed) => {
         let userInputs = this.state.buttonsPressed;
         let correctInputs = this.state.buttonOrder;
         userInputs.push(buttonPressed);
-        let i;
-        for (i = 0; i < userInputs.length; i++) {
-            if (userInputs[i] != correctInputs[i]) {
-                this.setState({hasGameEnded: true});
-            }
+        
+        let index = userInputs.length - 1;
+        if (buttonPressed != correctInputs[index]) {
+            this.endTheGame();
         }
+        else {
+            this.setState(prevState => ({
+                score: prevState.score + 1
+            }));
+        }
+    }
+    
+    endTheGame = () => {
+        this.setState({hasGameEnded: true});
+        this.setState({gameMessage: 'Game over!'});
+        
+        //lähetä backendiin että peli on päättynyt
+        //lähetä pisteet backendiin tässä
+    }
+    
+    checkEndStatus = () => {
+        // tällä lopetetaan peli toisenkin käyttäjän ruudulta
+        // GET api/ready
+        // if (backend palauttaa true) {
+        //    this.setState({hasGameEnded: true});
+        // }
     }
     
     render() {
         return (
             <View style={PTB2Styles.container}>
                 <View style={PTB2Styles.row}>
-                    <ColoredButton backgroundColor={this.state.redButtonStyle} action={this.checkOrder.bind(null, 0)} />
-                    <ColoredButton backgroundColor={this.state.redButtonStyle} action={this.startNewRound} />
+                    <ColoredButton disabled={this.state.buttonsDisabled} backgroundColor={this.state.redButtonStyle} action={this.checkOrder.bind(null, 0)} />
+                    <Text style={PTB2Styles.text}>Turn your phone sideways{"\n"}for better experience!</Text>
                 </View>
                 
                 <View style={PTB2Styles.row}>
-                    <ColoredButton backgroundColor={this.state.blueButtonStyle} action={this.checkOrder.bind(null, 1)} />
-                    <ColoredButton backgroundColor={this.state.blueButtonStyle} action={this.changeWord} />
+                    <ColoredButton disabled={this.state.buttonsDisabled} backgroundColor={this.state.blueButtonStyle} action={this.checkOrder.bind(null, 1)} />
+                    <Text style={PTB2Styles.text}>Score: {this.state.score}</Text>
                 </View>
                 
                 <View style={PTB2Styles.row}>
-                    <ColoredButton backgroundColor={this.state.greenButtonStyle} action={this.checkOrder.bind(null, 2)} />
-                    <ColoredButton backgroundColor={this.state.greenButtonStyle} action={this.checkOrder} />
+                    <ColoredButton disabled={this.state.buttonsDisabled} backgroundColor={this.state.greenButtonStyle} action={this.checkOrder.bind(null, 2)} />
+                    <Text style={PTB2Styles.text}>{this.state.gameMessage}</Text>
                 </View>
                 
                 <View style={PTB2Styles.row}>
-                    <ColoredButton backgroundColor={this.state.yellowButtonStyle} action={this.checkOrder.bind(null, 3)} />
-                    <ColoredButton backgroundColor={this.state.yellowButtonStyle} action={this.checkOrder} />
+                    <ColoredButton disabled={this.state.buttonsDisabled} backgroundColor={this.state.yellowButtonStyle} action={this.checkOrder.bind(null, 3)} />
                 </View>
             </View>
         );

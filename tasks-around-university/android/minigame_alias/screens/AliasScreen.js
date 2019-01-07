@@ -9,19 +9,9 @@ export default class AliasScreen extends React.Component {
     
     /*
     TODO:
-    -checkGuess() jos arvas oikein, lähetä true backendiin, tällöin n. sekunnin päästä kaikki tietää onko joku arvannu
-    -poista nextword painike, tai saa se laittamaan ready backendiin?
     -nextword miinus pisteitä, selittäjälle yhtä paljon pisteitä kuin arvaajalle?
-    
-    -ready pitää olla vain yhdellä että päästään eteenpäin, selittäjä false jos ei paina next word
-    
-    
     -peli loppuu kesken sanan
     -progressbarissa fixed values
-    -next word onPress readyForNext
-    -checkReadyStatus interval clear, tai pidä huoli että vaan yks intervalli menossa samaan aikaan
-    
-    -timeoutit kondikseen
     -loppuscreen pisteille
     if ready AND explainer true -> give points
     this way explainer gets some points as well
@@ -41,7 +31,6 @@ export default class AliasScreen extends React.Component {
         super(props);
         this.state = {
             words: '',
-            wordsIndex: 0,
             textInput: '',
             currentWord: 'Game starts in 5 seconds!',
             correctWord: ' ',
@@ -133,7 +122,7 @@ export default class AliasScreen extends React.Component {
     }
     
     /*
-    barebones for letting the word to finish before ending the game
+    barebones for letting the word to finish before ending the game nvm this
     
     waitForWordToFinish = () => {
         clearTimeout(this.state.wordTimeout);

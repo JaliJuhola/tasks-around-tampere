@@ -6,13 +6,17 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         //paddingTop: '10%',
-        justifyContent: 'center',
-        alignItems: 'center',
+        //justifyContent: 'center',
+        //alignItems: 'center',
     },
     row:{
-        //flex: 1,
         flexDirection: 'row',
-        alignItems: 'center',
+        justifyContent: 'flex-start',
+        marginLeft: '5%',
+    },
+    text:{
+        paddingTop: 40,
+        paddingLeft: 30,
     },
     coloredButton:{
         width: 100,
@@ -21,6 +25,7 @@ const styles = StyleSheet.create({
         // borderRadius: 50?
         borderRadius: 100,
         margin: '3%',
+        alignItems: 'center',
     },
 });
 

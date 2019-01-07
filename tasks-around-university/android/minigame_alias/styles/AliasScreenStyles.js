@@ -18,8 +18,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     textCorrect:{
-        //position: 'relative',
-        //top: '10%',
         justifyContent: 'center',
         marginBottom: 20,
     },
