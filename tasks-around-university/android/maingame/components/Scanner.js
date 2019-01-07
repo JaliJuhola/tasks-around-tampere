@@ -99,24 +99,29 @@ export default class Scanner extends Component {
     if (!this.state.lastScannedUrl) {
       return;
     }
-
-    return (
-      <View style={ScannerStyles.bottomBar}>
-        <View style={ScannerStyles.footer}>
-        </View>
-        <TouchableOpacity style={ScannerStyles.url} onPress={this._handlePressUrl}>
-          <Text numberOfLines={1} style={ScannerStyles.urlText}>
-            {this.state.lastScannedUrl}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={ScannerStyles.cancelButton}
-          onPress={this._handlePressCancel}>
-          <Text style={ScannerStyles.cancelButtonText}>
-            Cancel
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
+    //Same as in _handlePressUrl, using handlepressurl is better for dev. comment this if you are using handlepressurl
+    if(this.props.scan_action(this.state.lastScannedUrl)) {
+      return;
+    }
+    () => Linking.openURL(this.state.lastScannedUrl)
+// Delete comment marks when want to see better urls/qrscans.    
+//    return (
+//      <View style={ScannerStyles.bottomBar}>
+//        <View style={ScannerStyles.footer}>
+//        </View>
+//        <TouchableOpacity style={ScannerStyles.url} onPress={this._handlePressUrl}>
+//          <Text numberOfLines={1} style={ScannerStyles.urlText}>
+//            {this.state.lastScannedUrl}
+//          </Text>
+//        </TouchableOpacity>
+//        <TouchableOpacity
+//          style={ScannerStyles.cancelButton}
+//          onPress={this._handlePressCancel}>
+//          <Text style={ScannerStyles.cancelButtonText}>
+//            Cancel
+//          </Text>
+//        </TouchableOpacity>
+//      </View>
+//    );
+  }
 }

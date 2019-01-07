@@ -18,13 +18,26 @@ class Group(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(default=timezone.now)
 
-
 class Player(models.Model):
     id = models.AutoField(primary_key=True)
-    x = models.IntegerField(default=0)
-    y = models.IntegerField(default=0)
+    x = models.DecimalField(max_digits=10, decimal_places=8, default=0.0)
+    y = models.DecimalField(max_digits=10, decimal_places=8, default=0.0)
     name = models.CharField(max_length=128)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(default=timezone.now)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, null=True)
+    leader = models.BooleanField(default=False)
     token = models.CharField(max_length=128)
+    icon_name = models.CharField(max_length=40, default="space-shuttle")
+    last_connection = models.DateTimeField(default=timezone.now)
+
+class Lobby(models.Model):
+    id = models.AutoField(primary_key=True)
+    minigame = models.CharField(max_length=128)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, null=False)
+    closed = models.BooleanField()
+
+class LobbyPlayer(models.Model):
+    lobby = models.ForeignKey(Lobby, on_delete=models.CASCADE, null=False)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=False)
+    joined_since = models.DateTimeField(auto_now_add=True)

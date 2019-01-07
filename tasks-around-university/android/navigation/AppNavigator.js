@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Alert, Text, View, BackHandler } from 'react-native'
 import { StackViewStyleInterpolator } from 'react-navigation-stack';
 import {
   Scene,
@@ -14,13 +14,17 @@ import {
   Lightbox,
 } from 'react-native-router-flux';
 import TabBarIcon from '../maingame/components/TabBarIcon';
-import MenuIcon from './MenuIcon';
-import HomeScreen from '../maingame/screens/HomeScreen';
 import ScannerScreen from '../maingame/screens/ScannerScreen';
 import PushTheButtonsScreen from '../pushthebuttons/screens/PushTheButtonsScreen';
 import MapScreen from '../maingame/screens/MapScreen';
 import StartScreen from '../maingame/screens/StartScreen';
 import LobbyScreen from '../maingame/screens/LobbyScreen';
+// import {GeocacheScreen} from '../geocache/GeocacheScreen';
+import {AliasScreen} from '../minigame_alias/screens/AliasScreen';
+import {QuiklashScreen} from '../maingame/components/Quiklash';
+import {GeocacheScreen} from '../geocache/GeocacheScreen';
+import IconSelect from '../maingame/components/IconSelect';
+
 
 
 const styles = StyleSheet.create({
@@ -46,8 +50,10 @@ const reducerCreate = params => {
   };
 };
 
+
 const stateHandler = (prevState, newState, action) => {
-  console.log('onStateChange: ACTION:', action);
+  console.log(prevState);
+  console.log(newState);
 };
 
 const getSceneStyle = () => ({
@@ -66,72 +72,130 @@ const transitionConfig = () => ({
     StackViewStyleInterpolator.forFadeFromBottomAndroid,
 });
 
+//Android's back button, need logic here. Adding them later on.
+const onBackAndroid = () => {
+  console.log("*************************************************");
+  console.log("Back Handler");
+  if(Actions.currentScene === "main_map") {
+    console.log("main_map scene asd");
+  }
+  if(Actions.currentScene === "start") {
+    Alert.alert(
+      'Quit?',
+      'Do you want to close the game?',
+      [
+        {
+          text: 'Yes',
+          onPress: () => BackHandler.exitApp(),
+        },
+        { text: 'No', onPress: () => {} },
+      ],
+      { cancellable: false }
+    );
+  }
+  if(Actions.currentScene === "IconSelect") {
+    Actions.StartScreen();
+  }
+  if(Actions.currentScene === "Lobby") {
+    //-> map
+  }
+  if(Actions.currentScene === "Minigame") {
+    //-> map
+  }
+  if(Actions.currentScene === "scanner") {
+    //-> map
+  }
+
+  console.log("*************************************************");
+  return true;
+}
 const AppNavigator = () => (
   <Router
     createReducer={reducerCreate}
     onStateChange={stateHandler}
     getSceneStyle={getSceneStyle}
-    uriPrefix={prefix}>
+    backAndroidHandler={onBackAndroid}
+    uriPrefix={prefix}
+    >
     <Overlay key="overlay">
       <Modal key="modal" hideNavBar transitionConfig={transitionConfig}>
-        <Lightbox key="lightbox">
-          <Stack key="root" hideNavBar titleStyle={{ alignSelf: 'center' }}>
-            <Scene hideNavBar>
-              <Tabs
-                key="tabbar"
-                backToInitial
-                onTabOnPress={() => {
-                  console.log('Back to initial and also print this');
-                }}
-                swipeEnabled
-                tabBarStyle={styles.tabBarStyle}
-                activeBackgroundColor="white"
-                inactiveBackgroundColor="rgba(255, 0, 0, 0.5)">
-                <Scene
-                  key="start"
-                  component={StartScreen}
-                  title="Start"
-                  tabBarLabel="Start Screen"
-                  icon={TabBarIcon}
-                  hideNavBar={true}
-                />
-                <Scene
-                  key="main_home"
-                  component={HomeScreen}
-                  title="Home"
-                  tabBarLabel="Home"
-                  icon={TabBarIcon}
-                />
-                <Scene
-                  key="scanners"
-                  component={ScannerScreen}
-                  title="scanner"
-                  tabBarLabel="scanner"
-                  icon={TabBarIcon}
-                />
-                <Scene
-                  key="push_the_buttons"
-                  component={PushTheButtonsScreen}
-                  title="push the buttons"
-                  tabBarLabel="button push"
-                  icon={TabBarIcon}
-                />
-                <Scene
-                  key="lobby"
-                  component={LobbyScreen}
-                  title="Lobby"
-                  tabBarLabel="Lobby Screen"
-                  icon={TabBarIcon}
-                  hideNavBar={true}
-                />
-                <Scene
-                  key="main_map"
-                  component={MapScreen}
-                  title="Map"
-                  tabBarLabel="Map"
-                  icon={TabBarIcon}
-                />
-              </Tabs>
+        <Lightbox key="lightbox" hideNavBar={true} >
+          <Stack key="root" hideNavBar={true} titleStyle={{ alignSelf: 'center' }}>
+            <Scene hideNavBar hideTabBar>
+              <Scene
+                key="start"
+                component={StartScreen}
+                title="Start"
+                tabBarLabel="Start"
+                icon={TabBarIcon}
+                hideNavBar={true}
+                type="replace"
+              />
+              <Scene
+                key="scanners"
+                component={ScannerScreen}
+                title="scanner"
+                tabBarLabel="scanner"
+                icon={TabBarIcon}
+              />
+              <Scene
+                key="push_the_buttons"
+                component={PushTheButtonsScreen}
+                title="push the buttons"
+                tabBarLabel="push"
+                icon={TabBarIcon}
+                type="replace"
+              />
+              <Scene
+                key="lobby"
+                component={LobbyScreen}
+                title="Lobby"
+                tabBarLabel="lobby"
+                icon={TabBarIcon}
+                hideNavBar={true}
+                type="replace"
+              />
+              <Scene
+                key="main_map"
+                component={MapScreen}
+                title="Map"
+                tabBarLabel="Map"
+                icon={TabBarIcon}
+                type="replace"
+              />
+              <Scene
+                key="quiklash"
+                component={QuiklashScreen}
+                title="Quiklash"
+                tabBarLabel="Quiklash"
+                icon={TabBarIcon}
+                hideNavBar={true}
+                type="replace"
+              />
+              <Scene
+                key="alias"
+                component={AliasScreen}
+                title="Alias"
+                tabBarLabel="Alias"
+                icon={TabBarIcon}
+                type="replace"
+              />
+              <Scene
+                key="cache"
+                component={GeocacheScreen}
+                title="Geocache"
+                tabBarLabel="geo"
+                icon={TabBarIcon}
+                type="replace"
+              />
+              <Scene
+                key="icon_select"
+                component={IconSelect}
+                title="IconSelect"
+                tabBarLabel="icos"
+                icon={TabBarIcon}
+                type="replace"
+              />
             </Scene>
           </Stack>
         </Lightbox>

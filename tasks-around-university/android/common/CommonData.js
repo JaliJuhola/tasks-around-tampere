@@ -2,21 +2,16 @@ import {GlobalStorage} from '../core/store/store';
 
 export class CommonData {
 
-    static socketConnection = undefined;
-    static getPlayerName = () => {
-        var player = GlobalStorage.getItem('player');
-        return player.player_name;
+    static async getPlayerName(){
+        return await GlobalStorage.getItem('player_name').then(function (response) {return response});
     }
-    static getGroupName = () =>  {
-        var group = GlobalStorage.getItem('player');
-        return group.group_name;
+    static async getGroupName(){
+       return await GlobalStorage.getItem('group_name').then(function (response) {return response});
     }
-    static getGroupId = () =>  {
-        var group = GlobalStorage.getItem('player');
-        return group.id;
+    static async getGroupId(){
+        return await GlobalStorage.getItem('group_id').then(function (response) {return response});
     }
-    static getPlayerId= () =>  {
-        var group = GlobalStorage.getItem('player');
-        return group.id;
+    static async getPlayerId(){
+        return await GlobalStorage.getItem('player_id').then(function (response) {return response});
     }
 }

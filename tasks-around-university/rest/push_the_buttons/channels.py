@@ -13,5 +13,5 @@ class PushTheButtonsChannels:
         push_event_to_channel("{}-{}".format(cls.CHANNEL_NAME, group_id) , cls.EVENT_PUSH_COMPLETED, {'player_id': player_who_pushed, 'current_score': current_score})
 
     @classmethod
-    def new_push_available(cls, target_player, player_who_has_event, group_id):
-        push_event_to_channel("{}-{}".format(cls.CHANNEL_NAME, group_id), cls.EVENT_NEW_PUSH_AVAILABLE, {'target_player': target_player, 'player_who_has_event': player_who_has_event})
+    def new_push_available(cls, target_player, player_who_has_event, group_id, seconds_to_push):
+        push_event_to_channel("{}-{}".format(cls.CHANNEL_NAME, group_id), cls.EVENT_NEW_PUSH_AVAILABLE, {'target_player': target_player, 'player_who_has_event': player_who_has_event, 'seconds_to_push':seconds_to_push})

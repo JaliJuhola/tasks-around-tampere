@@ -3,8 +3,8 @@ from django.http import HttpResponse, JsonResponse
 #from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from rest.maingame.models import Hotspot, Player, Group
-from rest.maingame.serializers import HotspotSerializer, PlayerSerializer, PlayerLocationSerializer
+from rest.maingame.models import Hotspot, Player, Group, Lobby, LobbyPlayer
+from rest.maingame.serializers import HotspotSerializer, PlayerSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,46 +14,8 @@ from rest.maingame.channels import WaitingPlayersToJoinChannels
 import uuid
 from rest.common.channels import PUSHER_CLIENT
 import json
-
-@api_view(['GET'])
-def hotspot_list(request):
-    hotspots = Hotspot.objects.all()
-    serializer = HotspotSerializer(hotspots, many=True)
-    return Response(serializer.data)
-
-@api_view(['POST'])
-def pusher_authentication(request):
-  auth = PUSHER_CLIENT.authenticate(
-    channel=request.data['channel_name'],
-    socket_id=request.data['socket_id'],
-    custom_data={
-      u'user_id': str(request.user.id),
-      u'user_info': {
-        u'user_name': str(request.user.name)
-      }
-    }
-  )
-  return Response(json.dumps(auth))
-
-@api_view(['GET'])
-def hotspot_detail(request, pk):
-    try:
-        hotspot = Hotspot.objects.get(pk=pk)
-    except Hotspot.DoesNotExist:
-        return Response({'message': 'hotspot not found'}, status=status.HTTP_404_NOT_FOUND)
-
-    serializer = HotspotSerializer(hotspot)
-    return Response(serializer.data)
-
-@api_view(['GET'])
-def player_location(request, pk):
-    try:
-        player = Player.objects.get(pk=pk)
-    except Player.DoesNotExist:
-        return Response({'message': 'Player not found'},status=status.HTTP_404_NOT_FOUND)
-
-    serializer = PlayerLocationSerializer(player)
-    return Response(serializer.data)
+from django.utils import timezone
+from rest.push_the_buttons.models import PushTheButtonsMainGame
 
 class AuthView(APIView):
     """
@@ -90,7 +52,7 @@ class PlayerGroupView(APIView):
     serializer_class = PlayerSerializer
 
     def get(self, request):
-        identifier = request.GET["group_id"]
+        identifier = request.user.group.id
         if not identifier:
             return Response({'id': 'This field is required!'}, status=status.HTTP_400_BAD_REQUEST)
         players = Player.objects.filter(group__id=identifier)
@@ -111,3 +73,148 @@ class PlayerGroupView(APIView):
            return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({ 'player_id': request.user.id, 'player_name': request.user.name, 'group_name': request.user.group.name, 'group_id': request.user.group.id}, status=status.HTTP_201_CREATED)
 
+class PlayerView(APIView):
+    """
+    List all snippets, or create a new snippet.
+    """
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
+
+    def get(self, request):
+        group_name = request.user.group.name
+        player_name = request.user.name
+        is_leader = request.user.leader
+        player_id = request.user.id
+        group_id = request.user.group.id
+        return Response({'group': {'name': group_name, 'id': group_id}, 'player': {'name': player_name, 'id': player_id, 'leader': is_leader}})
+
+
+class GroupView(APIView):
+    """
+    List all snippets, or create a new snippet.
+    """
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
+
+    def post(self, request):
+        group_name = request.data['group_name']
+        player = request.user
+        group = Group.objects.create(name=group_name)
+        player.group = group
+        player.leader = True
+        player.save()
+        return Response({ 'player_id': request.user.id, 'player_name': request.user.name, 'group_name': group.name, 'group_id': group.id}, status=status.HTTP_201_CREATED)
+
+class LobbyView(APIView):
+    """
+    List all snippets, or create a new snippet.
+    """
+    queryset = Lobby.objects.all()
+    serializer_class = PlayerSerializer
+
+    def post(self, request):
+        minigame_name = request.data['minigame_name']
+        group = request.user.group
+        player = request.user
+        player.last_connection = timezone.now() + timezone.timedelta(seconds=20)
+        lobby, created = Lobby.objects.get_or_create(group=group, minigame=minigame_name, closed=False)
+        lobby_player, created = LobbyPlayer.objects.get_or_create(lobby=lobby, player=player)
+        lobby_player.joined_since = timezone.now() + timezone.timedelta(seconds=20)
+        lobby_player.save()
+        player.save()
+        return Response({'lobby_id': lobby.id})
+
+    def patch(self, request):
+        lobby_id = request.data['lobby_id']
+        player = request.user
+        player.last_connection = timezone.now() + timezone.timedelta(seconds=20)
+        lobby = Lobby.objects.get(id=int(lobby_id))
+        lobby_player = LobbyPlayer.objects.get(lobby=lobby, player=player)
+        lobby_player.joined_since = timezone.now() + timezone.timedelta(seconds=20)
+        lobby_player.save()
+        player.save()
+        players_in_lobby = LobbyPlayer.objects.filter(lobby=lobby, joined_since__gte=timezone.now())
+        response_array = []
+        for player_in_lobby in players_in_lobby:
+            player = player_in_lobby.player
+            response_array.append({'id': player.id, 'name': player.name, 'x': player.x, 'y': player.y, 'group_id': player.group.id, 'avatar': player.icon_name})
+
+        return Response({'players': response_array, 'closed': lobby.closed})
+
+class LobbyExitView(APIView):
+    """
+    List all snippets, or create a new snippet.
+    """
+    queryset = Lobby.objects.all()
+    serializer_class = PlayerSerializer
+
+    def post(self, request):
+        lobby_id = request.data['lobby_id']
+        lobby = Lobby.objects.get(id=int(lobby_id))
+        lobby.closed = True
+        lobby.save()
+        return Response({'status': True})
+
+class AvatarView(APIView):
+    """
+    List all snippets, or create a new snippet.
+    """
+    queryset = Lobby.objects.all()
+    serializer_class = PlayerSerializer
+
+    def post(self, request):
+        icon_name = request.data['icon_name']
+        request.user.icon_name = icon_name
+        request.user.save()
+        return Response({'status': True})
+
+
+class PlayerLocationView(APIView):
+    def post(self, request):
+        x_cord = request.data['x']
+        y_cord = request.data['y']
+        player = request.user
+        player.last_connection = timezone.now() + timezone.timedelta(seconds=20)
+        player.x = x_cord
+        player.y = y_cord
+        player.save()
+        players = Player.objects.filter(group=player.group, last_connection__gte=timezone.now())
+        response_array = []
+        for player in players:
+            player_type = 1
+            if player == request.user:
+                player_type= 3
+            elif player.leader:
+                player_type = 2
+            response_array.append({'name': player.name, 'type': player_type, 'location': {'longitude': player.x, 'latitude': player.y}, 'avatar': "../assets/testmarker.png"})
+        return Response({'players': response_array})
+
+class MinigameProgressionView(APIView):
+    def get(self, request):
+        TOTAL_MINIGAMES = 4
+        total_score = 0
+        minigames_completed = 0
+        push_the_buttons_group_max = 0
+        push_the_buttons_max = 0
+        push_the_buttons_group_count = 0
+        alias_group_max = 0
+        alias_max = 0
+        alias_group_count = 0
+        quiklash_group_max = 0
+        quiklash_max = 0
+        quiklash_group_count = 0
+        geocache_group_max = 0
+        geocache_max = 0
+        geocache_group_count = 0
+
+        ptbmg = PushTheButtonsMainGame.objects.filter(game_ended=True).order_by('-current_score')
+        ptbmg_group = ptbmg.filter(group=request.user.group).order_by('-current_score')
+        if ptbmg_group.first():
+            push_the_buttons_group_max = ptbmg_group.first().current_score
+            push_the_buttons_group_count = ptbmg_group.count()
+            minigames_completed = minigames_completed + 1
+            total_score = total_score + push_the_buttons_group_max
+        if ptbmg.first():
+            push_the_buttons_max = ptbmg.first().current_score
+
+        return Response({'Push the buttons': {'group': push_the_buttons_group_max, 'world': push_the_buttons_max, 'count': push_the_buttons_group_count}, 'Alias': {'group': alias_group_max, 'world': alias_max, 'count': alias_group_count}, 'Quiklash': {'group': quiklash_group_max, 'world': quiklash_max, 'count': quiklash_group_count}, 'GeoCache': {'group': geocache_group_max, 'world': geocache_max, 'count': geocache_group_count}, 'total_score': total_score, 'completion_percentage': minigames_completed/TOTAL_MINIGAMES})

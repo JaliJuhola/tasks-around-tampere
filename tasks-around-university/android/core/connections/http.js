@@ -27,12 +27,13 @@ export class Http {
             return response;
           })
           .catch(function (error) {
+            console.log(error)
             return {'error': error};
         })
     }
     static async get(url_extensions) {
         var token = await this.getToken();
-        return axios.patch(settings['rest_api_url'] + url_extensions, {headers: {'Authorization': token}})
+        return axios.get(settings['rest_api_url'] + url_extensions, {headers: {'Authorization': token}})
           .then(function (response) {
             return response;
           })

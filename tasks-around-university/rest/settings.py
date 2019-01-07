@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-import netifaces
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,17 +26,7 @@ SECRET_KEY = 'f)+lq0y*cq=ubho$gqku)4m4$9apjxq8e+uz%x5(ifmm4eewo^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-def ip_addresses():
-    ip_list = []
-    for interface in netifaces.interfaces():
-        addrs = netifaces.ifaddresses(interface)
-        for x in (netifaces.AF_INET, netifaces.AF_INET6):
-            if x in addrs:
-                ip_list.append(addrs[x][0]['addr'])
-    return ip_list
-
-ALLOWED_HOSTS = ip_addresses()
-print(ALLOWED_HOSTS)
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -54,6 +43,9 @@ INSTALLED_APPS = [
     'rest.hello_world.apps.HelloWorldConfig',
     'rest.maingame.apps.MaingameConfig',
     'rest.push_the_buttons.apps.PushTheButtonsConfig',
+    'rest.quiklash.apps.QuiklashConfig',
+    'rest.alias.apps.AliasConfig',
+    'rest.geocache.apps.GeocacheConfig',
     'corsheaders'
     ]
 
@@ -99,9 +91,9 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django',
-        'USER': 'django',
-        'PASSWORD': 'aab11f9002bcdac508c68d50a0d2d56e',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'tester',
         'HOST': 'localhost',
         'PORT': '',
     }

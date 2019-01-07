@@ -12,8 +12,11 @@ from rest.maingame.channels import WaitingPlayersToJoinChannels
 import uuid
 from rest.push_the_buttons.channels import PushTheButtonsChannels
 from rest.push_the_buttons.models import PushTheButtonsMainGame
+from django.utils import timezone
 
 PUSH_THE_BUTTONS_SCORE_TO_ADD = 1
+SECONDS_TO_PUSH = 10
+TIME_DECREASES_MILLISECONDS = 180
 
 class PushTheButtonView(APIView):
     """
@@ -23,34 +26,41 @@ class PushTheButtonView(APIView):
     serializer_class = PlayerSerializer
 
     def patch(self, request):
-        group_id = request.data['group_id']
-        if not group_id:
-            return Response({'message': 'both id fields are required!'}, status=status.HTTP_400_BAD_REQUEST)
+        group_id = request.user.group.id
         try:
             group = Group.objects.get(id=group_id)
-            game_object = PushTheButtonsMainGame.objects.get_or_create(group=group)
+            game_object = PushTheButtonsMainGame.objects.filter(group=group, game_ended=False).last()
             player = request.user
-            random_player_1 = Player.objects.order_by('?').first()
-            random_player_2 = Player.objects.order_by('?').first()
+            if game_object.next_to_click:
+                if player.id != game_object.next_to_click.id or game_object.next_push_before < timezone.now():
+                    game_object.game_ended = True
+                    game_object.save()
+                    PushTheButtonsChannels.push_completed_event(None, group.id, game_object.current_score)
+                    return Response({'message': 'game ended'}, status=status.HTTP_400_BAD_REQUEST)
+
+            random_player_1 = Player.objects.filter(group=group).order_by('?').first()
+            random_player_2 = Player.objects.filter(group=group).order_by('?').first()
             game_object.next_to_click = random_player_1
+            game_object.next_push_before = timezone.now() + timezone.timedelta(seconds=SECONDS_TO_PUSH) - timezone.timedelta(milliseconds=game_object.current_score*TIME_DECREASES_MILLISECONDS)
             game_object.current_score = game_object.current_score + PUSH_THE_BUTTONS_SCORE_TO_ADD
             game_object.save()
             PushTheButtonsChannels.push_completed_event(player.id, group.id, game_object.current_score)
-            PushTheButtonsChannels.new_push_available(random_player_1.id, random_player_2.id, group.id)
+            PushTheButtonsChannels.new_push_available(random_player_1.id, random_player_2.id, group.id, (((SECONDS_TO_PUSH * 1000) - TIME_DECREASES_MILLISECONDS * game_object.current_score)))
         except Group.DoesNotExist:
            return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({ 'player_id': request.user.id, 'player_name': request.user.name, 'group_name': request.user.group.name, 'group_id': request.user.group.id}, status=status.HTTP_201_CREATED)
 
+    def get(self, request):
+        group_id = request.user.group.id
+        group = Group.objects.get(id=group_id)
+        game_object = PushTheButtonsMainGame.objects.filter(group=group, game_ended=False).last()
+        game_object.game_ended = True
+        game_object.save()
+        PushTheButtonsChannels.push_completed_event(None, group.id, game_object.current_score)
+        return Response({'status': True})
+
     def post(self, request):
-        group_id = request.data['group_id']
-        if not group_id:
-            return Response({'message': 'both id fields are required!'}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            group = Group.objects.get(id=group_id)
-            game_object = PushTheButtonsMainGame.objects.get_or_create(group=group)
-            game_object.game_ended = True
-            game_object.save()
-            PushTheButtonsChannels.push_completed_event(None, group.id)
-        except Group.DoesNotExist:
-           return Response({'message': 'invalid group_id'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({status: True})
+        group_id = request.user.group.id
+        group = Group.objects.get(id=group_id)
+        PushTheButtonsMainGame.objects.create(group=group)
+        return Response({'status': True})
