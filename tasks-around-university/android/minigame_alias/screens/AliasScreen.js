@@ -35,9 +35,9 @@ export default class AliasScreen extends React.Component {
             currentWord: 'Game starts in 5 seconds!',
             correctWord: ' ',
             explainer: true,
-            buttonDisabled: false,
-            textInputDisabled: false,
-            nextWordDisabled: false,
+            buttonDisabled: true,
+            textInputDisabled: true,
+            nextWordDisabled: true,
             timeElapsed: 0,
             totalTimeElapsed: 0,
             score: 0,
@@ -45,13 +45,13 @@ export default class AliasScreen extends React.Component {
             scoreTimer: '',
             wordTimeout: '',
             readyCheck: '',
-            roundTimeout: '',
             remainingTimeout: '',
             debug: '',
             
         };
-        
-        let t = setTimeout(this.waitForNewWord, 5000);
+        let starter = setTimeout(this.waitForNewWord, 5000);
+        // game length 3 minutes + 5 seconds start delay
+        let gameTimeout = setTimeout(this.endRound, 185000);
     }
     
     // This function first clears previous timers, requests a new JSON,
@@ -97,7 +97,6 @@ export default class AliasScreen extends React.Component {
             this.setState({nextWordDisabled: true});
         }
         
-        this.setState({roundTimeout: setTimeout(this.endRound, 180000)});
         this.setState({wordTimeout: setTimeout(this.waitForNewWord, 30000)});
         this.setState({scoreTimer: setInterval(this.updateScoreTimer, 500)});
         this.setState({readyCheck: setInterval(this.checkReadyStatus, 1000)});
@@ -188,7 +187,7 @@ export default class AliasScreen extends React.Component {
     checkGuess = () => {
         if (this.state.currentWord != "Game over!") {
             let guess = this.state.textInput.toLowerCase();
-            if (guess == this.state.words) {
+            if (guess == this.state.words.toLowerCase()) {
                 clearInterval(this.state.scoreTimer);
                 this.updateScore();
                 this.setState({textInput: ''});
