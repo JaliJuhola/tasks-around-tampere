@@ -31,15 +31,21 @@ export default class Map extends React.Component {
       teamScore: 0,
       minigameMarkers: [],
       userMarkers: [],
+      images: [
+        require('../assets/user_marker_1.png'),
+        require('../assets/user_marker_2.png'),
+        require('../assets/user_marker_3.png'),
+        require('../assets/user_marker_4.png'),
+        require('../assets/user_marker_5.png'),
+        require('../assets/user_marker_6.png'),
+      ],
       team: [
         {
           name: "You",
-          avatar: '../assets/testmarker.png',
           location: null,
         },
         {
           name: "team_member_2",
-          avatar: '../assets/testmarker.png',
           location: {
             latitude: 61.492372,
             longitude: 23.778839,
@@ -47,7 +53,6 @@ export default class Map extends React.Component {
         },
         {
           name: "team_member_3",
-          avatar: '../assets/testmarker.png',
           location: {
             latitude: 61.492772,
             longitude: 23.778539,
@@ -55,24 +60,39 @@ export default class Map extends React.Component {
         },
         {
           name: "team_member_4",
-          avatar: '../assets/testmarker.png',
           location: {
             latitude: 61.492572,
             longitude: 23.778939,
+          },
+        },
+        {
+          name: "team_member_5",
+          location: {
+            latitude: 61.492552,
+            longitude: 23.778919,
+          },
+        },
+        {
+          name: "team_member_6",
+          location: {
+            latitude: 61.492532,
+            longitude: 23.778969,
           },
         },
       ],
       markers: [
         {
           title: 'Push the buttons',
-          description: "Distance:",
+          description: "",
           target_str: 'push_the_buttons',
           difficulty: "Easy",
+          players: '2-6',
           score: 0,
           hiscore: 0,
           timesPlayed: 0,
           completed: false,
           distance: null,
+          distanceText: null,
           coordinates: {
             latitude: 61.494138,
             longitude: 23.779433,
@@ -81,14 +101,16 @@ export default class Map extends React.Component {
         },
         {
           title: 'Alias',
-          description: "Distance:",
+          description: "",
           target_str: 'alias',
           difficulty: "Easy",
+          players: '2-6',
           score: 0,
           hiscore: 0,
           timesPlayed: 0,
           completed: false,
           distance: null,
+          distanceText: null,
           coordinates: {
             latitude: 61.492572,
             longitude: 23.778139,
@@ -97,14 +119,16 @@ export default class Map extends React.Component {
         },
         {
           title: 'Quiklash',
-          description: "Distance:",
+          description: "",
           target_str: 'quiklash',
           difficulty: "Normal",
+          players: '2-6',
           score: 25,
           hiscore: 0,
           timesPlayed: 0,
           completed: true,
           distance: null,
+          distanceText: null,
           coordinates: {
             latitude: 61.49396,
             longitude: 23.777845,
@@ -113,14 +137,16 @@ export default class Map extends React.Component {
         },
         {
           title: 'GeoCache',
-          description: "Distance:",
+          description: "",
           target_str: 'cache',
           difficulty: "Hard",
+          players: '2-6',
           score: 0,
           hiscore: 0,
           timesPlayed: 0,
           completed: false,
           distance: null,
+          distanceText: null,
           coordinates: {
             latitude: 61.495455,
             longitude: 23.778125,
@@ -198,6 +224,7 @@ export default class Map extends React.Component {
         c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         distance = r * c;
 
+        newMarkers[i].distance = distance;
         if(distance < 20) {
           newMarkers[i].userNear = true;
           this.setState({markerNearUser: true});
@@ -205,8 +232,12 @@ export default class Map extends React.Component {
         else {
           newMarkers[i].userNear = false;
         }
-        newMarkers[i].distance = Number((distance).toFixed(1));
-        newMarkers[i].description = "Distance: " + this.state.markers[i].distance + "m";
+        if(distance > 1000) {
+          newMarkers[i].distanceText = Number((distance/1000).toFixed(1)) + "km";;
+        }
+        else {
+          newMarkers[i].distanceText = Number((distance).toFixed(1)) + "m";
+        }
 
       }
       this.setState({markers: newMarkers});
@@ -225,8 +256,12 @@ export default class Map extends React.Component {
         } else if(user.type === 2) {
           color = "#0000A0"
           name = "Leader " + user.name;
-       }
+        }
         if(user.location != null) {
+          markerImage = this.state.images[0];
+          if(i <= 5) {
+           markerImage = this.state.images[i];
+          }
           return(
             <MapView.Marker
               id={Date.now() + i}
@@ -235,7 +270,7 @@ export default class Map extends React.Component {
               onPress={(e) => {e.stopPropagation();}}
               pinColor={color}
             >
-              {/* <Image source={require('../../maingame/assets/testmarker.png')} style={MapStyles.userMarkerImage} /> */}
+              <Image source={markerImage} style={MapStyles.userMarkerImage} />
               <MapView.Callout tooltip={true}>
                 <View style={MapStyles.userNameContainer}>
                   <Text style={MapStyles.userName}>
@@ -336,6 +371,7 @@ export default class Map extends React.Component {
           }}
           style={MapStyles.map}
           minZoomLevel={10}
+          showsMyLocationButton={true}
           customMapStyle={CustomMapStyles}
         >
           {this.state.minigameMarkers}
@@ -356,10 +392,24 @@ export default class Map extends React.Component {
                   <Text style={MapStyles.modalPlace}>{this.state.markers[this.state.currentMarker].title}</Text>
                 </View>
                 <View style={MapStyles.modalTextContainer}>
-                  <Text style={MapStyles.modalText}>Difficulty: {this.state.markers[this.state.currentMarker].difficulty}</Text>
-                  <Text style={MapStyles.modalText}>High-Score: {this.state.markers[this.state.currentMarker].hiscore} Points</Text>
-                  <Text style={MapStyles.modalText}>Your best score: {this.state.markers[this.state.currentMarker].score} Points</Text>
-                  <Text style={MapStyles.modalText}>Times played: {this.state.markers[this.state.currentMarker].timesPlayed}</Text>
+                  <View style={MapStyles.modalTextBorder}>
+                    <Text style={MapStyles.modalText}>Distance: {this.state.markers[this.state.currentMarker].distanceText}</Text>
+                  </View>
+                  <View style={MapStyles.modalTextBorder}>
+                    <Text style={MapStyles.modalText}>Difficulty: {this.state.markers[this.state.currentMarker].difficulty}</Text>
+                  </View>
+                  <View style={MapStyles.modalTextBorder}>
+                    <Text style={MapStyles.modalText}>Players: {this.state.markers[this.state.currentMarker].players}</Text>
+                  </View>
+                  <View style={MapStyles.modalTextBorder}>
+                    <Text style={MapStyles.modalText}>High-Score: {this.state.markers[this.state.currentMarker].hiscore} Points</Text>
+                  </View>
+                  <View style={MapStyles.modalTextBorder}>
+                    <Text style={MapStyles.modalText}>Your best score: {this.state.markers[this.state.currentMarker].score} Points</Text>
+                  </View>
+                  <View style={MapStyles.modalTextBorder}>
+                    <Text style={MapStyles.modalText}>Times played: {this.state.markers[this.state.currentMarker].timesPlayed}</Text>
+                  </View>
                 </View>
                 <View style={MapStyles.modalDescription}>
                   <Text style={MapStyles.modalText}>Description: {this.state.markers[this.state.currentMarker].description}</Text>
