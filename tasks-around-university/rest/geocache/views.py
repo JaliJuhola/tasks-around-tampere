@@ -29,7 +29,7 @@ class GeoCacheMainView(APIView):
             game_object.riddles_solved = game_object.riddles_solved + 1
             game_object.tries = 0
             game_object.save()
-            riddle = GeocacheRiddles.objects.filter(id=game_object.riddles_solved).first()
+            riddle = GeocacheRiddles.objects.filter(id=game_object.riddles_solved + 1).first()
             if riddle:
                 GeocacheChannels.riddle_solved(group.id, game_object.current_score, riddle.riddle, game_object.tries)
             else:
