@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import {Http} from '../core/connections/http';
+import { Actions } from 'react-native-router-flux';
 
 /*
  * A simple timer component that displays time elapsed since component mounting.
@@ -83,6 +84,11 @@ const geoStyles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
   },
+  textInput: {
+    backgroundColor: '#D3D3D3',
+    color: '#A9A9A9',
+
+  },
   headerText: {
     fontSize: 28
   }
@@ -95,13 +101,14 @@ export class GeocacheScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      answer_str: '',
+      answerStr: '',
       fails: 0,
       hintsUsed: 0,
       currentRiddle: "",
       current_score: 0,
       seconds: 0,
       minutes: 0,
+      triesLeft: 6,
 
     };
     this.activate_channels_new_riddle = this.activate_channels_new_riddle.bind(this);
@@ -113,9 +120,9 @@ export class GeocacheScreen extends Component {
 
   componentDidMount() {
       var self = this;
-      Http.get('api/geocache/',{answer: self.state.answer_str
+      Http.get('api/geocache/',{answer: self.state.answerStr
       }).then(function (response) {
-        this.setState({
+        self.setState({
           currentRiddle: response['data']['riddle'],
           groupId: response['data']['group_id']
         });
@@ -129,9 +136,19 @@ export class GeocacheScreen extends Component {
     channel.bind('new-riddle', function(data) {
       const riddle = data['riddle'];
       const current_score = data['current_score'];
-      that.setState(previousState => {
-      return { currentRiddle: riddle, currentScore: current_score};
-      });
+      const tries = data['tries'];
+      if(current_score === this.state.currentScore) {
+        if(!riddle || tries >= 6) {
+          Actions.main_map();
+        }
+        that.setState(previousState => {
+          return { triesLeft: this.state.triesLeft - 1, tries: 6 - tries};
+          });
+      } else {
+        that.setState(previousState => {
+          return { currentRiddle: riddle, currentScore: current_score, tries: 6 - tries};
+        });
+      }
     });
     return channel;
   }
@@ -140,13 +157,10 @@ export class GeocacheScreen extends Component {
   // Uses time (time), fails (int) and hintsUsed (int) for calculation.
   sendQuess = () => {
     var self = this;
-    Http.patch('api/geocache/',{answer: self.state.answer_str
+    Http.patch('api/geocache/',{answer: self.state.answerStr
     }).then(function (response) {
       if(!response['data']['status']) {
-        self.setState({fails: self.state.fails + 1, answer_str: ""});
-      } else {
-        self.setState({answer_str: ""});
-        alert("You are correct");
+        self.setState({answerStr: ""});
       }
     })
   }
@@ -171,8 +185,8 @@ export class GeocacheScreen extends Component {
           <View style={geoStyles.widget}>
             <TextInput
               placeholder="Type your answer here!"
-              onChangeText={(text) => this.setState({ answer_str: text })}
-              style={geoStyles.text}
+              onChangeText={(text) => this.setState({ answerStr: text })}
+              style={geoStyles.textInput}
             />
             <View style={geoStyles.buttonContainer}>
               <Button
@@ -186,6 +200,12 @@ export class GeocacheScreen extends Component {
             </View>
           </View>
           <View style={geoStyles.widget}>
+            <View>
+                <Text style={geoStyles.text}>{"Yritykset tässä kätkössä: " + this.state.fails }</Text>
+            </View>
+            <View>
+              <Text style={geoStyles.text}>{"Yrityksiä jäljellä: " + this.state.triesLeft}</Text>
+            </View>
             <Timer style={geoStyles.text} secs={this.state.seconds} mins={this.state.minutes}/>
           </View>
 

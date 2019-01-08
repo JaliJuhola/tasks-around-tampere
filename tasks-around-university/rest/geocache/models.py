@@ -9,6 +9,7 @@ class GeocacheMainGame(models.Model):
     current_score = models.IntegerField(default=0)
     game_ended = models.BooleanField(default=False)
     riddles_solved = models.IntegerField(default=0)
+    tries = models.IntegerField(default=0)
     class Meta:
         ordering = ('id',)
 
