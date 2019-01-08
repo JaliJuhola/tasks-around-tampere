@@ -43,7 +43,7 @@ class Timer extends Component {
   render() {
     return (
       <Text style={this.props.style}>
-        Time elapsed:
+        Aikaa kulunut:
         {this.state.mins}:
         {(this.state.secs < 10) ? ("0" + this.state.secs) : this.state.secs}
       </Text>
