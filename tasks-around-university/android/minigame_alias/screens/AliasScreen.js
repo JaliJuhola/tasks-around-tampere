@@ -48,7 +48,11 @@ export class AliasScreen extends React.Component {
           if(this.state.isLeader) {
             setTimeout(this.readyForNext, 5000);
           }
-          setTimeout(this.endRound, 13000);
+          setTimeout(this.endRound, 60000);
+          this.interval = setInterval(() => {
+            this.updateTotalTimer();
+           }, 3000);
+
         });
     }
 
@@ -86,7 +90,7 @@ export class AliasScreen extends React.Component {
 
     updateTotalTimer = () => {
         this.setState(prevState => ({
-            totalTimeElapsed: prevState.totalTimeElapsed + 0.5
+            totalTimeElapsed: prevState.totalTimeElapsed + 1
         }));
     }
 
@@ -118,28 +122,25 @@ export class AliasScreen extends React.Component {
     render() {
         return (
             <View style={AliasScreenStyles.container}>
-                <ProgressBar progress={(30 - this.state.timeElapsed) / 30} style={AliasScreenStyles.progressBar} />
+                <ProgressBar progress={(this.state.timeElapsed) / 20} style={AliasScreenStyles.progressBar} />
                 <Text style={AliasScreenStyles.text}>
-                  Pisteet: {this.state.score}
-                </Text>
-                <Text style={AliasScreenStyles.textCorrect}>
-                  {this.state.correctWord}
+                  Rymäsi pisteet: {this.state.score}
                 </Text>
                 <Text style={AliasScreenStyles.text}>
-                Selitettävä sana on: {this.state.currentWord}
+                {this.state.explainer ? "Selitettävä sana on: " + this.state.currentWord : "Et ole selittäjä!"}
                 </Text>
                 <TextInput
-                  disabled={this.state.textInputDisabled}
+                  disabled={this.state.explainer}
                   style={AliasScreenStyles.textInput}
                   placeholder='Kirjoita sana tänne'
                   value={this.state.textInput}
                   onChangeText={textInput => this.setState({ textInput })}
                   onSubmitEditing={() => this.checkGuess()}
                 />
-                <Button mode='contained' disabled={this.state.buttonDisabled} style={AliasScreenStyles.button} dark='true' onPress={() => this.checkGuess()}>
+                <Button mode='contained' disabled={this.state.explainer} style={AliasScreenStyles.button} dark='true' onPress={() => this.checkGuess()}>
                   Arvaa
                 </Button>
-                <Button mode='contained' disabled={this.state.nextWordDisabled} style={AliasScreenStyles.button} dark='true' onPress={() => this.readyForNext()}>
+                <Button mode='contained' disabled={this.state.explainer} style={AliasScreenStyles.button} dark='true' onPress={() => this.readyForNext()}>
                   Seuraava sana
                 </Button>
             </View>
