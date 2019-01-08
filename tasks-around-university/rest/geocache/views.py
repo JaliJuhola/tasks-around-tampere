@@ -24,7 +24,7 @@ class GeoCacheMainView(APIView):
             game_object.game_ended = True
             game_object.save()
             GeocacheChannels.riddle_solved(group.id, game_object.current_score, None, game_object.tries)
-        elif riddle.riddle == answer:
+        elif riddle.answer == answer:
             game_object.current_score = game_object.current_score + GEOCACHE_SCORE_TO_ADD
             game_object.riddles_solved = game_object.riddles_solved + 1
             game_object.tries = 0

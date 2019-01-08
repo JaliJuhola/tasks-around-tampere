@@ -310,7 +310,7 @@ export default class Map extends React.Component {
         marker.hiscore = response['data'][marker['title']]['world'];
         marker.timesPlayed = response['data'][marker['title']]['count'];
         if(marker.score > 0) {
-          marker.completed = true;
+          marker.timesPlayed = true;
         }
         return marker;
       });
@@ -321,7 +321,7 @@ export default class Map extends React.Component {
   render() {
     if(this.state.minigameMarkers.length < 1 || this.state.userMarkers.length < 1) {
       return (
-        <Loading message="Luodaan karttaa"></Loading>
+        <Loading message="Ladataan karttaa"></Loading>
       );
     }
     return (
