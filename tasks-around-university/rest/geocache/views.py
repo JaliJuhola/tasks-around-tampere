@@ -20,7 +20,7 @@ class GeoCacheMainView(APIView):
         status = False
         game_object = GeocacheMainGame.objects.filter(group=group).last()
         riddle = GeocacheRiddles.objects.get(id=game_object.riddles_solved + 1)
-        if game_object.tries >= MAX_TRIES:
+        if game_object.tries + 1 >= MAX_TRIES:
             game_object.game_ended = True
             game_object.save()
             GeocacheChannels.riddle_solved(group.id, game_object.current_score, None, game_object.tries)
