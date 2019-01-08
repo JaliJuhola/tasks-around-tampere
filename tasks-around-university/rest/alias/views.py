@@ -22,6 +22,7 @@ class AliasCloseGameView(APIView):
     def post(self, request):
         group = request.user.group
         game_object = models.AliasMainGame.objects.filter(group=group, game_ended=False).last()
+        AliasChannels.new_word(request.user.group.id, game_object.words_right, None, game_object.current_score, 1)
         game_object.game_ended = True
         game_object.save()
         return Response({
