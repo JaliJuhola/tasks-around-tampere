@@ -8,8 +8,13 @@ import CustomMapStyles from '../styles/CustomMapStyles.json';
 import RandomQuestions from './RandomQuestions';
 import TimerMixin from 'react-timer-mixin';
 import {Http} from '../../core/connections/http';
-import {getSocketConnection} from '../../common/minigame/Connection';
 import {Loading} from './Loading';
+var marker1 = require ('../assets/user_marker_1.png');
+var marker2 = require ('../assets/user_marker_2.png');
+var marker3 = require ('../assets/user_marker_3.png');
+var marker4 = require ('../assets/user_marker_4.png');
+var marker5 = require ('../assets/user_marker_5.png');
+var marker6 = require ('../assets/user_marker_6.png');
 
 
 
@@ -17,7 +22,6 @@ export default class Map extends React.Component {
   constructor(props) {
     super(props);
     // Common data should be abstracted later
-    this.pusher = getSocketConnection();
     // this.scoreHelper = new MiniGameScore(CommonData.getGroupId(), MINIGAME_KEY);
 
     this.state = {
@@ -32,12 +36,7 @@ export default class Map extends React.Component {
       minigameMarkers: [],
       userMarkers: [],
       images: [
-        require('../assets/user_marker_1.png'),
-        require('../assets/user_marker_2.png'),
-        require('../assets/user_marker_3.png'),
-        require('../assets/user_marker_4.png'),
-        require('../assets/user_marker_5.png'),
-        require('../assets/user_marker_6.png'),
+        marker1,marker2,marker3,marker4,marker5,marker6
       ],
       team: [
         {
@@ -258,7 +257,7 @@ export default class Map extends React.Component {
           name = "Leader " + user.name;
         }
         if(user.location != null) {
-          markerImage = this.state.images[0];
+          var markerImage = this.state.images[0];
           if(i <= 5) {
            markerImage = this.state.images[i];
           }
@@ -270,7 +269,7 @@ export default class Map extends React.Component {
               onPress={(e) => {e.stopPropagation();}}
               pinColor={color}
             >
-              <Image source={markerImage} style={MapStyles.userMarkerImage} />
+              {/* <Image source={markerImage} style={MapStyles.userMarkerImage} /> */}
               <MapView.Callout tooltip={true}>
                 <View style={MapStyles.userNameContainer}>
                   <Text style={MapStyles.userName}>
