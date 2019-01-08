@@ -105,9 +105,12 @@ const onBackAndroid = () => {
   if(Actions.currentScene === "scanner") {
     //-> map
   }
+<<<<<<< HEAD
 
   console.log("*************************************************");
   return true;
+=======
+>>>>>>> 385fccfc40d84735a46f83f24adf41b45fc6c699
 }
 const AppNavigator = () => (
   <Router
