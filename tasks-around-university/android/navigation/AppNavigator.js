@@ -76,10 +76,10 @@ const transitionConfig = () => ({
 const onBackAndroid = () => {
   console.log("*************************************************");
   console.log("Back Handler");
-  if(Actions.currentScene === "main_map") {
-    console.log("main_map scene asd");
-  }
-  if(Actions.currentScene === "start") {
+  // if(Actions.currentScene === "main_map") {
+    // console.log("main_map scene asd");
+  // }
+  if(Actions.currentScene === "start" || Actions.currentScene === "main_map") {
     Alert.alert(
       'Quit?',
       'Do you want to close the game?',
