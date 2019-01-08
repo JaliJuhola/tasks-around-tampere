@@ -126,23 +126,24 @@ export class GeocacheScreen extends Component {
           currentRiddle: response['data']['riddle'],
           groupId: response['data']['group_id']
         });
-        this.activate_channels_new_riddle();
+        self.activate_channels_new_riddle();
       })
   }
 
   activate_channels_new_riddle = () => {
     var that = this;
-    var channel = this.pusher.subscribe('geocache-' + that.state.groupId);
+    var channel = that.pusher.subscribe('geocache-' + that.state.groupId);
     channel.bind('new-riddle', function(data) {
+      console.log("hue");
       const riddle = data['riddle'];
       const current_score = data['current_score'];
       const tries = data['tries'];
-      if(current_score === this.state.currentScore) {
+      if(current_score === that.state.currentScore) {
         if(!riddle || tries >= 6) {
           Actions.main_map();
         }
         that.setState(previousState => {
-          return { triesLeft: this.state.triesLeft - 1, tries: 6 - tries};
+          return { triesLeft: that.state.triesLeft - 1, tries: 6 - tries};
           });
       } else {
         that.setState(previousState => {
@@ -159,10 +160,11 @@ export class GeocacheScreen extends Component {
     var self = this;
     Http.patch('api/geocache/',{answer: self.state.answerStr
     }).then(function (response) {
+      console.log(response['data']);
       if(!response['data']['status']) {
         self.setState({answerStr: ""});
       }
-    })
+    });
   }
 
   render() {

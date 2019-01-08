@@ -18,7 +18,7 @@ class GeoCacheMainView(APIView):
         answer = request.data['answer']
         group = request.user.group
         status = False
-        game_object = GeocacheMainGame.objects.filter(group=group, game_ended=False).last()
+        game_object = GeocacheMainGame.objects.filter(group=group).last()
         riddle = GeocacheRiddles.objects.get(id=game_object.riddles_solved + 1)
         if game_object.tries >= MAX_TRIES:
             game_object.game_ended = True
