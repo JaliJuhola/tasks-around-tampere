@@ -215,11 +215,10 @@ class MinigameProgressionView(APIView):
             total_score = total_score + push_the_buttons_group_max
         if ptbmg.first():
             push_the_buttons_max = ptbmg.first().current_score
+
         # geocache scores
         gcmg = GeocacheMainGame.objects.filter(game_ended=True).order_by('-current_score')
         gcmg_group= gcmg.filter(group=request.user.group).order_by('-current_score')
-        print(gcmg)
-        print(gcmg_group)
         if gcmg_group.first():
             geocache_group_max = gcmg_group.first().current_score
             geocache_group_count = gcmg_group.count()

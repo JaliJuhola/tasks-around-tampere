@@ -46,10 +46,11 @@ export default class PushTheButtonsScreen extends React.Component {
 			self.setState(previousState => (
 				{groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
         ));
-      }).then(() => {
-        this.active_channels_new_push()
-        this.activate_channels_push_completed()
-      });
+    }).then(() => {
+      this.active_channels_new_push()
+      this.activate_channels_push_completed()
+    });
+
       Http.get('api/me').then(function (response) {
         self.setState(previousState => (
           {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}

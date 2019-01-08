@@ -36,6 +36,9 @@ export class AliasScreen extends React.Component {
         }
         */
     }
+    basicScan = (scanned_item) => {
+        return scanned_item;
+    }
 
     checkGuess = () => {
         let guess = this.state.textInput.toLowerCase();

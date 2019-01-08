@@ -25,23 +25,6 @@ import {QuiklashScreen} from '../maingame/components/Quiklash';
 import {GeocacheScreen} from '../geocache/GeocacheScreen';
 import IconSelect from '../maingame/components/IconSelect';
 
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  tabBarStyle: {
-    backgroundColor: '#eee',
-  },
-  tabBarSelectedItemStyle: {
-    backgroundColor: '#ddd',
-  },
-});
-
 const reducerCreate = params => {
   const defaultReducer = new Reducer(params);
   return (state, action) => {

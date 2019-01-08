@@ -1,4 +1,3 @@
-import {MinigameEntry} from '../minigame/Channels';
 import { Actions } from 'react-native-router-flux';
 import {Http} from '../../core/connections/http';
 
@@ -31,8 +30,10 @@ class MiniGameEntry {
                 break;
             case "alias":
                 Actions.alias();
+                break;
             case "quiklash":
                 Actions.quiklash();
+                break;
             default:
                 console.log("invalid minigame_str in static enter_minigame(minigame_str)")
         }
