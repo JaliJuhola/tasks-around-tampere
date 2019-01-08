@@ -120,6 +120,7 @@ const onBackAndroid = () => {
   if(Actions.currentScene === "scanner") {
     Actions.MapScreen()
   }
+}
 const AppNavigator = () => (
   <Router
     createReducer={reducerCreate}
