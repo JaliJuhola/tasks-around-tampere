@@ -18,7 +18,7 @@ class MiniGameEntry {
             case "push_the_buttons":
             if(closing) {
                 Http.post('api/push_the_buttons', {}).then(function(){
-                    return Actions.push_the_buttons()
+                    return Actions.push_the_buttons();
                 })
             } else {
                 Actions.push_the_buttons()
@@ -28,7 +28,6 @@ class MiniGameEntry {
                 Http.post('api/geocache/', {}).then(function(){
                     return Actions.cache()
                 })
-                Actions.cache();
                 break;
             case "alias":
                 Actions.alias();
