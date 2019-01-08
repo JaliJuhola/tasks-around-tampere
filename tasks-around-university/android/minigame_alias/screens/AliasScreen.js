@@ -48,7 +48,7 @@ export class AliasScreen extends React.Component {
           if(this.state.isLeader) {
             setTimeout(this.readyForNext, 5000);
           }
-          setTimeout(this.endRound, 10000);
+          setTimeout(this.endRound, 13000);
         });
     }
 
@@ -80,12 +80,8 @@ export class AliasScreen extends React.Component {
     endRound = () => {
         var self = this;
         Http.post('api/alias/end').then(function (response) {
-            self.setState(previousState => (
-                {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
-        ));
-    }).then(() => {
-      this.activate_channels_alias();
-    });
+            alert("Peli loppui sinulla on " + this.state.score + " pistettä");
+        })
     }
 
     updateTotalTimer = () => {
