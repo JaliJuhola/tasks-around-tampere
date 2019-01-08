@@ -306,7 +306,6 @@ export default class Map extends React.Component {
     var self = this;
     Http.get('api/minigame/progression').then(function (response) {
       var newMarkers = self.state.markers.map((marker, i) =>  {
-        console.log(marker);
         marker.score = response['data'][marker['title']]['group'];
         marker.hiscore = response['data'][marker['title']]['world'];
         marker.timesPlayed = response['data'][marker['title']]['count'];

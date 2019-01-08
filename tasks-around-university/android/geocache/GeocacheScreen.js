@@ -115,8 +115,6 @@ export class GeocacheScreen extends Component {
       var self = this;
       Http.get('api/geocache/',{answer: self.state.answer_str
       }).then(function (response) {
-        console.log("RESPONSE IS");
-        console.log(response['data']['riddle']);
         this.setState({
           currentRiddle: response['data']['riddle'],
           groupId: response['data']['group_id']

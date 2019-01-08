@@ -45,15 +45,15 @@ const styles = StyleSheet.create({
 const reducerCreate = params => {
   const defaultReducer = new Reducer(params);
   return (state, action) => {
-    console.log('reducer: ACTION:', action);
+    // console.log('reducer: ACTION:', action);
     return defaultReducer(state, action);
   };
 };
 
 
 const stateHandler = (prevState, newState, action) => {
-  console.log(prevState);
-  console.log(newState);
+  // console.log(prevState);
+  // console.log(newState);
 };
 
 const getSceneStyle = () => ({

@@ -14,7 +14,6 @@ class MiniGameEntry {
         });
     }
     static enter_minigame(minigame_str, closing) {
-        console.log("minigame str is " + minigame_str)
         switch(minigame_str) {
             case "push_the_buttons":
             if(closing) {
