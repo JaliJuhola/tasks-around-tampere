@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, View, Image, Button } from 'react-native';
 import {Http} from '../core/connections/http';
 import { Actions } from 'react-native-router-flux';
-
+import {getSocketConnection} from '../common/minigame/Connection';
+import { Headline } from 'react-native-paper';
+import { Appbar, IconButton, Caption} from 'react-native-paper';
 /*
  * A simple timer component that displays time elapsed since component mounting.
  * Time is displayed in "min:secs" format.
@@ -64,7 +66,6 @@ const geoStyles = StyleSheet.create({
   },
   contents: {
     flex: 8,
-    justifyContent: 'space-around'
   },
   header: {
     alignItems: 'stretch',
@@ -76,13 +77,16 @@ const geoStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black',
     backgroundColor: tuniColor,
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     flex: 1/5,
-    marginHorizontal: 40
   },
   text: {
     color: 'white',
     textAlign: 'center',
+  },
+  subHeading: {
+    textAlign: 'center',
+    marginTop: '5%',
   },
   textInput: {
     backgroundColor: '#D3D3D3',
@@ -100,6 +104,7 @@ const geoStyles = StyleSheet.create({
 export class GeocacheScreen extends Component {
   constructor(props) {
     super(props);
+    this.pusher = getSocketConnection();
     this.state = {
       answerStr: '',
       fails: 0,
@@ -109,24 +114,32 @@ export class GeocacheScreen extends Component {
       seconds: 0,
       minutes: 0,
       triesLeft: 6,
-
+      groupId: 0,
+      playerId: 0,
+      playerName: 0,
+      groupName: 0,
     };
     this.activate_channels_new_riddle = this.activate_channels_new_riddle.bind(this);
     this.sendQuess = this.sendQuess.bind(this);
-
     // Save the starting time of the game (used in scoring).
     this.startTime = new Date().getTime();
   }
 
   componentDidMount() {
       var self = this;
+      Http.get('api/me').then(function (response) {
+        self.setState(previousState => (
+          {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
+          ));
+      }).then(() => {
+        self.activate_channels_new_riddle();
+      });
       Http.get('api/geocache/',{answer: self.state.answerStr
       }).then(function (response) {
         self.setState({
           currentRiddle: response['data']['riddle'],
           groupId: response['data']['group_id']
         });
-        self.activate_channels_new_riddle();
       })
   }
 
@@ -143,11 +156,11 @@ export class GeocacheScreen extends Component {
           Actions.main_map();
         }
         that.setState(previousState => {
-          return { triesLeft: that.state.triesLeft - 1, tries: 6 - tries};
+          return { triesLeft: 6-tries, fails: tries};
           });
       } else {
         that.setState(previousState => {
-          return { currentRiddle: riddle, currentScore: current_score, tries: 6 - tries};
+          return { currentRiddle: riddle, currentScore: current_score, fails: 6 - tries};
         });
       }
     });
@@ -166,25 +179,40 @@ export class GeocacheScreen extends Component {
       }
     });
   }
-
   render() {
     return (
       <View style={geoStyles.container}>
-        <View style={geoStyles.header}>
-          <Text style={[geoStyles.text, geoStyles.headerText]}>
-            Geocache
-            </Text>
-        </View>
+      		<Image
+          source={require('../assets/images/tay.jpg')}
+		  style={{justifyContent: 'center',position: 'absolute',top: 0,bottom: 0,zIndex: 0,height:'100%',width:'100%'}}
+		  blurRadius={1}
+        />
+      <Appbar.Header>
+        <Appbar.BackAction
+          onPress={() => Actions.main_map()}
+          >
+        </Appbar.BackAction>
+        <Appbar.Content
+          title={"Geocache"}
+          />
+      </Appbar.Header>
+        <Headline style={geoStyles.subHeading}>Vihje</Headline>
         <View style={geoStyles.contents}>
-
           <View style={geoStyles.widget}>
-            <View></View>
             <Text style={geoStyles.text}>
               {this.state.currentRiddle}
             </Text>
             <View></View>
           </View>
+          <Headline style={geoStyles.subHeading} >Arvauksesi</Headline>
           <View style={geoStyles.widget}>
+            <View>
+                <Text style={geoStyles.text}>{"Yritykset tässä kätkössä: " + this.state.fails }</Text>
+            </View>
+            <View>
+              <Text style={geoStyles.text}>{"Yrityksiä jäljellä: " + this.state.triesLeft}</Text>
+            </View>
+            <Timer style={geoStyles.text} secs={this.state.seconds} mins={this.state.minutes}/>
             <TextInput
               placeholder="Type your answer here!"
               onChangeText={(text) => this.setState({ answerStr: text })}
@@ -201,16 +229,6 @@ export class GeocacheScreen extends Component {
               />
             </View>
           </View>
-          <View style={geoStyles.widget}>
-            <View>
-                <Text style={geoStyles.text}>{"Yritykset tässä kätkössä: " + this.state.fails }</Text>
-            </View>
-            <View>
-              <Text style={geoStyles.text}>{"Yrityksiä jäljellä: " + this.state.triesLeft}</Text>
-            </View>
-            <Timer style={geoStyles.text} secs={this.state.seconds} mins={this.state.minutes}/>
-          </View>
-
         </View>
       </View>
     );

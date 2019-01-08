@@ -64,7 +64,5 @@ class GeoCacheExitView(APIView):
         game_object = GeocacheMainGame.objects.filter(group=group, game_ended=False).last()
         game_object.game_ended = True
         game_object.save()
-        GeocacheChannels.riddle_solved(group.id, game_object.current_score, None)
-        return Response({'status': True})
         GeocacheChannels.riddle_solved(group.id, game_object.current_score, None, 0)
         return Response({'status': True})
