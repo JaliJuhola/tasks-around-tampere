@@ -33,15 +33,15 @@ export class AliasScreen extends React.Component {
             isLeader: false,
 
         };
-        this.active_channels_new_push = this.active_channels_new_push.bind(this);
         this.pusher = getSocketConnection();
+        this.activate_channels_alias = this.activate_channels_alias.bind(this);
 
     }
     async componentDidMount() {
         var self = this;
         Http.get('api/me').then(function (response) {
                 self.setState(previousState => (
-                    {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name'], isLeader: ['data']['player']['leader']}
+                    {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name'], isLeader: response['data']['player']['leader']}
             ));
         }).then(() => {
           this.activate_channels_alias();
@@ -54,10 +54,10 @@ export class AliasScreen extends React.Component {
 
     activate_channels_alias = () => {
         var that = this;
-        var channel = this.pusher.subscribe('alias-' + that.state.groupId);
+        var channel = that.pusher.subscribe('alias-' + that.state.groupId);
         channel.bind('new-word', function(data) {
           if(!data['currentword']) {
-              alert("Peli loppui pisteesi olivat " + this.state.score);
+              alert("Peli loppui pisteesi olivat " + that.state.score);
               return Actions.main_map()
           }
           that.setState(previousState => {

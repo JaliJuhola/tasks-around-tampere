@@ -33,7 +33,6 @@ class MiniGameEntry {
                     return Actions.alias();
                 })
                 break;
-
             case "quiklash":
                 Actions.quiklash();
                 break;
