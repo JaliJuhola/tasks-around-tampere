@@ -35,12 +35,13 @@ class AliasWordListView(APIView):
     queryset = models.AliasWords.objects.all()
 
     def patch(self, request):
-        word = models.AliasWords.objects.all().order_by('?').first()
         game_object = models.AliasMainGame.objects.filter(group=request.user.group).last()
+        if game_object.game_ended:
+            AliasChannels.new_word(request.user.group.id, game_object.words_right, None, game_object.current_score, 1)
+        word = models.AliasWords.objects.all().order_by('?').first()
         game_object.words_right = game_object.words_right + 1
         game_object.current_score = game_object.current_score + 1
         game_object.save()
-        print(game_object.current_score)
         explainer = Player.objects.filter(group=request.user.group).order_by('?').first()
         AliasChannels.new_word(request.user.group.id, game_object.words_right, word.word, game_object.current_score, explainer.id)
         return Response({

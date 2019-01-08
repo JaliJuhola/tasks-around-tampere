@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { Button, Headline, TextInput, ProgressBar } from 'react-native-paper';
+import { Button, Headline, TextInput, ProgressBar, Appbar} from 'react-native-paper';
 
 import AliasScreenStyles from '../styles/AliasScreenStyles';
 import {Http} from '../../core/connections/http';
@@ -120,29 +120,42 @@ export class AliasScreen extends React.Component {
         });
     }
     render() {
+        var buttonColor = '#4e008e';
         return (
-            <View style={AliasScreenStyles.container}>
-                <ProgressBar progress={(this.state.timeElapsed) / 20} style={AliasScreenStyles.progressBar} />
-                <Text style={AliasScreenStyles.text}>
-                  Rymäsi pisteet: {this.state.score}
-                </Text>
-                <Text style={AliasScreenStyles.text}>
-                {this.state.explainer ? "Selitettävä sana on: " + this.state.currentWord : "Et ole selittäjä!"}
-                </Text>
-                <TextInput
-                  disabled={this.state.explainer}
-                  style={AliasScreenStyles.textInput}
-                  placeholder='Kirjoita sana tänne'
-                  value={this.state.textInput}
-                  onChangeText={textInput => this.setState({ textInput })}
-                  onSubmitEditing={() => this.checkGuess()}
-                />
-                <Button mode='contained' disabled={this.state.explainer} style={AliasScreenStyles.button} dark='true' onPress={() => this.checkGuess()}>
-                  Arvaa
-                </Button>
-                <Button mode='contained' disabled={this.state.explainer} style={AliasScreenStyles.button} dark='true' onPress={() => this.readyForNext()}>
-                  Seuraava sana
-                </Button>
+            <View>
+                <Appbar.Header>
+                    <Appbar.BackAction
+                    onPress={() => {
+                        Http.post('api/alias/end',{
+                        })
+                    }}
+                    >
+                    </Appbar.BackAction>
+                    <Appbar.Content
+                    title={"Alias"}
+                    />
+                </Appbar.Header>
+                <View style={AliasScreenStyles.container}>
+                    <ProgressBar progress={(this.state.timeElapsed) / 20} style={AliasScreenStyles.progressBar} />
+                    <Text style={AliasScreenStyles.text}>
+                    Rymäsi pisteet: {this.state.score}
+                    </Text>
+                    <Text style={AliasScreenStyles.text}>
+                    {this.state.explainer ? "Selitettävä sana on: " + this.state.currentWord : "Et ole selittäjä!"}
+                    </Text>
+                    <TextInput
+                    disabled={this.state.explainer}
+                    style={AliasScreenStyles.textInput}
+                    placeholder='Kirjoita sana tänne'
+                    value={this.state.textInput}
+                    onChangeText={textInput => this.setState({ textInput })}
+                    onSubmitEditing={() => this.checkGuess()}
+                    />
+                    <Button mode="contained" disabled={this.state.explainer} onPress={this.checkGuess} color={buttonColor} style={{marginTop: "10%",width: "60%", elevation: 1, opacity: 1}}>Arvaa
+                    </Button>
+                    <Button mode="contained" disabled={this.state.explainer} onPress={this.readyForNext} color={buttonColor} style={{width: "60%",marginTop: "10%", elevation: 1, opacity: 1}}>Seuraava sana
+                    </Button>
+                </View>
             </View>
         );
     }
