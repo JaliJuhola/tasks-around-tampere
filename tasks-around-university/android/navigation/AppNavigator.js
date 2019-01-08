@@ -76,10 +76,10 @@ const transitionConfig = () => ({
 const onBackAndroid = () => {
   console.log("*************************************************");
   console.log("Back Handler");
-  if(Actions.currentScene === "main_map") {
-    console.log("main_map scene asd");
-  }
-  if(Actions.currentScene === "start") {
+  // if(Actions.currentScene === "main_map") {
+    // console.log("main_map scene asd");
+  // }
+  if(Actions.currentScene === "start" || Actions.currentScene === "main_map") {
     Alert.alert(
       'Quit?',
       'Do you want to close the game?',
@@ -97,18 +97,29 @@ const onBackAndroid = () => {
     Actions.StartScreen();
   }
   if(Actions.currentScene === "Lobby") {
-    //-> map
+    Actions.MapScreen();
   }
-  if(Actions.currentScene === "Minigame") {
-    //-> map
+  //
+  //This might cause problems in multiplayer needs to be checked.
+  //
+  if(Actions.currentScene === "push_the_buttons" || Actions.currentScene === "quiklash" ||
+  Actions.currentScene === "alias" || Actions.currentScene === "cache") {
+    Alert.alert(
+      'Quit?',
+      'Do you want to close the game and go back to map? May cause bugs, recommend to play it trough with party.',
+      [
+        {
+          text: 'Yes',
+          onPress: () => Actions.MapScreen(),
+        },
+        { text: 'No', onPress: () => {} },
+      ],
+      { cancellable: false }
+    );
   }
   if(Actions.currentScene === "scanner") {
-    //-> map
+    Actions.MapScreen()
   }
-
-  console.log("*************************************************");
-  return true;
-}
 const AppNavigator = () => (
   <Router
     createReducer={reducerCreate}
