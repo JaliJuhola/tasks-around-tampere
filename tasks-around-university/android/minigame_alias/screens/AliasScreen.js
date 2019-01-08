@@ -115,7 +115,7 @@ export class AliasScreen extends React.Component {
     }
     readyForNext = () => {
         var self = this;
-        Http.patch('api/alias/score',{}).then(function (response) {
+        Http.get('api/alias/score',{}).then(function (response) {
             self.setState({textInput: ""});
         });
     }

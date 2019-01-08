@@ -35,7 +35,7 @@ class AliasWordListView(APIView):
     queryset = models.AliasWords.objects.all()
 
     def patch(self, request):
-        word = models.AliasWords.objects.filter("?")[:1]
+        word = models.AliasWords.objects.all().order_by('?').first()
         game_object = models.AliasMainGame.objects.filter(group=request.user.group, game_ended=False).last()
         game_object.words_right = game_object.words_right + 1
         game_object.current_score = game_object.current_score + 1
@@ -46,7 +46,7 @@ class AliasWordListView(APIView):
             'status': True
         })
     def get(self, request):
-        word = models.AliasWords.objects.filter("?")[:1]
+        word = models.AliasWords.objects.all().order_by('?').first()
         game_object = models.AliasMainGame.objects.filter(group=request.user.group, game_ended=False).last()
         game_object.save()
         explainer = Player.objects.filter(group=request.user.group).order_by('?').first()
