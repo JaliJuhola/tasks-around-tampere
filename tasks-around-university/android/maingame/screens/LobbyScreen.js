@@ -52,8 +52,6 @@ export default class LobbyScreen extends React.Component {
 		clearInterval(this.interval);
 	}
 	toTarget = () => {
-		console.log("datat");
-		console.log(this.target_action);
 		var self = this;
 		Http.post('api/lobby/close',{lobby_id: this.state.lobby_id}).then(function (response) {
 			MiniGameEntry.enter_minigame(self.state.target_action, true);

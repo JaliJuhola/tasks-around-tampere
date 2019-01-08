@@ -24,7 +24,6 @@ export class QuiklashScreen extends React.Component {
   playerReady(){
     //Player is ready, get info when others are ready from server
     //Also get the first question
-    console.log(this.state.temp);
     if(this.state.view == 1){
       this.setState({
         view : 0,
