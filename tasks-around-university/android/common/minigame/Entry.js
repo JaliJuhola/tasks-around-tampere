@@ -29,8 +29,11 @@ class MiniGameEntry {
                 })
                 break;
             case "alias":
-                Actions.alias();
+                Http.post('api/alias/start', {}).then(function(){
+                    return Actions.alias();
+                })
                 break;
+
             case "quiklash":
                 Actions.quiklash();
                 break;

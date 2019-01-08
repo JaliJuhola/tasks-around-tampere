@@ -1,80 +1,150 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { Button, Headline, TextInput } from 'react-native-paper';
+import { Button, Headline, TextInput, ProgressBar } from 'react-native-paper';
 
 import AliasScreenStyles from '../styles/AliasScreenStyles';
+import {Http} from '../../core/connections/http';
+import {getSocketConnection} from '../../common/minigame/Connection';
+import { Actions } from 'react-native-router-flux';
 
 export class AliasScreen extends React.Component {
-    state = {
-        words: ['sininen', 'hääyöaie', 'fileesuikale', 'kanawokki', 'ruutupaperi'],
-        textInput: '',
-        currentWord: 'apua',
-        correctWord: '',
-        explainer: true,
-        buttonDisabled: false,
-        textInputDisabled: false,
-    };
 
-    updateText = () => {
-        let rnd = Math.floor(Math.random() * 5);
-        // backendiin tarkistus ettei tule kahta samaa
-        while (this.state.words[rnd] == this.state.currentWord) {
-            rnd = Math.floor(Math.random() * 5);
-        }
-        this.setState({currentWord: this.state.words[rnd]});
-        this.setState({correctWord: ''});
-        //this.setState({currentWord: 'hälytys apua:D'});
+    constructor(props) {
+        super(props);
+        this.state = {
+            words: '',
+            textInput: '',
+            currentWord: 'Peli alkaa hetken kuluttua!',
+            correctWord: ' ',
+            explainer: true,
+            timeElapsed: 0,
+            totalTimeElapsed: 0,
+            score: 0,
+            latestScore: 0,
+            scoreTimer: '',
+            wordTimeout: '',
+            readyCheck: '',
+            remainingTimeout: '',
+            debug: '',
+            groupId: 0,
+            playerId: 0,
+            playerName: 0,
+            groupName: 0,
+            isLeader: false,
 
-        /*
-        if (this.state.explainer) {
-            this.setState({buttonDisabled: true});
-            this.setState({textInputDisabled: true});
-        }
-        else {
-            this.setState({buttonDisabled: false});
-            this.setState({textInputDisabled: false});
-        }
-        */
+        };
+        this.active_channels_new_push = this.active_channels_new_push.bind(this);
+        this.pusher = getSocketConnection();
+
     }
-    basicScan = (scanned_item) => {
-        return scanned_item;
+    async componentDidMount() {
+        var self = this;
+        Http.get('api/me').then(function (response) {
+                self.setState(previousState => (
+                    {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name'], isLeader: ['data']['player']['leader']}
+            ));
+        }).then(() => {
+          this.activate_channels_alias();
+          if(this.state.isLeader) {
+            setTimeout(this.readyForNext, 5000);
+          }
+          setTimeout(this.endRound, 10000);
+        });
     }
 
+    activate_channels_alias = () => {
+        var that = this;
+        var channel = this.pusher.subscribe('alias-' + that.state.groupId);
+        channel.bind('new-word', function(data) {
+          if(!data['currentword']) {
+              alert("Peli loppui pisteesi olivat " + this.state.score);
+              return Actions.main_map()
+          }
+          that.setState(previousState => {
+            return { currentWord: data['currentword'], score: data['current_score']};
+          });
+          if(that.state.playerId === data['target']) {
+            that.setState(previousState => {
+              return { correctWord: data['currentword']};
+              });
+          } else {
+            that.setState(previousState => {
+                return { correctWord: "Et ole selittäjä"};
+            });
+          }
+        });
+        return channel;
+      }
+
+
+    endRound = () => {
+        var self = this;
+        Http.post('api/alias/end').then(function (response) {
+            self.setState(previousState => (
+                {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
+        ));
+    }).then(() => {
+      this.activate_channels_alias();
+    });
+    }
+
+    updateTotalTimer = () => {
+        this.setState(prevState => ({
+            totalTimeElapsed: prevState.totalTimeElapsed + 0.5
+        }));
+    }
+
+    // This function updates score followingly: <=10s elapsed gives 500 points,
+    // 30s elapsed (max time per word) gives 100 points, everything in between is linearly determined
+
+    // This function checks if user's guess was right or wrong and updates things accordingly
     checkGuess = () => {
-        let guess = this.state.textInput.toLowerCase();
-        if (guess == this.state.currentWord) {
-            this.updateText();
-            this.setState({textInput: ''});
-            this.setState({correctWord: 'Correct!'});
-        }
-        else {
-            this.setState({textInput: ''});
-            this.setState({correctWord: 'Wrong! :('});
+        var self = this;
+        if (this.state.currentWord != "Peli loppui") {
+            let guess = this.state.textInput.toLowerCase();
+            if (guess == this.state.correctWord) {
+                alert("Arvasit oikein!");
+                Http.patch('api/alias/score',{}).then(function (response) {
+                  self.setState({textInput: ""});
+                });
+            }
+            else {
+                alert("Arvasit väärin!");
+            }
         }
     }
-
+    readyForNext = () => {
+        var self = this;
+        Http.patch('api/alias/score',{}).then(function (response) {
+            self.setState({textInput: ""});
+        });
+    }
     render() {
         return (
             <View style={AliasScreenStyles.container}>
+                <ProgressBar progress={(30 - this.state.timeElapsed) / 30} style={AliasScreenStyles.progressBar} />
+                <Text style={AliasScreenStyles.text}>
+                  Pisteet: {this.state.score}
+                </Text>
                 <Text style={AliasScreenStyles.textCorrect}>
-                  {this.state.correctWord}
+                  {this.state.correctWord} +{this.state.latestScore}
                 </Text>
                 <Text style={AliasScreenStyles.text}>
-                  {this.state.currentWord}
+                Selitettävä sana on: {this.state.currentWord}
                 </Text>
                 <TextInput
                   disabled={this.state.textInputDisabled}
                   style={AliasScreenStyles.textInput}
-                  placeholder='Guess the word!'
+                  placeholder='Kirjoita sana tänne'
                   value={this.state.textInput}
                   onChangeText={textInput => this.setState({ textInput })}
                   onSubmitEditing={() => this.checkGuess()}
                 />
                 <Button mode='contained' disabled={this.state.buttonDisabled} style={AliasScreenStyles.button} dark='true' onPress={() => this.checkGuess()}>
-                  Submit your guess
+                  Arvaa
                 </Button>
-                <Button mode='contained' style={AliasScreenStyles.button} dark='true' onPress={() => this.updateText()}>
-                  Next word
+                <Button mode='contained' disabled={this.state.nextWordDisabled} style={AliasScreenStyles.button} dark='true' onPress={() => this.readyForNext()}>
+                  Seuraava sana
                 </Button>
             </View>
         );

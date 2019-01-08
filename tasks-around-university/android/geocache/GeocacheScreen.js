@@ -187,7 +187,7 @@ export class GeocacheScreen extends Component {
   // Uses time (time), fails (int) and hintsUsed (int) for calculation.
   sendQuess = () => {
     var self = this;
-    Http.patch('api/geocache/',{answer: self.state.scannedItem
+    Http.patch('api/alias/score',{answer: self.state.scannedItem
     }).then(function (response) {
       self.setState({scannedItem: ""});
       if(!response['data']['status']) {

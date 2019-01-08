@@ -1,15 +1,7 @@
 import React from 'react';
-import { ExpoLinksView } from '@expo/samples';
-import axios from 'axios';
-import {GlobalStorage} from '../../core/store/store';
 import {
-  Image,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  Modal,
   View,
   Button,
 } from 'react-native';
