@@ -15,6 +15,8 @@ import json
 from django.utils import timezone
 from rest.push_the_buttons.models import PushTheButtonsMainGame
 from rest.geocache.models import GeocacheMainGame
+from rest.alias.models import AliasMainGame
+
 
 class AuthView(APIView):
     """
@@ -226,6 +228,17 @@ class MinigameProgressionView(APIView):
             total_score = total_score + geocache_max
         if gcmg.first():
             geocache_max = gcmg.first().current_score
+
+        # alias scores
+        amg = AliasMainGame.objects.filter(game_ended=True).order_by('-current_score')
+        amg_group= amg.filter(group=request.user.group).order_by('-current_score')
+        if amg_group.first():
+            alias_group_max = amg_group.first().current_score
+            alias_group_count = amg_group.count()
+            minigames_completed = minigames_completed + 1
+            total_score = total_score + geocache_max
+        if amg.first():
+            alias_max = amg.first().current_score
 
         print({'group': geocache_group_max, 'world': geocache_max, 'count': geocache_group_count})
         return Response({'Push the buttons': {'group': push_the_buttons_group_max, 'world': push_the_buttons_max, 'count': push_the_buttons_group_count}, 'Alias': {'group': alias_group_max, 'world': alias_max, 'count': alias_group_count}, 'Quiklash': {'group': quiklash_group_max, 'world': quiklash_max, 'count': quiklash_group_count}, 'GeoCache': {'group': geocache_group_max, 'world': geocache_max, 'count': geocache_group_count}, 'total_score': total_score, 'completion_percentage': minigames_completed/TOTAL_MINIGAMES})
