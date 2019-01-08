@@ -65,11 +65,11 @@ export class AliasScreen extends React.Component {
           });
           if(that.state.playerId === data['target']) {
             that.setState(previousState => {
-              return { correctWord: data['currentword']};
+              return { correctWord: data['currentword'], explainer: true};
               });
           } else {
             that.setState(previousState => {
-                return { correctWord: "Et ole selittäjä"};
+                return { correctWord: "Et ole selittäjä", explainer:false};
             });
           }
         });
@@ -98,7 +98,7 @@ export class AliasScreen extends React.Component {
         var self = this;
         if (this.state.currentWord != "Peli loppui") {
             let guess = this.state.textInput.toLowerCase();
-            if (guess == this.state.correctWord) {
+            if (guess === this.state.correctWord.toLowerCase()) {
                 alert("Arvasit oikein!");
                 Http.patch('api/alias/score',{}).then(function (response) {
                   self.setState({textInput: ""});
@@ -123,7 +123,7 @@ export class AliasScreen extends React.Component {
                   Pisteet: {this.state.score}
                 </Text>
                 <Text style={AliasScreenStyles.textCorrect}>
-                  {this.state.correctWord} +{this.state.latestScore}
+                  {this.state.correctWord}
                 </Text>
                 <Text style={AliasScreenStyles.text}>
                 Selitettävä sana on: {this.state.currentWord}
