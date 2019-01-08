@@ -222,7 +222,7 @@ class MinigameProgressionView(APIView):
         print(gcmg_group)
         if gcmg_group.first():
             geocache_group_max = gcmg_group.first().current_score
-            geocache_group_count = ptbmg_group.count()
+            geocache_group_count = gcmg_group.count()
             minigames_completed = minigames_completed + 1
             total_score = total_score + geocache_max
         if gcmg.first():
