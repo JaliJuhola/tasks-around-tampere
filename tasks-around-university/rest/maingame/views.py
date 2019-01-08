@@ -225,5 +225,5 @@ class MinigameProgressionView(APIView):
             total_score = total_score + geocache_max
         if gcmg.first():
             geocache_max = gcmg.first().current_score
-
+        print({'group': geocache_group_max, 'world': geocache_max, 'count': geocache_group_count})
         return Response({'Push the buttons': {'group': push_the_buttons_group_max, 'world': push_the_buttons_max, 'count': push_the_buttons_group_count}, 'Alias': {'group': alias_group_max, 'world': alias_max, 'count': alias_group_count}, 'Quiklash': {'group': quiklash_group_max, 'world': quiklash_max, 'count': quiklash_group_count}, 'GeoCache': {'group': geocache_group_max, 'world': geocache_max, 'count': geocache_group_count}, 'total_score': total_score, 'completion_percentage': minigames_completed/TOTAL_MINIGAMES})
