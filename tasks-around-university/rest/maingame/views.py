@@ -8,14 +8,13 @@ from rest.maingame.serializers import HotspotSerializer, PlayerSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.authtoken.models import Token
 from rest.maingame.channels import WaitingPlayersToJoinChannels
 import uuid
 from rest.common.channels import PUSHER_CLIENT
 import json
 from django.utils import timezone
 from rest.push_the_buttons.models import PushTheButtonsMainGame
+from rest.geocache.models import GeocacheMainGame
 
 class AuthView(APIView):
     """
@@ -206,7 +205,7 @@ class MinigameProgressionView(APIView):
         geocache_group_max = 0
         geocache_max = 0
         geocache_group_count = 0
-
+        # Push the buttons scores
         ptbmg = PushTheButtonsMainGame.objects.filter(game_ended=True).order_by('-current_score')
         ptbmg_group = ptbmg.filter(group=request.user.group).order_by('-current_score')
         if ptbmg_group.first():
@@ -216,5 +215,15 @@ class MinigameProgressionView(APIView):
             total_score = total_score + push_the_buttons_group_max
         if ptbmg.first():
             push_the_buttons_max = ptbmg.first().current_score
+        # geocache scores
+        gcmg = GeocacheMainGame.objects.filter(game_ended=True).order_by('-current_score')
+        gcmg_group= gcmg.filter(group=request.user.group).order_by('-current_score')
+        if gcmg_group.first():
+            geocache_max = gcmg_group.first().current_score
+            geocache_group_count = ptbmg_group.count()
+            minigames_completed = minigames_completed + 1
+            total_score = total_score + geocache_max
+        if gcmg.first():
+            geocache_max = gcmg.first().current_score
 
         return Response({'Push the buttons': {'group': push_the_buttons_group_max, 'world': push_the_buttons_max, 'count': push_the_buttons_group_count}, 'Alias': {'group': alias_group_max, 'world': alias_max, 'count': alias_group_count}, 'Quiklash': {'group': quiklash_group_max, 'world': quiklash_max, 'count': quiklash_group_count}, 'GeoCache': {'group': geocache_group_max, 'world': geocache_max, 'count': geocache_group_count}, 'total_score': total_score, 'completion_percentage': minigames_completed/TOTAL_MINIGAMES})

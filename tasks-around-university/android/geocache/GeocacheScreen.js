@@ -147,17 +147,21 @@ export class GeocacheScreen extends Component {
     var that = this;
     var channel = that.pusher.subscribe('geocache-' + that.state.groupId);
     channel.bind('new-riddle', function(data) {
-      console.log("hue");
       const riddle = data['riddle'];
       const current_score = data['current_score'];
       const tries = data['tries'];
       if(current_score === that.state.currentScore) {
-        if(!riddle || tries >= 6) {
+        if(tries >= 6) {
+          alert("Arvauksesi loppuivat!");
+          Actions.main_map();
+        }
+        if(!riddle) {
+          alert("Peli loppui!");
           Actions.main_map();
         }
         that.setState(previousState => {
           return { triesLeft: 6-tries, fails: tries};
-          });
+        });
       } else {
         that.setState(previousState => {
           return { currentRiddle: riddle, currentScore: current_score, fails: 6 - tries};
@@ -173,7 +177,6 @@ export class GeocacheScreen extends Component {
     var self = this;
     Http.patch('api/geocache/',{answer: self.state.answerStr
     }).then(function (response) {
-      console.log(response['data']);
       if(!response['data']['status']) {
         self.setState({answerStr: ""});
       }
@@ -189,7 +192,10 @@ export class GeocacheScreen extends Component {
         />
       <Appbar.Header>
         <Appbar.BackAction
-          onPress={() => Actions.main_map()}
+          onPress={() => {
+            Http.post('api/geocache/exit/',{
+            })
+          }}
           >
         </Appbar.BackAction>
         <Appbar.Content
