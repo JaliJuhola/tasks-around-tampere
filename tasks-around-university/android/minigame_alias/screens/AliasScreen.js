@@ -32,6 +32,7 @@ export class AliasScreen extends React.Component {
             groupName: 0,
             isLeader: false,
 
+
         };
         this.pusher = getSocketConnection();
         this.activate_channels_alias = this.activate_channels_alias.bind(this);
@@ -92,12 +93,26 @@ export class AliasScreen extends React.Component {
         this.setState(prevState => ({
             totalTimeElapsed: prevState.totalTimeElapsed + 1
         }));
+
+        };
     }
-
-    // This function updates score followingly: <=10s elapsed gives 500 points,
-    // 30s elapsed (max time per word) gives 100 points, everything in between is linearly determined
-
-    // This function checks if user's guess was right or wrong and updates things accordingly
+    async componentDidMount() {
+        var self = this;
+        Http.get('api/me').then(function (response) {
+                self.setState(previousState => (
+                    {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name'], isLeader: response['data']['player']['leader']}
+            ));
+        }).then(() => {
+          this.activate_channels_alias();
+          if(this.state.isLeader) {
+            setTimeout(this.readyForNext, 5000);
+          }
+          setTimeout(this.endRound, 60000);
+          this.interval = setInterval(() => {
+            this.updateTotalTimer();
+           }, 3000);
+        });
+    }
     checkGuess = () => {
         var self = this;
         if (this.state.currentWord != "Peli loppui") {
