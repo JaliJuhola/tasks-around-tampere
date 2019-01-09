@@ -135,7 +135,6 @@ export class AliasScreen extends React.Component {
                     title={"Alias"}
                     />
                 </Appbar.Header>
-
                 <View style={AliasScreenStyles.container}>
                     <ProgressBar progress={(this.state.timeElapsed) / 20} style={AliasScreenStyles.progressBar} />
                     <Text style={AliasScreenStyles.text}>

@@ -123,7 +123,7 @@ export default class PushTheButtonsScreen extends React.Component {
 			  </Appbar.BackAction>
 			  <Appbar.Content
 			  title={this.state.groupName + "(" + this.state.groupId + ")" }
-			  subtitle="Aula"
+			  subtitle="Push the buttons"
 			  subtitleStyle={{marginTop: -5, opacity: 1}}
 			  />
 		    </Appbar.Header>

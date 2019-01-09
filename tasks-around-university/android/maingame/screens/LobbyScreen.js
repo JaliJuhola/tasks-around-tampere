@@ -120,7 +120,7 @@ export default class LobbyScreen extends React.Component {
 		<Image
           source={require('../../assets/images/tay.jpg')}
 		  style={{justifyContent: 'center',position: 'absolute',top: 0,bottom: 0,zIndex: 0,height:'100%',width:'100%'}}
-		  blurRadius={1}
+		  blurRadius={2}
         />
         <Appbar.Header style={LobbyScreenStyles.appbar}>
 			<Appbar.BackAction
