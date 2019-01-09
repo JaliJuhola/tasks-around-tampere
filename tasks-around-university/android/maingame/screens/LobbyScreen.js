@@ -15,8 +15,6 @@ export default class LobbyScreen extends React.Component {
 		this.state = {
 			lobby_id: props['data']['lobby_id'],
 			target_action: props['data']['minigame_target_str'],
-			gamename: 'Testipeli',
-			playercount: 3,
 			loadingColor: "#17a2b8",
 			groupsize: 4,
 			isLeader: false,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { Button, Headline, TextInput, ProgressBar, Appbar} from 'react-native-paper';
 
 import AliasScreenStyles from '../styles/AliasScreenStyles';
@@ -135,6 +135,7 @@ export class AliasScreen extends React.Component {
                     title={"Alias"}
                     />
                 </Appbar.Header>
+
                 <View style={AliasScreenStyles.container}>
                     <ProgressBar progress={(this.state.timeElapsed) / 20} style={AliasScreenStyles.progressBar} />
                     <Text style={AliasScreenStyles.text}>

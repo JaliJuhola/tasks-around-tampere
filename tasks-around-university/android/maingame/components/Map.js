@@ -343,8 +343,10 @@ export default class Map extends React.Component {
         marker.score = response['data'][marker['title']]['group'];
         marker.hiscore = response['data'][marker['title']]['world'];
         marker.timesPlayed = response['data'][marker['title']]['count'];
-        if(marker.score > 0) {
-          marker.timesPlayed = true;
+        if(marker.timesPlayed > 0) {
+          marker.completed = true;
+        } else {
+
         }
         return marker;
       });

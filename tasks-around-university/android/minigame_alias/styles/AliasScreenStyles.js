@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
         paddingTop: '10%',
         //justifyContent: 'center',
         alignItems: 'center',
-    }, 
+    },
     button:{
         width: '90%',
         marginBottom: 20,
