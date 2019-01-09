@@ -1,4 +1,3 @@
-import {MinigameEntry} from '../minigame/Channels';
 import { Actions } from 'react-native-router-flux';
 import {Http} from '../../core/connections/http';
 
@@ -14,12 +13,11 @@ class MiniGameEntry {
         });
     }
     static enter_minigame(minigame_str, closing) {
-        console.log("minigame str is " + minigame_str)
         switch(minigame_str) {
             case "push_the_buttons":
             if(closing) {
                 Http.post('api/push_the_buttons', {}).then(function(){
-                    return Actions.push_the_buttons()
+                    return Actions.push_the_buttons();
                 })
             } else {
                 Actions.push_the_buttons()
@@ -29,12 +27,15 @@ class MiniGameEntry {
                 Http.post('api/geocache/', {}).then(function(){
                     return Actions.cache()
                 })
-                Actions.cache();
                 break;
             case "alias":
-                Actions.alias();
+                Http.post('api/alias/start', {}).then(function(){
+                    return Actions.alias();
+                })
+                break;
             case "quiklash":
                 Actions.quiklash();
+                break;
             default:
                 console.log("invalid minigame_str in static enter_minigame(minigame_str)")
         }

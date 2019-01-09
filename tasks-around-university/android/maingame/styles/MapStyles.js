@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
         height: '40%',
         borderTopWidth: 3,
         borderColor: '#6200ee',
+        marginTop: 40,
     },
     modalTextContainer: {
         alignSelf: 'center',

@@ -13,6 +13,7 @@ import uuid
 from rest.push_the_buttons.channels import PushTheButtonsChannels
 from rest.push_the_buttons.models import PushTheButtonsMainGame
 from django.utils import timezone
+from rest.push_the_buttons.channels import PushTheButtonsChannels
 
 PUSH_THE_BUTTONS_SCORE_TO_ADD = 1
 SECONDS_TO_PUSH = 10

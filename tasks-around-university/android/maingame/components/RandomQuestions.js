@@ -2,43 +2,27 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, Button, Animated, TouchableHighlight } from 'react-native';
 import MapStyles from '../styles/MapStyles';
 import TimerMixin from 'react-timer-mixin';
+import QuestionData from './QuestionData.json';
 
 export default class RandomQuestions extends React.Component {
 
   state = {
 
-    intervalId: null,
     markerNearUser: false,
     userIsLeader: true,
     currentQuestionIndex: 0,
     currentQuestion: null,
-    currentAnswer1: null,
-    currentAnswer2: null,
     intervalOn: false,
+    intervalId: null,
     intervalChance: 0.35,
     intervalDuration: 15000,
+    closingDuration: 25000,
+    closingId: null,
     questionIsHidden: true,
 
     questionSlideValue: new Animated.Value(-200),
 
-    questions: [
-      {
-        questionText: 'Quick question: Yes or no?',
-        answerText1: 'Yes',
-        answerText2: 'No',
-
-      },
-      {
-        questionText: 'Quick question: Does pineapple belong on pizza?',
-        answerText1: 'Of course!',
-        answerText2: 'NO!',
-      },
-      {
-        questionText: 'Quick question: Is the glass half empty or half full?',
-        answerText1: 'Half full',
-        answerText2: 'Half empty',
-      },
-    ],
+    questions: QuestionData.questions,
   };
 
   componentDidMount() {
@@ -95,6 +79,7 @@ export default class RandomQuestions extends React.Component {
             //Removing the question from the array so that the same question cannot be chosen again
             this.removeQuestion(this.state.currentQuestionIndex);
 
+            this.startClosingTimer();
             this.toggleQuestionView()
           }
         }
@@ -106,6 +91,18 @@ export default class RandomQuestions extends React.Component {
     }
   }
 
+  startClosingTimer() {
+    id = TimerMixin.setInterval(() => {
+
+      clearInterval(this.state.closingId);
+      if(!this.state.questionIsHidden) {
+        this.handleRandomQuestions();
+        this.toggleQuestionView();
+      }
+    }, this.state.closingDuration)
+    this.setState({closingId: id});
+  }
+  
   //Returns true or false based on the odds
   getOdds(odds) {
     d = Math.random();
@@ -134,23 +131,12 @@ export default class RandomQuestions extends React.Component {
                   style={MapStyles.answerButton}
                   onPress={() => {
                     if(!this.state.questionIsHidden) {
+                      clearInterval(this.state.closingId);
                       this.handleRandomQuestions();
                       this.toggleQuestionView();
                     }
                   }}>
-                  <Text style={MapStyles.answerText}>{this.state.currentAnswer1}</Text>
-              </TouchableHighlight>
-
-              <TouchableHighlight
-                  underlayColor= 'white'
-                  style={MapStyles.answerButton}
-                  onPress={() => {
-                    if(!this.state.questionIsHidden) {
-                      this.handleRandomQuestions();
-                      this.toggleQuestionView();
-                    }
-                  }}>
-                  <Text style={MapStyles.answerText}>{this.state.currentAnswer2}</Text>
+                  <Text style={MapStyles.answerText}>Close</Text>
               </TouchableHighlight>
             </View>
         </Animated.View>

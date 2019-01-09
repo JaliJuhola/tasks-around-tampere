@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, StyleSheet, Text, View, Image, Button } from 'react-native';
+import { TextInput } from 'react-native-paper';
+
 import {Http} from '../core/connections/http';
+import { Actions } from 'react-native-router-flux';
+import {getSocketConnection} from '../common/minigame/Connection';
+import { Headline } from 'react-native-paper';
+import { Appbar, IconButton, Caption} from 'react-native-paper';
+import Scanner from '../maingame/components/Scanner';
 
 /*
  * A simple timer component that displays time elapsed since component mounting.
@@ -36,7 +43,7 @@ class Timer extends Component {
   render() {
     return (
       <Text style={this.props.style}>
-        Time elapsed:
+        Aikaa kulunut:
         {this.state.mins}:
         {(this.state.secs < 10) ? ("0" + this.state.secs) : this.state.secs}
       </Text>
@@ -52,7 +59,9 @@ const tuniColor = '#4e008e';
  */
 const geoStyles = StyleSheet.create({
   button: {
-    color: 'black'
+    color: 'black',
+    marginTop: 80,
+    borderColor: 'black',
   },
   buttonContainer: {
     marginHorizontal: 40,
@@ -63,7 +72,6 @@ const geoStyles = StyleSheet.create({
   },
   contents: {
     flex: 8,
-    justifyContent: 'space-around'
   },
   header: {
     alignItems: 'stretch',
@@ -75,13 +83,21 @@ const geoStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black',
     backgroundColor: tuniColor,
-    justifyContent: 'center',
-    flex: 1/5,
-    marginHorizontal: 40
+    justifyContent: 'space-around',
+    flex: 3,
   },
   text: {
     color: 'white',
     textAlign: 'center',
+  },
+  subHeading: {
+    textAlign: 'center',
+    marginTop: '5%',
+  },
+  textInput: {
+    backgroundColor: '#D3D3D3',
+    color: '#A9A9A9',
+
   },
   headerText: {
     fontSize: 28
@@ -94,46 +110,75 @@ const geoStyles = StyleSheet.create({
 export class GeocacheScreen extends Component {
   constructor(props) {
     super(props);
+    this.pusher = getSocketConnection();
     this.state = {
-      answer_str: '',
+      answerStr: '',
       fails: 0,
+      scannerOpen: false,
       hintsUsed: 0,
       currentRiddle: "",
-      current_score: 0,
+      currentScore: 0,
       seconds: 0,
       minutes: 0,
-
+      triesLeft: 6,
+      groupId: 0,
+      playerId: 0,
+      playerName: 0,
+      groupName: 0,
+      scannedItem: "",
     };
     this.activate_channels_new_riddle = this.activate_channels_new_riddle.bind(this);
     this.sendQuess = this.sendQuess.bind(this);
-
+    this.basicScan = this.basicScan.bind(this);
     // Save the starting time of the game (used in scoring).
     this.startTime = new Date().getTime();
   }
 
   componentDidMount() {
       var self = this;
-      Http.get('api/geocache/',{answer: self.state.answer_str
+      Http.get('api/me').then(function (response) {
+        self.setState(previousState => (
+          {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
+          ));
+      }).then(() => {
+        self.activate_channels_new_riddle();
+      });
+      Http.get('api/geocache/',{answer: self.state.answerStr
       }).then(function (response) {
-        console.log("RESPONSE IS");
-        console.log(response['data']['riddle']);
-        this.setState({
+        self.setState({
           currentRiddle: response['data']['riddle'],
           groupId: response['data']['group_id']
         });
-        this.activate_channels_new_riddle();
       })
   }
-
+  basicScan = (scanned_item) => {
+      this.setState({scannedItem: scanned_item, scannerOpen: false})
+      return scanned_item;
+  }
   activate_channels_new_riddle = () => {
     var that = this;
-    var channel = this.pusher.subscribe('geocache-' + that.state.groupId);
+    var channel = that.pusher.subscribe('geocache-' + that.state.groupId);
     channel.bind('new-riddle', function(data) {
       const riddle = data['riddle'];
       const current_score = data['current_score'];
-      that.setState(previousState => {
-      return { currentRiddle: riddle, currentScore: current_score};
-      });
+      const tries = data['tries'];
+      if(current_score === that.state.currentScore) {
+        if(tries >= 6) {
+          alert("Arvauksesi loppuivat!");
+          Actions.main_map();
+        }
+        if(!riddle) {
+          alert("Peli loppui!");
+          Actions.main_map();
+        }
+        that.setState(previousState => {
+          return { triesLeft: 6-tries, fails: tries};
+        });
+      } else {
+        that.setState(previousState => {
+          return { currentRiddle: riddle, currentScore: current_score, fails: 6 - tries};
+        });
+      }
     });
     return channel;
   }
@@ -142,40 +187,73 @@ export class GeocacheScreen extends Component {
   // Uses time (time), fails (int) and hintsUsed (int) for calculation.
   sendQuess = () => {
     var self = this;
-    Http.patch('api/geocache/',{answer: self.state.answer_str
+    Http.patch('api/geocache/',{answer: self.state.scannedItem
     }).then(function (response) {
+      self.setState({scannedItem: ""});
       if(!response['data']['status']) {
-        self.setState({fails: self.state.fails + 1, answer_str: ""});
+        alert("Väärin!");
       } else {
-        self.setState({answer_str: ""});
-        alert("You are correct");
+        alert("Oikein!");
       }
-    })
+    });
   }
-
   render() {
+    if(this.state.scannerOpen) {
+      return (
+        <Scanner scan_action={this.basicScan}></Scanner>
+      )
+    }
     return (
       <View style={geoStyles.container}>
-        <View style={geoStyles.header}>
-          <Text style={[geoStyles.text, geoStyles.headerText]}>
-            Geocache
-            </Text>
-        </View>
+      		<Image
+          source={require('../assets/images/tay.jpg')}
+		  style={{justifyContent: 'center',position: 'absolute',top: 0,bottom: 0,zIndex: 0,height:'100%',width:'100%'}}
+		  blurRadius={1}
+        />
+      <Appbar.Header>
+        <Appbar.BackAction
+          onPress={() => {
+            Http.post('api/geocache/exit/',{
+            })
+          }}
+          >
+        </Appbar.BackAction>
+        <Appbar.Content
+          title={"Geocache"}
+          />
+      </Appbar.Header>
+        <Headline style={geoStyles.subHeading}>Vihje</Headline>
         <View style={geoStyles.contents}>
-
           <View style={geoStyles.widget}>
-            <View></View>
             <Text style={geoStyles.text}>
               {this.state.currentRiddle}
             </Text>
-            <View></View>
+            <Text style={geoStyles.text}>
+              Etsi sijainti esitettynä yllä ja skannaa paikalta löytyvä qr-koodi.
+            </Text>
           </View>
+          <Headline style={geoStyles.subHeading} >Arvauksesi</Headline>
           <View style={geoStyles.widget}>
-            <TextInput
-              placeholder="Type your answer here!"
-              onChangeText={(text) => this.setState({ answer_str: text })}
-              style={geoStyles.text}
-            />
+            <View>
+                <Text style={geoStyles.text}>{"Yritykset tässä kätkössä: " + this.state.fails }</Text>
+            </View>
+            <View>
+              <Text style={geoStyles.text}>{"Yrityksiä jäljellä: " + this.state.triesLeft}</Text>
+            </View>
+            <View>
+              <Text style={geoStyles.text}>{"Pistemääräsi: " + this.state.currentScore}</Text>
+            </View>
+            <Timer style={geoStyles.text} secs={this.state.seconds} mins={this.state.minutes}/>
+            <View style={geoStyles.buttonContainer}>
+              <Button
+                style={geoStyles.button}
+                color={geoStyles.button.color}
+                onPress={() => {
+                  this.setState({scannerOpen: true})
+                }}
+                title="Avaa scanneri"
+              />
+            </View>
             <View style={geoStyles.buttonContainer}>
               <Button
                 style={geoStyles.button}
@@ -183,14 +261,11 @@ export class GeocacheScreen extends Component {
                 onPress={() => {
                   this.sendQuess()
                 }}
-                title="Submit"
+                disabled={this.state.scannedItem.length <= 0}
+                title="Tarkista vastaus"
               />
             </View>
           </View>
-          <View style={geoStyles.widget}>
-            <Timer style={geoStyles.text} secs={this.state.seconds} mins={this.state.minutes}/>
-          </View>
-
         </View>
       </View>
     );

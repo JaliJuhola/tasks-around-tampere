@@ -74,8 +74,9 @@ export default class Scanner extends Component {
   }
 
   _handlePressUrl = () => {
-    if(this.props.scan_action(this.state.lastScannedUrl)) {
-      return;
+    var scanned_item = this.props.scan_action(this.state.lastScannedUrl)
+    if(scanned_item) {
+      return
     }
     Alert.alert(
       'Open this URL?',
@@ -104,7 +105,7 @@ export default class Scanner extends Component {
       return;
     }
     () => Linking.openURL(this.state.lastScannedUrl)
-// Delete comment marks when want to see better urls/qrscans.    
+// Delete comment marks when want to see better urls/qrscans.
 //    return (
 //      <View style={ScannerStyles.bottomBar}>
 //        <View style={ScannerStyles.footer}>

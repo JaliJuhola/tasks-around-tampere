@@ -4,9 +4,6 @@ import {
 } from 'react-native';
 import PushTheButtons from '../components/PushTheButtons';
 export default class PushTheButtonsScreen extends React.Component {
-  static navigationOptions = {
-    title: 'Push The Buttons',
-  };
   constructor(props) {
     super(props);
     this.state = {
@@ -17,9 +14,7 @@ export default class PushTheButtonsScreen extends React.Component {
 
   render() {
     return (
-      <ScrollView>
         <PushTheButtons></PushTheButtons>
-      </ScrollView>
     );
   }
 }

@@ -8,6 +8,8 @@ class AliasMainGame(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     current_score = models.IntegerField(default=0)
     game_ended = models.BooleanField(default=False)
+    words_right = models.IntegerField(default=0)
+
     class Meta:
         ordering = ('id',)
 

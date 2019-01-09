@@ -1,39 +1,34 @@
 import React from 'react';
-import { ExpoLinksView } from '@expo/samples';
-import axios from 'axios';
-import {GlobalStorage} from '../../core/store/store';
 import {
-  Image,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  Modal,
   View,
   Button,
+  Image,
 } from 'react-native';
 // import {MiniGameScore} from '../../common/minigame/Score';
 import { Actions } from 'react-native-router-flux';
 import {Http} from '../../core/connections/http';
 import {getSocketConnection} from '../../common/minigame/Connection';
+import {Loading} from '../../maingame/components/Loading';
+import {Appbar, Subheading, Divider} from 'react-native-paper';
 
 export default class PushTheButtonsScreen extends React.Component {
   constructor(props) {
     super(props);
     // Common data should be abstracted later
     this.pusher = getSocketConnection();
-    // this.scoreHelper = new MiniGameScore(CommonData.getGroupId(), MINIGAME_KEY);
 
     this.state = {
-      playerToClickMessage: "Peli alkaa kuin joku pelaaja painaa tästä!",
+      playerToClickMessage: "Peli alkaa kuin joku pelaaja painaa napista!",
       secondsToPush: 999999,
       joinGroupModalVisible: false,
       currentScore: 0,
       playerId: undefined,
       groupId: undefined,
       groupName: undefined,
-      playerName: undefined
+      playerName: undefined,
+      clickable: true,
     };
     this.playerClickedButton = this.playerClickedButton.bind(this);
     this.activate_channels_push_completed = this.activate_channels_push_completed.bind(this);
@@ -46,10 +41,11 @@ export default class PushTheButtonsScreen extends React.Component {
 			self.setState(previousState => (
 				{groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
         ));
-      }).then(() => {
-        this.active_channels_new_push()
-        this.activate_channels_push_completed()
-      });
+    }).then(() => {
+      this.active_channels_new_push()
+      this.activate_channels_push_completed()
+    });
+
       Http.get('api/me').then(function (response) {
         self.setState(previousState => (
           {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
@@ -64,7 +60,7 @@ export default class PushTheButtonsScreen extends React.Component {
     var that = this;
     var channel = this.pusher.subscribe('push-the-buttons-' + that.state.groupId);
     channel.bind('new-push', function(data) {
-      const target_str = data['player_who_has_event'] + " should click the button";
+      const target_str = "Pelaajan numero " + data['player_who_has_event'] + " Tulee klikata";
       const time_to_push = data['seconds_to_push'];
       if(that.state.playerId === data['player_who_has_event']) {
         that.setState(previousState => {
@@ -72,7 +68,7 @@ export default class PushTheButtonsScreen extends React.Component {
           });
       }
       that.setState(previousState => {
-      return { playerToClickMessage: target_str};
+      return { playerToClickMessage: target_str, clickable:true};
       });
     });
     return channel;
@@ -96,7 +92,7 @@ export default class PushTheButtonsScreen extends React.Component {
     var self = this;
     if (this.state.playerToClickMessage !== "Wait for new command!") {
       self.setState(previousState => {
-        return { playerToClickMessage: "Wait for new command!" };
+        return { playerToClickMessage: "Wait for new command!", clickable:false };
       });
       Http.patch('api/push_the_buttons',{group_id: self.state.groupId
       }).then(function (response) {
@@ -111,20 +107,41 @@ export default class PushTheButtonsScreen extends React.Component {
   render() {
     var that = this;
     if(!that.state.playerId || !that.state.groupId) {
-      return  (<Text>Loading....</Text>)
+      return  (<Loading message="Odotetaan pelin latautumista!"></Loading>)
     }
     return (
-      <View style={styles.container}>
-        <Text>Olet pelaaja numero{that.state.playerId}</Text>
-        <Text>Tämän hetkiset pisteet{that.state.currentScore}</Text>
-        <Text>Aikaa painaa nappia{that.state.secondsToPush}</Text>
-        <Text>{that.state.playerToClickMessage}</Text>
-        <Button
-          onPress={() => this.playerClickedButton()}
-          title="Click here when someones says so!"
-          color="#841584"
-          accessibilityLabel="Learn more about this purple button"
+      <View style={styles.mainContainer}>
+        <Image
+          source={require('../../assets/images/tay.jpg')}
+		    style={{justifyContent: 'center',position: 'absolute',top: 0,bottom: 0,zIndex: 0,height:'100%',width:'100%'}}
+		      blurRadius={2}
         />
+        <Appbar.Header>
+			  <Appbar.BackAction
+				onPress={() => Actions.main_map()}
+			  >
+			  </Appbar.BackAction>
+			  <Appbar.Content
+			  title={this.state.groupName + "(" + this.state.groupId + ")" }
+			  subtitle="Aula"
+			  subtitleStyle={{marginTop: -5, opacity: 1}}
+			  />
+		    </Appbar.Header>
+        <View style={styles.container}>
+          <Text style={styles.textItems}>{"Numerosi: " + that.state.playerId}</Text>
+          <Divider />
+          <Text style={styles.textItems}>{"Pisteet: " + that.state.currentScore}</Text>
+          <Divider />
+          <Text style={styles.textItems}>{"Aikaa: " + that.state.secondsToPush}</Text>
+          <Divider />
+          <Text style={styles.textItems}>{that.state.playerToClickMessage}</Text>
+          <Divider />
+          <Button
+            onPress={() => this.playerClickedButton()}
+            title="Paina tätä nappia kuin joku niin sanoo!"
+            style={styles.mainButton}
+          />
+        </View>
       </View>
     );
   }
@@ -134,6 +151,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: '#fff',
   },
+  textItems: {
+    marginTop: 20,
+    paddingBottom: 15,
+    fontSize: 26,
+    color: "#000099"
+  },
+  mainButton: {
+    marginTop: 40,
+    fontSize: 20,
+    color:'#4e008e'
+  },
+  mainContainer: {
+    height: "100%",
+    width: "100%",
+  }
 });

@@ -10,14 +10,12 @@ export class Http {
             if(!settings.reauth_automatically) {
                 throw Error("Failed to fetch token, reauth is needed");
             } else {
-                console.log("creating new user automatically!");
                 var status =  axios.post(settings['rest_api_url'] + 'api/auth/', {
                     name: "pseudoname",
                 })
                 token = status.token;
             }
         }
-        console.log("returning token: " + token);
         return token;
     }
     static async post(url_extensions, data) {
@@ -45,7 +43,6 @@ export class Http {
         var token = await this.getToken();
         return axios.patch(settings['rest_api_url'] + url_extensions, data, {headers: {'Authorization': token }})
           .then(function (response) {
-            console.log(response);
             return response;
           })
           .catch(function (error) {

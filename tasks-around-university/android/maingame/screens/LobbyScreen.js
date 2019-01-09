@@ -15,8 +15,6 @@ export default class LobbyScreen extends React.Component {
 		this.state = {
 			lobby_id: props['data']['lobby_id'],
 			target_action: props['data']['minigame_target_str'],
-			gamename: 'Testipeli',
-			playercount: 3,
 			loadingColor: "#17a2b8",
 			groupsize: 4,
 			isLeader: false,
@@ -52,8 +50,6 @@ export default class LobbyScreen extends React.Component {
 		clearInterval(this.interval);
 	}
 	toTarget = () => {
-		console.log("datat");
-		console.log(this.target_action);
 		var self = this;
 		Http.post('api/lobby/close',{lobby_id: this.state.lobby_id}).then(function (response) {
 			MiniGameEntry.enter_minigame(self.state.target_action, true);

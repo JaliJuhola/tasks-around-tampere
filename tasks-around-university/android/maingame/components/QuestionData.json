@@ -1,0 +1,52 @@
+{
+    "questions": [
+        {
+        "questionText": "Quick question: Yes or no?",
+        "answerText1": "Yes",
+        "answerText2": "No"
+        },
+        {
+        "questionText": "Quick question: Does pineapple belong on pizza?"
+        },
+        {
+        "questionText": "Is the glass half empty or half full?"
+        },
+        {
+        "questionText": "Is earth flat or round?"
+        },
+        {
+        "questionText": "Cats or dogs: Which pet is better?"
+        },
+        {
+        "questionText": "Is a hotdog a sandwich?"
+        },
+        {
+        "questionText": "Quick question: Do you know the way to the next spot?"
+        },
+        {
+        "questionText": "Should a shirt be buttoned top-to-bottom or bottom-to-top?"  
+        },
+        {
+        "questionText": "Can Tampere survive a zombie apocalypse?"
+        },
+        {
+        "questionText": "Is tomato a vegetable?"
+        },
+        {
+        "questionText": "Is this question stupid?"
+        },
+        {
+        "questionText": "Would you rather be ruled by cats or dogs?"
+        },
+        {
+        "questionText": "Which came first: the chicken or the egg?"
+        },
+        {
+        "questionText": "Spring. Summer. Fall. Winter. Which season is the best?"
+        },
+        {
+        "questionText": "iOS or Android?"
+        }
+        
+    ]
+}

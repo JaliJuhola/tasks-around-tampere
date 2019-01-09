@@ -25,35 +25,18 @@ import {QuiklashScreen} from '../maingame/components/Quiklash';
 import {GeocacheScreen} from '../geocache/GeocacheScreen';
 import IconSelect from '../maingame/components/IconSelect';
 
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  tabBarStyle: {
-    backgroundColor: '#eee',
-  },
-  tabBarSelectedItemStyle: {
-    backgroundColor: '#ddd',
-  },
-});
-
 const reducerCreate = params => {
   const defaultReducer = new Reducer(params);
   return (state, action) => {
-    console.log('reducer: ACTION:', action);
+    // console.log('reducer: ACTION:', action);
     return defaultReducer(state, action);
   };
 };
 
 
 const stateHandler = (prevState, newState, action) => {
-  console.log(prevState);
-  console.log(newState);
+  // console.log(prevState);
+  // console.log(newState);
 };
 
 const getSceneStyle = () => ({
