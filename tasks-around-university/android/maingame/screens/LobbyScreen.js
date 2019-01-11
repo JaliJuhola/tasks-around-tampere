@@ -55,7 +55,7 @@ export default class LobbyScreen extends React.Component {
 	toTarget = () => {
 		var self = this;
 		Http.post('api/lobby/close',{lobby_id: this.state.lobby_id}).then(function (response) {
-			self.setState({isLoading:false});
+			self.setState({isLoading:true});
 		});
 	}
 	members(player_id, group_name, first_load) {
@@ -64,7 +64,7 @@ export default class LobbyScreen extends React.Component {
 		var image_index = 0
 		var members = 0
 		Http.patch('api/lobby',{lobby_id: this.state.lobby_id}).then(function (response) {
-			if(response['data']['closed'] && self.target_action) {
+			if(response['data']['closed'] && self.state.target_action) {
 				return MiniGameEntry.enter_minigame(self.state.target_action, false);
 			}
 			return response['data']['players'].map((item) => {
@@ -100,28 +100,25 @@ export default class LobbyScreen extends React.Component {
 		let buttonColor = '';
 		let buttonPress = undefined;
 		let buttonOpacity = 1;
-		if(!this.state.isLeader) {
+		var self = this;
+		if(!this.state.isLeader || true === true) {
 			buttonColor = "#ff0033";
 			buttonPress = undefined;
 			buttonOpacity = 0.5;
 			warningMessage = <Caption  style={{flexDirection: "row", marginBottom: "5%", fontSize: 20, textAlign: "center", color: "#ff0033", elevation: 4}} height={40}>Vain ryhmän johtaja voi aloittaa pelin!</Caption>;
-		} else if (this.state.cards.length < 1) {
-			buttonColor = "#ff0033";
-			buttonPress = undefined;
-			buttonOpacity = 0.5;
-			warningMessage = <Caption  style={{flexDirection: "row", marginBottom: "5%", fontSize: 20, textAlign: "center", color: "#ff0033", elevation: 4}} height={40}>Pelissä tulee olla vähintään 2 pelaajaa</Caption>;
-		} else {
+		// } else if (self.state.cards.length) {
+		// 	buttonColor = "#ff0033";
+		// 	buttonPress = undefined;
+		// 	buttonOpacity = 0.5;
+		// 	warningMessage = <Caption  style={{flexDirection: "row", marginBottom: "5%", fontSize: 20, textAlign: "center", color: "#ff0033", elevation: 4}} height={40}>Pelissä tulee olla vähintään 2 pelaajaa</Caption>;
+		// } else {
 			warningMessage = <Caption></Caption>
 			buttonColor = "#00FF00"
 			buttonPress = this.toTarget;
 			buttonOpacity = 1;
 		}
-		if (this.state.isLoading)
-		{
-			return <Loading message="Odotetaan pelaajien liittyvän"></Loading>
-		}
     return (
-		<MainView onExit={() => Actions.main_map()} mainTitle={"Aula " + this.state.groupName + "(" + this.state.groupId + ")"}>
+		<MainView onExit={() => Actions.main_map()} mainTitle={"Aula " + this.state.groupName + "(" + this.state.groupId + ")"} isLoading={this.state.isLoading} loadingTitle="Odotetaan muita pelaajia">
 			<View style={{flexDirection: "row"}}>
 				<IconButton
 					icon="update"

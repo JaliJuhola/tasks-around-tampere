@@ -9,6 +9,8 @@ import RandomQuestions from './RandomQuestions';
 import TimerMixin from 'react-timer-mixin';
 import {Http} from '../../core/connections/http';
 import {Loading} from '../../common/Components/Loading';
+import { MainView } from '../../common/Components/MainView';
+import { Actions } from 'react-native-router-flux';
 
 var marker1 = require ('../assets/user_marker_1.png');
 var marker2 = require ('../assets/user_marker_2.png');
@@ -34,6 +36,7 @@ export default class Map extends React.Component {
       currentMarker: 0,
       teamProgress: 0,
       teamScore: 0,
+      isLoading: true,
       minigameMarkers: [],
       userMarkers: [],
       images: [
@@ -163,7 +166,11 @@ export default class Map extends React.Component {
     this.updateUsersLocation();
     // updating map every interval
     this.map_updater = this.updateMap();
+    this.updateMinigameScore();
     this.updateOverallScore();
+    if(this.state.minigameMarkers.length > 0) {
+      this.setState({isLoading:false});
+    }
   }
 
   //Updates map every interval
@@ -171,6 +178,9 @@ export default class Map extends React.Component {
     return TimerMixin.setInterval(() => {
       this.updateUsersLocation();
       this.updateMinigameScore();
+      if(this.state.minigameMarkers.length > 0) {
+        this.setState({isLoading:false});
+      }
     }, this.state.mapUpdateInterval);
   }
 
@@ -308,7 +318,7 @@ export default class Map extends React.Component {
         )
       })
       this.setState({
-        minigameMarkers: markers
+        minigameMarkers: markers,
       })
     }
   }
@@ -356,13 +366,11 @@ export default class Map extends React.Component {
   }
 
   render() {
-    if(this.state.minigameMarkers.length < 1 || this.state.userMarkers.length < 1) {
-      return (
-        <Loading message="Ladataan karttaa"></Loading>
-      );
-    }
     return (
-      <View>
+      <MainView
+      onExit={() => Actions.main()} mainTitle={"Kartta"}
+      isLoading={this.state.isLoading}
+      loadingTitle="Ladataan karttaa">
         <MapView
           initialRegion={{
             latitude: 61.4941,
@@ -430,7 +438,7 @@ export default class Map extends React.Component {
             <Text style={MapStyles.bottomScreenText}>Points: {this.state.teamScore}</Text>
             <Text style={MapStyles.bottomScreenText}>Progress: {this.state.teamProgress}%</Text>
           </View>
-      </View>
+        </MainView>
     );
   }
 }

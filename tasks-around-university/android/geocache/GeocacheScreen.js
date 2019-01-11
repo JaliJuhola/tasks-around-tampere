@@ -8,6 +8,7 @@ import {getSocketConnection} from '../common/minigame/Connection';
 import { Headline } from 'react-native-paper';
 import { Appbar, IconButton, Caption} from 'react-native-paper';
 import Scanner from '../maingame/components/Scanner';
+import { MainView } from '../common/Components/MainView';
 
 /*
  * A simple timer component that displays time elapsed since component mounting.
@@ -204,24 +205,10 @@ export class GeocacheScreen extends Component {
       )
     }
     return (
-      <View style={geoStyles.container}>
-      <Image
-      source={require('../assets/images/tay.jpg')}
-		  style={{justifyContent: 'center',position: 'absolute',top: 0,bottom: 0,zIndex: 0,height:'100%',width:'100%'}}
-		  blurRadius={2}
-      />
-      <Appbar.Header>
-        <Appbar.BackAction
-          onPress={() => {
-            Http.post('api/geocache/exit/',{
-            })
-          }}
-          >
-        </Appbar.BackAction>
-        <Appbar.Content
-          title={"Geocache"}
-          />
-      </Appbar.Header>
+      <MainView mainTitle="Geocache" onExit = { () => {
+        Http.post('api/geocache/exit/',{})
+      }}
+      >
         <Headline style={geoStyles.subHeading}>Vihje</Headline>
         <View style={geoStyles.contents}>
           <View style={geoStyles.widget}>
@@ -267,7 +254,7 @@ export class GeocacheScreen extends Component {
             </View>
           </View>
         </View>
-      </View>
+        </MainView>
     );
 
   }

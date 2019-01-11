@@ -28,7 +28,7 @@ class SelectIcon extends React.Component {
   }
   render() {
     return (
-        <MainView onExit={() => Actions.start()} mainTitle={"Valitse avatar"}>
+        <MainView onExit={() => Actions.start()} mainTitle={"Valitse avatar"} >
             <ScrollView>
                 <RadioButton.Group
                 onValueChange={value => this.setState({ selectedIcon: value })}

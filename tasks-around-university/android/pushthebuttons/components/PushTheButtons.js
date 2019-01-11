@@ -60,7 +60,9 @@ export default class PushTheButtonsScreen extends React.Component {
   active_channels_new_push = () => {
     var that = this;
     var channel = this.pusher.subscribe('push-the-buttons-' + that.state.groupId);
+    console.log('push-the-buttons-' + that.state.groupId);
     channel.bind('new-push', function(data) {
+      console.log(data);
       const target_str = "Pelaajan numero " + data['player_who_has_event'] + " Tulee klikata";
       const time_to_push = data['seconds_to_push'];
       if(that.state.playerId === data['player_who_has_event']) {
@@ -108,7 +110,7 @@ export default class PushTheButtonsScreen extends React.Component {
   render() {
     var that = this;
     return (
-        <MainView mainText="Push the buttons" onExit= {() => {Actions.main_map();}}>
+        <MainView mainTitle="Push the buttons" onExit= {() => {Actions.main_map();}}>
         <View style={styles.container}>
           <Text style={styles.textItems}>{"Numerosi: " + that.state.playerId}</Text>
           <Divider />

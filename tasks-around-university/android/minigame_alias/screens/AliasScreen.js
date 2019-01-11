@@ -6,6 +6,7 @@ import AliasScreenStyles from '../styles/AliasScreenStyles';
 import {Http} from '../../core/connections/http';
 import {getSocketConnection} from '../../common/minigame/Connection';
 import { Actions } from 'react-native-router-flux';
+import { MainView } from '../../common/Components/MainView';
 
 export class AliasScreen extends React.Component {
 
@@ -97,17 +98,15 @@ export class AliasScreen extends React.Component {
 
     checkGuess = () => {
         var self = this;
-        if (this.state.currentWord != "Peli loppui") {
-            let guess = this.state.textInput.toLowerCase();
-            if (guess === this.state.correctWord.toLowerCase()) {
-                alert("Arvasit oikein!");
-                Http.patch('api/alias/score',{}).then(function (response) {
-                  self.setState({textInput: ""});
-                });
-            }
-            else {
-                alert("Arvasit väärin!");
-            }
+        let guess = this.state.textInput.toLowerCase();
+        if (guess === this.state.currentWord.toLowerCase()) {
+            alert("Arvasit oikein!");
+            Http.patch('api/alias/score',{}).then(function (response) {
+                self.setState({textInput: ""});
+            });
+        }
+        else {
+            alert("Arvasit väärin!");
         }
     }
     readyForNext = () => {
@@ -119,19 +118,12 @@ export class AliasScreen extends React.Component {
     render() {
         var buttonColor = '#4e008e';
         return (
-            <View>
-                <Appbar.Header>
-                    <Appbar.BackAction
-                    onPress={() => {
-                        Http.post('api/alias/end',{
-                        })
-                    }}
-                    >
-                    </Appbar.BackAction>
-                    <Appbar.Content
-                    title={"Alias"}
-                    />
-                </Appbar.Header>
+            <MainView
+                onExit={() => () => {
+                    Http.post('api/alias/end',{
+                    })
+                }} mainTitle={"Alias"}
+                >
                 <View style={AliasScreenStyles.container}>
                     <ProgressBar progress={(this.state.timeElapsed) / 20} style={AliasScreenStyles.progressBar} />
                     <Text style={AliasScreenStyles.text}>
@@ -153,7 +145,7 @@ export class AliasScreen extends React.Component {
                     <Button mode="contained" disabled={this.state.explainer} onPress={this.readyForNext} color={buttonColor} style={{width: "60%",marginTop: "10%", elevation: 1, opacity: 1}}>Seuraava sana
                     </Button>
                 </View>
-            </View>
+            </MainView>
         );
     }
 }
