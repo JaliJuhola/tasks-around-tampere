@@ -93,26 +93,8 @@ export class AliasScreen extends React.Component {
         this.setState(prevState => ({
             totalTimeElapsed: prevState.totalTimeElapsed + 1
         }));
+    }
 
-        };
-    }
-    async componentDidMount() {
-        var self = this;
-        Http.get('api/me').then(function (response) {
-                self.setState(previousState => (
-                    {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name'], isLeader: response['data']['player']['leader']}
-            ));
-        }).then(() => {
-          this.activate_channels_alias();
-          if(this.state.isLeader) {
-            setTimeout(this.readyForNext, 5000);
-          }
-          setTimeout(this.endRound, 60000);
-          this.interval = setInterval(() => {
-            this.updateTotalTimer();
-           }, 3000);
-        });
-    }
     checkGuess = () => {
         var self = this;
         if (this.state.currentWord != "Peli loppui") {

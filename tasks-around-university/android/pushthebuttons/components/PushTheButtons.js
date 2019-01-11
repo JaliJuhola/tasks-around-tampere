@@ -10,8 +10,9 @@ import {
 import { Actions } from 'react-native-router-flux';
 import {Http} from '../../core/connections/http';
 import {getSocketConnection} from '../../common/minigame/Connection';
-import {Loading} from '../../maingame/components/Loading';
+import {Loading} from '../../common/Components/Loading';
 import {Appbar, Subheading, Divider} from 'react-native-paper';
+import { MainView } from '../../common/Components/MainView';
 
 export default class PushTheButtonsScreen extends React.Component {
   constructor(props) {
@@ -106,27 +107,8 @@ export default class PushTheButtonsScreen extends React.Component {
   }
   render() {
     var that = this;
-    if(!that.state.playerId || !that.state.groupId) {
-      return  (<Loading message="Odotetaan pelin latautumista!"></Loading>)
-    }
     return (
-      <View style={styles.mainContainer}>
-        <Image
-          source={require('../../assets/images/tay.jpg')}
-		    style={{justifyContent: 'center',position: 'absolute',top: 0,bottom: 0,zIndex: 0,height:'100%',width:'100%'}}
-		      blurRadius={2}
-        />
-        <Appbar.Header>
-			  <Appbar.BackAction
-				onPress={() => Actions.main_map()}
-			  >
-			  </Appbar.BackAction>
-			  <Appbar.Content
-			  title={this.state.groupName + "(" + this.state.groupId + ")" }
-			  subtitle="Push the buttons"
-			  subtitleStyle={{marginTop: -5, opacity: 1}}
-			  />
-		    </Appbar.Header>
+        <MainView mainText="Push the buttons" onExit= {() => {Actions.main_map();}}>
         <View style={styles.container}>
           <Text style={styles.textItems}>{"Numerosi: " + that.state.playerId}</Text>
           <Divider />
@@ -142,7 +124,7 @@ export default class PushTheButtonsScreen extends React.Component {
             style={styles.mainButton}
           />
         </View>
-      </View>
+      </MainView>
     );
   }
 }
