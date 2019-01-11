@@ -8,7 +8,8 @@ import CustomMapStyles from '../styles/CustomMapStyles.json';
 import RandomQuestions from './RandomQuestions';
 import TimerMixin from 'react-timer-mixin';
 import {Http} from '../../core/connections/http';
-import {Loading} from './Loading';
+import {Loading} from '../../common/Components/Loading';
+
 var marker1 = require ('../assets/user_marker_1.png');
 var marker2 = require ('../assets/user_marker_2.png');
 var marker3 = require ('../assets/user_marker_3.png');

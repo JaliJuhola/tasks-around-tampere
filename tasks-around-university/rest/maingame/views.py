@@ -120,8 +120,10 @@ class LobbyView(APIView):
         player.last_connection = timezone.now() + timezone.timedelta(seconds=20)
         lobby, created = Lobby.objects.get_or_create(group=group, minigame=minigame_name, closed=False)
         lobby_player, created = LobbyPlayer.objects.get_or_create(lobby=lobby, player=player)
+        lobby.closed = True
         lobby_player.joined_since = timezone.now() + timezone.timedelta(seconds=20)
         lobby_player.save()
+        lobby.save()
         player.save()
         return Response({'lobby_id': lobby.id})
 
