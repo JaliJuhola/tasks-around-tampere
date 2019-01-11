@@ -60,7 +60,18 @@ const onBackAndroid = () => {
   console.log("*************************************************");
   console.log("Back Handler");
   if(Actions.currentScene === "main_map") {
-    console.log("main_map scene asd");
+    Alert.alert(
+      'Logout and quit?',
+      'Logout and quit the app?',
+      [
+        {
+          text: 'Yes',
+          onPress: () => BackHandler.exitApp(),
+        },
+        { text: 'No', onPress: () => {} },
+      ],
+      { cancellable: false }
+    );
   }
   if(Actions.currentScene === "start") {
     Alert.alert(
@@ -80,13 +91,13 @@ const onBackAndroid = () => {
     Actions.StartScreen();
   }
   if(Actions.currentScene === "Lobby") {
-    //-> map
+    Actions.MapScreen();
   }
   if(Actions.currentScene === "Minigame") {
     //-> map
   }
   if(Actions.currentScene === "scanner") {
-    //-> map
+    Actions.MapScreen();
   }
 
   console.log("*************************************************");
