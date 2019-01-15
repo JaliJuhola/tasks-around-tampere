@@ -51,7 +51,7 @@ export class MainView extends React.Component {
               />
           </Appbar.Header>
         </View>
-          <View style={{flex:1}}>
+          <View style={{flex:1, justifyContent:"space-around"}}>
               {this.props.children}
           </View>
         </View>

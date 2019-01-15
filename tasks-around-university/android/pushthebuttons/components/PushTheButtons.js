@@ -13,6 +13,9 @@ import {getSocketConnection} from '../../common/minigame/Connection';
 import {Loading} from '../../common/Components/Loading';
 import {Appbar, Subheading, Divider} from 'react-native-paper';
 import { MainView } from '../../common/Components/MainView';
+import {GameContainer} from '../../common/Components/GameContainer';
+import TimerCountdown from 'react-native-timer-countdown';
+import { InfoContainer } from '../../common/Components/InfoContainer';
 
 export default class PushTheButtonsScreen extends React.Component {
   constructor(props) {
@@ -21,8 +24,8 @@ export default class PushTheButtonsScreen extends React.Component {
     this.pusher = getSocketConnection();
 
     this.state = {
-      playerToClickMessage: "Peli alkaa kuin joku pelaaja painaa napista!",
-      secondsToPush: 999999,
+      playerToClickMessage: "Peli alkaa kuin joku painaa napista",
+      secondsToPush: 0,
       joinGroupModalVisible: false,
       currentScore: 0,
       playerId: undefined,
@@ -60,10 +63,7 @@ export default class PushTheButtonsScreen extends React.Component {
   active_channels_new_push = () => {
     var that = this;
     var channel = this.pusher.subscribe('push-the-buttons-' + that.state.groupId);
-    console.log('push-the-buttons-' + that.state.groupId);
     channel.bind('new-push', function(data) {
-      console.log(data);
-      const target_str = "Pelaajan numero " + data['target_player'] + " Tulee klikata";
       const time_to_push = data['seconds_to_push'];
       if(that.state.playerId === data['player_who_has_event']) {
         that.setState(previousState => {
@@ -71,7 +71,7 @@ export default class PushTheButtonsScreen extends React.Component {
           });
       }
       that.setState(previousState => {
-      return { playerToClickMessage: target_str, clickable:true};
+      return { playerToClickMessage: data['target_player'], clickable:true};
       });
     });
     return channel;
@@ -95,7 +95,7 @@ export default class PushTheButtonsScreen extends React.Component {
     var self = this;
     if (this.state.playerToClickMessage !== "Wait for new command!") {
       self.setState(previousState => {
-        return { playerToClickMessage: "Wait for new command!", clickable:false };
+        return { playerToClickMessage: undefined, clickable:false };
       });
       Http.patch('api/push_the_buttons',{group_id: self.state.groupId
       }).then(function (response) {
@@ -109,23 +109,59 @@ export default class PushTheButtonsScreen extends React.Component {
   }
   render() {
     var that = this;
+    var targetedStr = undefined;
+    if(this.state.playerToClickMessage === "Peli alkaa kuin joku painaa napista") {
+      targetedStr = <View style={{flexDirection: 'row', }}>
+      <Text style={styles.textItemsBold}>{this.state.playerToClickMessage}</Text>
+    </View>
+    } else if(this.state.playerToClickMessage) {
+      targetedStr = <View style={{flexDirection: 'row' , flexWrap: 'wrap'}}>
+      <Text style={styles.textItems}>Numero  </Text>
+      <Text style={styles.textItemsBold}>{that.state.playerToClickMessage}</Text>
+      <Text style={styles.textItems}> klikkaa nappia</Text>
+    </View>
+    }
+
+    else {
+      targetedStr = <View style={{flexDirection: 'row', }}>
+      <Text style={styles.textItemsBold}>Odota komentoa!</Text>
+    </View>
+    }
     return (
         <MainView mainTitle="Push the buttons" onExit= {() => {Actions.main_map();}}>
-        <View style={styles.container}>
-          <Text style={styles.textItems}>{"Numerosi: " + that.state.playerId}</Text>
+        <GameContainer style={styles.container}>
+        <View style={{flexDirection: 'row', }}>
+            <Text style={styles.textItems}>Numerosi: </Text>
+            <Text style={styles.textItemsBold}>{that.state.playerId}</Text>
+        </View>
           <Divider />
-          <Text style={styles.textItems}>{"Pisteet: " + that.state.currentScore}</Text>
+          <View style={{flexDirection: 'row', }}>
+            <Text style={styles.textItems}>Pisteet:  </Text>
+            <Text style={styles.textItemsBold}>{that.state.currentScore}</Text>
+          </View>
           <Divider />
-          <Text style={styles.textItems}>{"Aikaa: " + that.state.secondsToPush}</Text>
+          <View style={{flexDirection: 'row', }}>
+            <Text style={styles.textItems}>Aikaa painaa nappia: </Text><TimerCountdown
+              initialSecondsRemaining={1000*this.state.secondsToPush}
+              onTick={secondsRemaining => console.log('tick', secondsRemaining)}
+              onTimeElapsed={() => console.log('complete')}
+              style={styles.textItemsBold}
+            />
+          </View>
           <Divider />
-          <Text style={styles.textItems}>{that.state.playerToClickMessage}</Text>
+          {targetedStr}
           <Divider />
           <Button
             onPress={() => this.playerClickedButton()}
             title="Paina tätä nappia kuin joku niin sanoo!"
             style={styles.mainButton}
           />
-        </View>
+        </GameContainer>
+        <InfoContainer style={styles.container}>
+        <Text style={styles.textItemsInfo}>
+          Tässä pelissä yksi pelaajista saa käskyn, jonka mukaan jonkin muun pelaajan tulee painaa nappia. Muista oma numerosi, koska käsky tulee sen mukaan.
+        </Text>
+        </InfoContainer>
       </MainView>
     );
   }
@@ -136,11 +172,24 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 15,
   },
+  textItemsBold: {
+    marginTop: 20,
+    paddingBottom: 15,
+    fontSize: 22,
+    color: 'red',
+    fontWeight: 'bold'
+  },
+  textItemsInfo: {
+    marginTop: 20,
+    paddingBottom: 15,
+    fontSize: 22,
+    color: '#31708f'
+  },
   textItems: {
     marginTop: 20,
     paddingBottom: 15,
-    fontSize: 26,
-    color: "#000099"
+    fontSize: 22,
+    color: "white"
   },
   mainButton: {
     marginTop: 40,

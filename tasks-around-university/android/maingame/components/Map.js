@@ -11,22 +11,11 @@ import {Http} from '../../core/connections/http';
 import {Loading} from '../../common/Components/Loading';
 import { MainView } from '../../common/Components/MainView';
 import { Actions } from 'react-native-router-flux';
-
-var marker1 = require ('../assets/user_marker_1.png');
-var marker2 = require ('../assets/user_marker_2.png');
-var marker3 = require ('../assets/user_marker_3.png');
-var marker4 = require ('../assets/user_marker_4.png');
-var marker5 = require ('../assets/user_marker_5.png');
-var marker6 = require ('../assets/user_marker_6.png');
-
-
-
+import settings from '../../Settings';
 export default class Map extends React.Component {
   constructor(props) {
     super(props);
-    // Common data should be abstracted later
-    // this.scoreHelper = new MiniGameScore(CommonData.getGroupId(), MINIGAME_KEY);
-
+    this.markerImages = [require ('../assets/user_marker_1.png'),require ('../assets/user_marker_2.png'),require ('../assets/user_marker_3.png'),require ('../assets/user_marker_4.png'),require ('../assets/user_marker_5.png'),require ('../assets/user_marker_6.png')];
     this.state = {
       markerModalVisible: false,
       markerNearUser: false,
@@ -39,9 +28,6 @@ export default class Map extends React.Component {
       isLoading: true,
       minigameMarkers: [],
       userMarkers: [],
-      images: [
-        marker1,marker2,marker3,marker4,marker5,marker6
-      ],
       team: [
         {
           name: "You",
@@ -207,8 +193,8 @@ export default class Map extends React.Component {
             team: response['data']['players'],
           });
           self.displayUserMarkers();
-          self.displayMinigameMarkers();
           self.updateDistances();
+          self.displayMinigameMarkers();
         });
         }
   }
@@ -268,9 +254,9 @@ export default class Map extends React.Component {
           name = "Leader " + user.name;
         }
         if(user.location != null) {
-          var markerImage = this.state.images[0];
+          var markerImage = this.markerImages[0];
           if(i <= 5) {
-           markerImage = this.state.images[i];
+           markerImage = this.markerImages[i];
           }
           return(
             <MapView.Marker
@@ -303,8 +289,13 @@ export default class Map extends React.Component {
     if(this.state.markers[0].distance != null) {
       var markers = this.state.markers.map((marker, i) =>  {
         var color = '#6200ee';
-        if(marker.completed) {
-          color = '#0EDA16';
+        var marker_pressed = (e) => {e.stopPropagation(); this.showModalWindow(i);}
+        if(marker.distance > 20 && !settings['debug']) {
+          color = '#808080';
+          marker_pressed = undefined;
+          if(marker.completed) {
+            color = '#0EDA16';
+          }
         }
         return(
           <MapView.Marker
@@ -312,7 +303,7 @@ export default class Map extends React.Component {
             key={Date.now() + i}
             coordinate={marker.coordinates}
             pinColor={color}
-            onPress={(e) => {e.stopPropagation(); this.showModalWindow(i);}}
+            onPress={marker_pressed}
           >
           </MapView.Marker>
         )

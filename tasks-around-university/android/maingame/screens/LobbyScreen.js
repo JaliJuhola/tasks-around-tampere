@@ -10,6 +10,7 @@ import MiniGameEntry from '../../common/minigame/Entry';
 import { Actions } from 'react-native-router-flux';
 import {Loading} from '../../common/Components/Loading';
 import { MainView } from '../../common/Components/MainView';
+import settings from '../../Settings';
 
 export default class LobbyScreen extends React.Component {
 	constructor(props) {
@@ -101,17 +102,17 @@ export default class LobbyScreen extends React.Component {
 		let buttonPress = undefined;
 		let buttonOpacity = 1;
 		var self = this;
-		if(!this.state.isLeader || true === true) {
+		if(!this.state.isLeader && !settings['debug']) {
 			buttonColor = "#ff0033";
 			buttonPress = undefined;
 			buttonOpacity = 0.5;
 			warningMessage = <Caption  style={{flexDirection: "row", marginBottom: "5%", fontSize: 20, textAlign: "center", color: "#ff0033", elevation: 4}} height={40}>Vain ryhmän johtaja voi aloittaa pelin!</Caption>;
-		// } else if (self.state.cards.length) {
-		// 	buttonColor = "#ff0033";
-		// 	buttonPress = undefined;
-		// 	buttonOpacity = 0.5;
-		// 	warningMessage = <Caption  style={{flexDirection: "row", marginBottom: "5%", fontSize: 20, textAlign: "center", color: "#ff0033", elevation: 4}} height={40}>Pelissä tulee olla vähintään 2 pelaajaa</Caption>;
-		// } else {
+		} else if (self.state.cards && self.state.cards.length < 2 && !settings['debug']) {
+			buttonColor = "#ff0033";
+			buttonPress = undefined;
+			buttonOpacity = 0.5;
+			warningMessage = <Caption  style={{flexDirection: "row", marginBottom: "5%", fontSize: 20, textAlign: "center", color: "#ff0033", elevation: 4}} height={40}>Pelissä tulee olla vähintään 2 pelaajaa</Caption>;
+		} else {
 			warningMessage = <Caption></Caption>
 			buttonColor = "#00FF00"
 			buttonPress = this.toTarget;

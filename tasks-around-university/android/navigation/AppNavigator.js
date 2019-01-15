@@ -75,14 +75,14 @@ const onBackAndroid = () => {
   }
   if(Actions.currentScene === "start") {
     Alert.alert(
-      'Quit?',
-      'Do you want to close the game?',
+      'Kirdaudu ulos',
+      'Haluatko kirjautua ulos?',
       [
         {
-          text: 'Yes',
+          text: 'Kyllä',
           onPress: () => BackHandler.exitApp(),
         },
-        { text: 'No', onPress: () => {} },
+        { text: 'Ei', onPress: () => {} },
       ],
       { cancellable: false }
     );
