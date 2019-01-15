@@ -24,7 +24,7 @@ import {AliasScreen} from '../minigame_alias/screens/AliasScreen';
 import {QuiklashScreen} from '../maingame/components/Quiklash';
 import {GeocacheScreen} from '../geocache/GeocacheScreen';
 import IconSelect from '../maingame/components/IconSelect';
-
+import { Auth } from '../core/auth/auth';
 const reducerCreate = params => {
   const defaultReducer = new Reducer(params);
   return (state, action) => {
@@ -57,32 +57,32 @@ const transitionConfig = () => ({
 
 //Android's back button, need logic here. Adding them later on.
 const onBackAndroid = () => {
-  console.log("*************************************************");
-  console.log("Back Handler");
   if(Actions.currentScene === "main_map") {
-    Alert.alert(
-      'Logout and quit?',
-      'Logout and quit the app?',
-      [
-        {
-          text: 'Yes',
-          onPress: () => BackHandler.exitApp(),
-        },
-        { text: 'No', onPress: () => {} },
-      ],
-      { cancellable: false }
-    );
+    Auth.logout().then(() =>{
+      Alert.alert(
+        'Kirjaudu ulos',
+        'Haluatko kirjautua ulos?',
+        [
+          { text: 'Ei', onPress: () => {} },
+          {
+            text: 'Kyllä',
+            onPress: () => Actions.start(),
+          },
+        ],
+        { cancellable: false }
+      );
+    })
   }
   if(Actions.currentScene === "start") {
     Alert.alert(
-      'Kirdaudu ulos',
-      'Haluatko kirjautua ulos?',
+      'Poistu applikaatiosta',
+      'Haluatko poistua applikaatiosta?',
       [
+        { text: 'Ei', onPress: () => {} },
         {
           text: 'Kyllä',
           onPress: () => BackHandler.exitApp(),
         },
-        { text: 'Ei', onPress: () => {} },
       ],
       { cancellable: false }
     );

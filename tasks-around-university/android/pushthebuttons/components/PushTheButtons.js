@@ -4,13 +4,12 @@ import {
   Text,
   View,
   Button,
-  Image,
+  Alert
 } from 'react-native';
 // import {MiniGameScore} from '../../common/minigame/Score';
 import { Actions } from 'react-native-router-flux';
 import {Http} from '../../core/connections/http';
 import {getSocketConnection} from '../../common/minigame/Connection';
-import {Loading} from '../../common/Components/Loading';
 import {Appbar, Subheading, Divider} from 'react-native-paper';
 import { MainView } from '../../common/Components/MainView';
 import {GameContainer} from '../../common/Components/GameContainer';
@@ -81,7 +80,7 @@ export default class PushTheButtonsScreen extends React.Component {
     var channel = this.pusher.subscribe('push-the-buttons-' + that.state.groupId);
     channel.bind('push-completed', function(data) {
       if(!data['player_id']){
-        alert("game ended with score " + data['current_score']);
+        Alert.alert("Push The Buttons", "Peli loppui pistein " + data['current_score']);
         return Actions.main_map()
       }
       that.setState(previousState => {
@@ -93,19 +92,15 @@ export default class PushTheButtonsScreen extends React.Component {
   }
   playerClickedButton = () => {
     var self = this;
-    if (this.state.playerToClickMessage !== "Wait for new command!") {
-      self.setState(previousState => {
-        return { playerToClickMessage: undefined, clickable:false };
-      });
-      Http.patch('api/push_the_buttons',{group_id: self.state.groupId
-      }).then(function (response) {
-      }).catch(function (error) {
-        console.log(error);
-        console.log(error.status);
-      })
-    } else {
-      alert("Wait for signal!");
-    }
+    self.setState(previousState => {
+      return { playerToClickMessage: undefined, clickable:false };
+    });
+    Http.patch('api/push_the_buttons',{group_id: self.state.groupId
+    }).then(function (response) {
+    }).catch(function (error) {
+      console.log(error);
+      console.log(error.status);
+    })
   }
   render() {
     var that = this;

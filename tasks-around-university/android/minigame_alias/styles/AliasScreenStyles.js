@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
     progressBar:{
         width: '90%',
         marginBottom: 20,
+        color: "#2F4F4F"
     },
     debug:{
         alignItems: 'center',

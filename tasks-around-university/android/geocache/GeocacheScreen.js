@@ -53,8 +53,6 @@ class Timer extends Component {
 
 }
 
-const tuniColor = '#4e008e';
-
 /*
  * Styles for the Geocache component
  */
@@ -76,14 +74,14 @@ const geoStyles = StyleSheet.create({
   },
   header: {
     alignItems: 'stretch',
-    backgroundColor: tuniColor,
+    backgroundColor: '#4e008e',
     justifyContent: 'flex-end',
     flex: 1
   },
   widget: {
     borderWidth: 1,
     borderColor: 'black',
-    backgroundColor: tuniColor,
+    backgroundColor: '#4e008e',
     justifyContent: 'space-around',
     flex: 3,
   },
@@ -165,11 +163,11 @@ export class GeocacheScreen extends Component {
       const tries = data['tries'];
       if(current_score === that.state.currentScore) {
         if(tries >= 6) {
-          alert("Arvauksesi loppuivat!");
+          Alert.alert("Geochache", "Arvauksesi loppuivat!");
           Actions.main_map();
         }
         if(!riddle) {
-          alert("Peli loppui!");
+          Alert.alert("Geochache", "Peli loppui!");
           Actions.main_map();
         }
         that.setState(previousState => {
@@ -192,9 +190,9 @@ export class GeocacheScreen extends Component {
     }).then(function (response) {
       self.setState({scannedItem: ""});
       if(!response['data']['status']) {
-        alert("Väärin!");
+        Alert.alert("Geochache", "Väärin!");
       } else {
-        alert("Oikein!");
+        Alert.alert("Oikein!");
       }
     });
   }

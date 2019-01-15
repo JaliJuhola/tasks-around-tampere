@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, Alert } from 'react-native';
 import { Button, RadioButton, Appbar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Auth} from '../../core/auth/auth';
@@ -9,6 +9,7 @@ import Modal from "react-native-modal";
 import { Actions } from 'react-native-router-flux';
 import {Http} from '../../core/connections/http';
 import {MainView} from '../../common/Components/MainView'
+import { ScrollContainer } from '../../common/Components/ScrollContainer';
 
 
 class SelectIcon extends React.Component {
@@ -22,7 +23,7 @@ class SelectIcon extends React.Component {
     }).then(function (response) {
         Actions.main_map();
     }).catch(function (error) {
-        alert("failed to set avatar!");
+        Alert.alert("Virhe", "Avatarin asettaminen epäonnistui!");
     });
 
   }
@@ -32,7 +33,7 @@ class SelectIcon extends React.Component {
             <ScrollView>
                 <RadioButton.Group
                 onValueChange={value => this.setState({ selectedIcon: value })}
-                value={this.state.selectedIcon}>
+                value={this.state.selectedIcon} style={{ justifyContent: 'center'}}>
                     <View style={{flexDirection: "row", justifyContent: 'center',alignItems: 'center', marginTop: 25}}>
                         <Icon name="space-shuttle" size={60} />
                         <RadioButton value="space-shuttle" style={{justifyContent: 'center',alignItems: 'center', marginLeft: 25}} />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, Alert } from 'react-native';
 import { Button, Headline, TextInput, ProgressBar, Appbar} from 'react-native-paper';
 
 import AliasScreenStyles from '../styles/AliasScreenStyles';
@@ -63,7 +63,7 @@ export class AliasScreen extends React.Component {
         var channel = that.pusher.subscribe('alias-' + that.state.groupId);
         channel.bind('new-word', function(data) {
           if(!data['currentword']) {
-              alert("Peli loppui pisteesi olivat " + that.state.score);
+              Alert.alert("Alias", "Peli loppui pisteesi olivat " + that.state.score);
               return Actions.main_map()
           }
           that.setState(previousState => {
@@ -86,7 +86,7 @@ export class AliasScreen extends React.Component {
     endRound = () => {
         var self = this;
         Http.post('api/alias/end').then(function (response) {
-            alert("Peli loppui sinulla on " + this.state.score + " pistettä");
+            Alert.alert("Alias", "Peli loppui sinulla on " + this.state.score + " pistettä");
         })
     }
 
@@ -100,13 +100,13 @@ export class AliasScreen extends React.Component {
         var self = this;
         let guess = this.state.textInput.toLowerCase();
         if (guess === this.state.currentWord.toLowerCase()) {
-            alert("Arvasit oikein!");
+            Alert.alert("Alias", "Arvasit oikein!");
             Http.patch('api/alias/score',{}).then(function (response) {
                 self.setState({textInput: ""});
             });
         }
         else {
-            alert("Arvasit väärin!");
+            Alert.alert("Alias", "Arvasit väärin!");
         }
     }
     readyForNext = () => {
@@ -125,7 +125,7 @@ export class AliasScreen extends React.Component {
                 }} mainTitle={"Alias"}
                 >
                 <View style={AliasScreenStyles.container}>
-                    <ProgressBar progress={(this.state.timeElapsed) / 20} style={AliasScreenStyles.progressBar} />
+                    <ProgressBar progress={(this.state.totalTimeElapsed) / 20} style={AliasScreenStyles.progressBar} />
                     <Text style={AliasScreenStyles.text}>
                     Rymäsi pisteet: {this.state.score}
                     </Text>
