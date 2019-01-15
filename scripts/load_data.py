@@ -19,3 +19,4 @@ from rest.geocache.models import GeocacheMainGame, GeocacheRiddles
 GeocacheRiddles.objects.create(id=1, riddle="Tietopinnin 24/7 luokan ensimmainen huone vasemmalta", answer="tassa_on_eka_qr_koodi")
 GeocacheRiddles.objects.create(id=2, riddle="Pinni A:n ruokalan linjaston alla!", answer="et_voi_arvata_naita_mitenkaan")
 GeocacheRiddles.objects.create(id=3, riddle="Yliopiston edessa oleva bussipysakki josta lahtee bussi 6", answer="vai_voitko_sittenkin")
+

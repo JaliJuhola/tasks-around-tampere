@@ -63,7 +63,7 @@ export default class PushTheButtonsScreen extends React.Component {
     console.log('push-the-buttons-' + that.state.groupId);
     channel.bind('new-push', function(data) {
       console.log(data);
-      const target_str = "Pelaajan numero " + data['player_who_has_event'] + " Tulee klikata";
+      const target_str = "Pelaajan numero " + data['target_player'] + " Tulee klikata";
       const time_to_push = data['seconds_to_push'];
       if(that.state.playerId === data['player_who_has_event']) {
         that.setState(previousState => {

@@ -201,7 +201,7 @@ export class GeocacheScreen extends Component {
   render() {
     if(this.state.scannerOpen) {
       return (
-        <Scanner scan_action={this.basicScan}></Scanner>
+        <Scanner scan_action={this.basicScan} open={this.state.scannerOpen}></Scanner>
       )
     }
     return (
