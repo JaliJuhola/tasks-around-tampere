@@ -97,7 +97,7 @@ const onBackAndroid = () => {
     //-> map
   }
   if(Actions.currentScene === "scanner") {
-    Actions.MapScreen();
+    //Might be using scanner class to do this stuff.
   }
 
   console.log("*************************************************");
