@@ -31,24 +31,23 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'flex-end',
-        justifyContent: 'space-evenly',
+        justifyContent: 'center',
     },
     answerText: {
-        color: 'white',
-        alignSelf:'center',
-        backgroundColor: '#6200ee',
+        color: 'white', 
+        fontSize: 16,
+    },
+    answerButton: {
+        height: 40, 
+        width: '30%', 
+        backgroundColor: '#6200ee', 
         paddingTop: 5,
         paddingBottom: 5,
         paddingRight: 8,
         paddingLeft: 8,
-        fontSize: 16,
         borderRadius: 5,
-    },
-    answerButton: {
-        height: 100,
-        width: '45%',
-        alignContent:'center',
-        justifyContent: 'flex-end'
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     modalWindowContainer: {
         flex:1,
@@ -81,16 +80,19 @@ const styles = StyleSheet.create({
         height: '40%',
         borderTopWidth: 3,
         borderColor: '#6200ee',
-        marginTop: 40,
     },
     modalTextContainer: {
         alignSelf: 'center',
-        marginTop: 5,
-        width: '80%',
-        height: '30%',
+        width: '100%',
+        height: '45%',
+    },
+    modalTextBorder: {
+        borderWidth: 1,
+        borderColor: '#6200ee',
     },
     modalText: {
-        marginTop: 7,
+        marginTop: 4,
+        marginBottom: 4,
         alignSelf: 'center',
         fontSize: 16,
     },
@@ -112,20 +114,53 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 20,
     },
-    bottomScreen: {
-        backgroundColor: '#6200ee',
+    bottomScreenContainer: {
         position: "absolute",
         bottom: 0,
         left: 0,
         right: 0,
         width: '100%',
-        height: '10%',
+        height: '15%',
         alignItems: 'center',
         justifyContent: 'center',
     },
-    bottomScreenText: {
+    legendContainer: {
+        height: '45%',
+        width: '100%',
+        backgroundColor: 'white',
+        borderWidth: 4,
+        borderColor: '#6200ee',
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+    },
+    legendText: {
+        color: 'black',
+        fontSize: 15
+    },
+    legendImage: {
+      width: 20,
+      height: 20,
+    },
+    legend: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    progressContainer: {
+        height: '55%',
+        width: '100%',
+        backgroundColor: '#6200ee',
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+    },
+    progressText: {
         color: 'white',
-        fontSize: 20
+        fontSize: 20,
     },
     userNameContainer: {
         width: 200,

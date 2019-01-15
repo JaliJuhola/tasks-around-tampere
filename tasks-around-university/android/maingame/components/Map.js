@@ -9,6 +9,7 @@ import RandomQuestions from './RandomQuestions';
 import TimerMixin from 'react-timer-mixin';
 import {Http} from '../../core/connections/http';
 import {Loading} from './Loading';
+import Icon from 'react-native-vector-icons/FontAwesome';
 var marker1 = require ('../assets/user_marker_1.png');
 var marker2 = require ('../assets/user_marker_2.png');
 var marker3 = require ('../assets/user_marker_3.png');
@@ -160,6 +161,7 @@ export default class Map extends React.Component {
   componentDidMount() {
     // Initial map update
     this.updateUsersLocation();
+    this.displayMinigameMarkers();
     // updating map every interval
     this.map_updater = this.updateMap();
     this.updateOverallScore();
@@ -268,8 +270,9 @@ export default class Map extends React.Component {
               coordinate={user.location}
               onPress={(e) => {e.stopPropagation();}}
               pinColor={color}
-            >
-              {/* <Image source={markerImage} style={MapStyles.userMarkerImage} /> */}
+            >         
+              <Image source={markerImage} style={MapStyles.userMarkerImage} />
+
               <MapView.Callout tooltip={true}>
                 <View style={MapStyles.userNameContainer}>
                   <Text style={MapStyles.userName}>
@@ -289,27 +292,29 @@ export default class Map extends React.Component {
 
   //Returns minigame-markers
   displayMinigameMarkers() {
-    if(this.state.markers[0].distance != null) {
-      var markers = this.state.markers.map((marker, i) =>  {
-        var color = '#6200ee';
-        if(marker.completed) {
-          color = '#0EDA16';
-        }
-        return(
-          <MapView.Marker
-            id={Date.now() + i}
-            key={Date.now() + i}
-            coordinate={marker.coordinates}
-            pinColor={color}
-            onPress={(e) => {e.stopPropagation(); this.showModalWindow(i);}}
-          >
-          </MapView.Marker>
-        )
-      })
-      this.setState({
-        minigameMarkers: markers
-      })
-    }
+    var markers = this.state.markers.map((marker, i) =>  {
+      var color = '#6200ee';
+      if(marker.completed) {
+        color = '#0EDA16';
+      }
+      if(marker.distance == null) {
+        marker.distance = 1000;
+        marker.distanceText = "Calculating...";
+      }
+      return(
+        <MapView.Marker
+          id={Date.now() + i}
+          key={Date.now() + i}
+          coordinate={marker.coordinates}
+          pinColor={color}
+          onPress={(e) => {e.stopPropagation(); this.showModalWindow(i);}}
+        >
+        </MapView.Marker>
+      )
+    })
+    this.setState({
+      minigameMarkers: markers
+    })
   }
 
   showModalWindow(activatedMarker) {
@@ -355,7 +360,7 @@ export default class Map extends React.Component {
   }
 
   render() {
-    if(this.state.minigameMarkers.length < 1 || this.state.userMarkers.length < 1) {
+    if(this.state.minigameMarkers.length < 1) {
       return (
         <Loading message="Ladataan karttaa"></Loading>
       );
@@ -425,9 +430,25 @@ export default class Map extends React.Component {
               </View>
             </View>
           </Modal>
-          <View style={MapStyles.bottomScreen}>
-            <Text style={MapStyles.bottomScreenText}>Points: {this.state.teamScore}</Text>
-            <Text style={MapStyles.bottomScreenText}>Progress: {this.state.teamProgress}%</Text>
+          <View style={MapStyles.bottomScreenContainer}>
+            <View style={MapStyles.legendContainer}>
+              <View style={MapStyles.legend}>
+                <Icon name="map-marker" color="#6200ee" size={20} />
+                <Text style={MapStyles.legendText}>Minigame</Text>
+              </View>
+              <View style={MapStyles.legend}>
+                <Icon name="map-marker" color="#0EDA16" size={20} />
+                <Text style={MapStyles.legendText}>Completed</Text>
+              </View>
+              <View style={MapStyles.legend}>
+                <Image source={this.state.images[0]} style={MapStyles.legendImage}></Image>
+                <Text style={MapStyles.legendText}>Player</Text>
+              </View>
+            </View>
+            <View style={MapStyles.progressContainer}>
+              <Text style={MapStyles.progressText}>Points: {this.state.teamScore}</Text>
+              <Text style={MapStyles.progressText}>Progress: {this.state.teamProgress}%</Text>
+            </View>
           </View>
       </View>
     );
