@@ -15,14 +15,10 @@ class MiniGameEntry {
     static enter_minigame(minigame_str, closing) {
         switch(minigame_str) {
             case "push_the_buttons":
-            if(closing) {
                 Http.post('api/push_the_buttons', {}).then(function(){
                     return Actions.push_the_buttons();
                 })
-            } else {
-                Actions.push_the_buttons()
-            }
-                break
+                break;
             case "cache":
                 Http.post('api/geocache/', {}).then(function(){
                     return Actions.cache()

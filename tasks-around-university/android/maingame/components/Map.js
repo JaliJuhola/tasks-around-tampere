@@ -9,6 +9,7 @@ import RandomQuestions from './RandomQuestions';
 import TimerMixin from 'react-timer-mixin';
 import {Http} from '../../core/connections/http';
 import {Loading} from '../../common/Components/Loading';
+<<<<<<< HEAD
 
 var marker1 = require ('../assets/user_marker_1.png');
 var marker2 = require ('../assets/user_marker_2.png');
@@ -16,15 +17,20 @@ var marker3 = require ('../assets/user_marker_3.png');
 var marker4 = require ('../assets/user_marker_4.png');
 var marker5 = require ('../assets/user_marker_5.png');
 var marker6 = require ('../assets/user_marker_6.png');
+=======
+import { MainView } from '../../common/Components/MainView';
+import { Actions } from 'react-native-router-flux';
+import settings from '../../Settings';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Auth } from '../../core/auth/auth';
+>>>>>>> development
 
 
 
 export default class Map extends React.Component {
   constructor(props) {
     super(props);
-    // Common data should be abstracted later
-    // this.scoreHelper = new MiniGameScore(CommonData.getGroupId(), MINIGAME_KEY);
-
+    this.markerImages = [require ('../assets/user_marker_1.png'),require ('../assets/user_marker_2.png'),require ('../assets/user_marker_3.png'),require ('../assets/user_marker_4.png'),require ('../assets/user_marker_5.png'),require ('../assets/user_marker_6.png')];
     this.state = {
       markerModalVisible: false,
       markerNearUser: false,
@@ -34,11 +40,9 @@ export default class Map extends React.Component {
       currentMarker: 0,
       teamProgress: 0,
       teamScore: 0,
+      isLoading: true,
       minigameMarkers: [],
       userMarkers: [],
-      images: [
-        marker1,marker2,marker3,marker4,marker5,marker6
-      ],
       team: [
         {
           name: "You",
@@ -126,7 +130,7 @@ export default class Map extends React.Component {
           score: 25,
           hiscore: 0,
           timesPlayed: 0,
-          completed: true,
+          completed: false,
           distance: null,
           distanceText: null,
           coordinates: {
@@ -161,9 +165,14 @@ export default class Map extends React.Component {
   componentDidMount() {
     // Initial map update
     this.updateUsersLocation();
+    this.displayMinigameMarkers();
     // updating map every interval
     this.map_updater = this.updateMap();
+    this.updateMinigameScore();
     this.updateOverallScore();
+    if(this.state.minigameMarkers.length > 0) {
+      this.setState({isLoading:false});
+    }
   }
 
   //Updates map every interval
@@ -171,6 +180,9 @@ export default class Map extends React.Component {
     return TimerMixin.setInterval(() => {
       this.updateUsersLocation();
       this.updateMinigameScore();
+      if(this.state.minigameMarkers.length > 0) {
+        this.setState({isLoading:false});
+      }
     }, this.state.mapUpdateInterval);
   }
 
@@ -197,8 +209,8 @@ export default class Map extends React.Component {
             team: response['data']['players'],
           });
           self.displayUserMarkers();
-          self.displayMinigameMarkers();
           self.updateDistances();
+          self.displayMinigameMarkers();
         });
         }
   }
@@ -251,16 +263,16 @@ export default class Map extends React.Component {
         var color = "#0000FF";
         var name = user.name;
         if(user.type === 3) {
-          color = "#FF0000";
+          color = "#02f2ff";
           name = "You";
         } else if(user.type === 2) {
-          color = "#0000A0"
+          color = "#a00078"
           name = "Leader " + user.name;
         }
         if(user.location != null) {
-          var markerImage = this.state.images[0];
+          var markerImage = this.markerImages[0];
           if(i <= 5) {
-           markerImage = this.state.images[i];
+           markerImage = this.markerImages[i];
           }
           return(
             <MapView.Marker
@@ -290,27 +302,30 @@ export default class Map extends React.Component {
 
   //Returns minigame-markers
   displayMinigameMarkers() {
-    if(this.state.markers[0].distance != null) {
-      var markers = this.state.markers.map((marker, i) =>  {
-        var color = '#6200ee';
-        if(marker.completed) {
-          color = '#0EDA16';
-        }
-        return(
-          <MapView.Marker
-            id={Date.now() + i}
-            key={Date.now() + i}
-            coordinate={marker.coordinates}
-            pinColor={color}
-            onPress={(e) => {e.stopPropagation(); this.showModalWindow(i);}}
-          >
-          </MapView.Marker>
-        )
-      })
-      this.setState({
-        minigameMarkers: markers
-      })
-    }
+    var markers = this.state.markers.map((marker, i) =>  {
+      var color = '#6200ee';
+      var marker_pressed = (e) => {e.stopPropagation(); this.showModalWindow(i);}
+      if(marker.distance > 100 && !settings['debug']) {
+        color = '#808080';
+        marker_pressed = undefined;
+      }
+      if(marker.completed) {
+        color = '#0EDA16';
+      }
+      return(
+        <MapView.Marker
+          id={Date.now() + i}
+          key={Date.now() + i}
+          coordinate={marker.coordinates}
+          pinColor={color}
+          onPress={marker_pressed}
+        >
+        </MapView.Marker>
+      )
+    })
+    this.setState({
+      minigameMarkers: markers
+    })
   }
 
   showModalWindow(activatedMarker) {
@@ -356,13 +371,12 @@ export default class Map extends React.Component {
   }
 
   render() {
-    if(this.state.minigameMarkers.length < 1 || this.state.userMarkers.length < 1) {
-      return (
-        <Loading message="Ladataan karttaa"></Loading>
-      );
-    }
+    Auth.not_auth();
     return (
-      <View>
+      <MainView
+      onExit={() => Actions.main()} mainTitle={"Kartta"}
+      isLoading={this.state.isLoading}
+      loadingTitle="Ladataan karttaa">
         <MapView
           initialRegion={{
             latitude: 61.4941,
@@ -426,11 +440,27 @@ export default class Map extends React.Component {
               </View>
             </View>
           </Modal>
-          <View style={MapStyles.bottomScreen}>
-            <Text style={MapStyles.bottomScreenText}>Points: {this.state.teamScore}</Text>
-            <Text style={MapStyles.bottomScreenText}>Progress: {this.state.teamProgress}%</Text>
+          <View style={MapStyles.bottomScreenContainer}>
+            <View style={MapStyles.legendContainer}>
+              <View style={MapStyles.legend}>
+                <Icon name="map-marker" color="#6200ee" size={20} />
+                <Text style={MapStyles.legendText}>Minigame</Text>
+              </View>
+              <View style={MapStyles.legend}>
+                <Icon name="map-marker" color="#0EDA16" size={20} />
+                <Text style={MapStyles.legendText}>Completed</Text>
+              </View>
+              <View style={MapStyles.legend}>
+                <Image source={this.markerImages[0]} style={MapStyles.legendImage}></Image>
+                <Text style={MapStyles.legendText}>Player</Text>
+              </View>
+            </View>
+            <View style={MapStyles.progressContainer}>
+              <Text style={MapStyles.progressText}>Points: {this.state.teamScore}</Text>
+              <Text style={MapStyles.progressText}>Progress: {this.state.teamProgress}%</Text>
+            </View>
           </View>
-      </View>
+        </MainView>
     );
   }
 }

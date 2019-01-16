@@ -18,6 +18,7 @@ export default class Scanner extends Component {
   constructor(props) {
     super(props);
     this.props = props;
+    this.props.open = true // if this is false scanner get closed
     this.state = {
       hasCameraPermission: null,
       lastScannedUrl: null,
@@ -94,7 +95,6 @@ export default class Scanner extends Component {
 
   _handlePressCancel = () => {
     this.setState({ lastScannedUrl: null });
-    Actions.pop()
   };
   _maybeRenderUrl = () => {
     if (!this.state.lastScannedUrl) {

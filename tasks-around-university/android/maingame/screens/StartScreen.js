@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Auth} from '../../core/auth/auth';
@@ -25,7 +25,7 @@ export default class StartScreen extends React.Component {
         this.setState({groupnameError:true})
       }
     } else {
-      alert("Virhe luodessa käyttäjää!");
+      Alert.alert("Virhe", "Virhe luodessa käyttäjää!");
     }
   }
   async createGroup() {
@@ -38,11 +38,12 @@ export default class StartScreen extends React.Component {
         this.setState({groupnameError:true})
       }
     } else {
-      alert("Virhe luodessa käyttäjää!");
+      Alert.alert("Virhe", "Virhe luodessa käyttäjää!");
     }
   }
 
   render() {
+    Auth.check_auth();
     return (
       <View style={StartScreenStyles.container}>
         <View>

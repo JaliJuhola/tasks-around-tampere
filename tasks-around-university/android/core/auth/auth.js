@@ -3,6 +3,7 @@ import settings from '../../Settings';
 import GlobalStorage from '../store/store';
 import {Http} from '../connections/http';
 import { AsyncStorage } from "react-native";
+import { Actions } from 'react-native-router-flux';
 export class Auth {
     static async fetch_or_create_user(username, force = true) {
         var status = await axios.post(settings['rest_api_url'] + 'api/auth/', {
@@ -16,6 +17,9 @@ export class Auth {
             return error;
         });
         return status
+    }
+    static async logout() {
+        GlobalStorage.deleteItem("token");
     }
     static async join_group(group_id) {
         var status = await Http.post('api/group/player', {
@@ -51,8 +55,12 @@ export class Auth {
     }
     static async check_auth()  {
         if(await GlobalStorage.getItem("token")) {
-            return true;
+            Actions.main_map();
         }
-        return false;
+    }
+    static async not_auth()  {
+        if(!await GlobalStorage.getItem("token")) {
+            Actions.startScreen();
+        }
     }
 }

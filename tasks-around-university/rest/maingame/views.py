@@ -140,7 +140,10 @@ class LobbyView(APIView):
         for player_in_lobby in players_in_lobby:
             player = player_in_lobby.player
             response_array.append({'id': player.id, 'name': player.name, 'x': player.x, 'y': player.y, 'group_id': player.group.id, 'avatar': player.icon_name})
+<<<<<<< HEAD
         print(lobby.closed)
+=======
+>>>>>>> development
         return Response({'players': response_array, 'closed': lobby.closed})
 
 class LobbyExitView(APIView):
@@ -241,5 +244,4 @@ class MinigameProgressionView(APIView):
         if amg.first():
             alias_max = amg.first().current_score
 
-        print({'group': geocache_group_max, 'world': geocache_max, 'count': geocache_group_count})
         return Response({'Push the buttons': {'group': push_the_buttons_group_max, 'world': push_the_buttons_max, 'count': push_the_buttons_group_count}, 'Alias': {'group': alias_group_max, 'world': alias_max, 'count': alias_group_count}, 'Quiklash': {'group': quiklash_group_max, 'world': quiklash_max, 'count': quiklash_group_count}, 'GeoCache': {'group': geocache_group_max, 'world': geocache_max, 'count': geocache_group_count}, 'total_score': total_score, 'completion_percentage': minigames_completed/TOTAL_MINIGAMES})

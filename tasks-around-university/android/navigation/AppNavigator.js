@@ -24,7 +24,7 @@ import {AliasScreen} from '../minigame_alias/screens/AliasScreen';
 import {QuiklashScreen} from '../maingame/components/Quiklash';
 import {GeocacheScreen} from '../geocache/GeocacheScreen';
 import IconSelect from '../maingame/components/IconSelect';
-
+import { Auth } from '../core/auth/auth';
 const reducerCreate = params => {
   const defaultReducer = new Reducer(params);
   return (state, action) => {
@@ -57,21 +57,32 @@ const transitionConfig = () => ({
 
 //Android's back button, need logic here. Adding them later on.
 const onBackAndroid = () => {
-  console.log("*************************************************");
-  console.log("Back Handler");
   if(Actions.currentScene === "main_map") {
-    console.log("main_map scene asd");
+    Auth.logout().then(() =>{
+      Alert.alert(
+        'Kirjaudu ulos',
+        'Haluatko kirjautua ulos?',
+        [
+          { text: 'Ei', onPress: () => {} },
+          {
+            text: 'Kyllä',
+            onPress: () => Actions.start(),
+          },
+        ],
+        { cancellable: false }
+      );
+    })
   }
   if(Actions.currentScene === "start") {
     Alert.alert(
-      'Quit?',
-      'Do you want to close the game?',
+      'Poistu applikaatiosta',
+      'Haluatko poistua applikaatiosta?',
       [
+        { text: 'Ei', onPress: () => {} },
         {
-          text: 'Yes',
+          text: 'Kyllä',
           onPress: () => BackHandler.exitApp(),
         },
-        { text: 'No', onPress: () => {} },
       ],
       { cancellable: false }
     );
@@ -80,13 +91,13 @@ const onBackAndroid = () => {
     Actions.StartScreen();
   }
   if(Actions.currentScene === "Lobby") {
-    //-> map
+    Actions.MapScreen();
   }
   if(Actions.currentScene === "Minigame") {
     //-> map
   }
   if(Actions.currentScene === "scanner") {
-    //-> map
+    //Might be using scanner class to do this stuff.
   }
 
   console.log("*************************************************");

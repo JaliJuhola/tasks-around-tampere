@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, Alert } from 'react-native';
 import { Button, Headline, TextInput, ProgressBar, Appbar} from 'react-native-paper';
 
 import AliasScreenStyles from '../styles/AliasScreenStyles';
 import {Http} from '../../core/connections/http';
 import {getSocketConnection} from '../../common/minigame/Connection';
 import { Actions } from 'react-native-router-flux';
+import { MainView } from '../../common/Components/MainView';
 
 export class AliasScreen extends React.Component {
 
@@ -14,7 +15,7 @@ export class AliasScreen extends React.Component {
         this.state = {
             words: '',
             textInput: '',
-            currentWord: 'Peli alkaa hetken kuluttua!',
+            currentWord: 0,
             correctWord: ' ',
             explainer: true,
             timeElapsed: 0,
@@ -31,6 +32,7 @@ export class AliasScreen extends React.Component {
             playerName: 0,
             groupName: 0,
             isLeader: false,
+
 
         };
         this.pusher = getSocketConnection();
@@ -61,7 +63,7 @@ export class AliasScreen extends React.Component {
         var channel = that.pusher.subscribe('alias-' + that.state.groupId);
         channel.bind('new-word', function(data) {
           if(!data['currentword']) {
-              alert("Peli loppui pisteesi olivat " + that.state.score);
+              Alert.alert("Alias", "Peli loppui pisteesi olivat " + that.state.score);
               return Actions.main_map()
           }
           that.setState(previousState => {
@@ -84,7 +86,7 @@ export class AliasScreen extends React.Component {
     endRound = () => {
         var self = this;
         Http.post('api/alias/end').then(function (response) {
-            alert("Peli loppui sinulla on " + this.state.score + " pistettä");
+            Alert.alert("Alias", "Peli loppui sinulla on " + this.state.score + " pistettä");
         })
     }
 
@@ -94,23 +96,17 @@ export class AliasScreen extends React.Component {
         }));
     }
 
-    // This function updates score followingly: <=10s elapsed gives 500 points,
-    // 30s elapsed (max time per word) gives 100 points, everything in between is linearly determined
-
-    // This function checks if user's guess was right or wrong and updates things accordingly
     checkGuess = () => {
         var self = this;
-        if (this.state.currentWord != "Peli loppui") {
-            let guess = this.state.textInput.toLowerCase();
-            if (guess === this.state.correctWord.toLowerCase()) {
-                alert("Arvasit oikein!");
-                Http.patch('api/alias/score',{}).then(function (response) {
-                  self.setState({textInput: ""});
-                });
-            }
-            else {
-                alert("Arvasit väärin!");
-            }
+        let guess = this.state.textInput.toLowerCase();
+        if (guess === this.state.currentWord.toLowerCase()) {
+            Alert.alert("Alias", "Arvasit oikein!");
+            Http.patch('api/alias/score',{}).then(function (response) {
+                self.setState({textInput: ""});
+            });
+        }
+        else {
+            Alert.alert("Alias", "Arvasit väärin!");
         }
     }
     readyForNext = () => {
@@ -122,6 +118,7 @@ export class AliasScreen extends React.Component {
     render() {
         var buttonColor = '#4e008e';
         return (
+<<<<<<< HEAD
             <View>
                 <Appbar.Header>
                     <Appbar.BackAction
@@ -135,10 +132,18 @@ export class AliasScreen extends React.Component {
                     title={"Alias"}
                     />
                 </Appbar.Header>
+=======
+            <MainView
+                onExit={() => () => {
+                    Http.post('api/alias/end',{
+                    })
+                }} mainTitle={"Alias"}
+                >
+>>>>>>> development
                 <View style={AliasScreenStyles.container}>
-                    <ProgressBar progress={(this.state.timeElapsed) / 20} style={AliasScreenStyles.progressBar} />
+                    <ProgressBar progress={(this.state.totalTimeElapsed) / 20} style={AliasScreenStyles.progressBar} />
                     <Text style={AliasScreenStyles.text}>
-                    Rymäsi pisteet: {this.state.score}
+                    Ryhmäsi pisteet: {this.state.score}
                     </Text>
                     <Text style={AliasScreenStyles.text}>
                     {this.state.explainer ? "Selitettävä sana on: " + this.state.currentWord : "Et ole selittäjä!"}
@@ -156,7 +161,7 @@ export class AliasScreen extends React.Component {
                     <Button mode="contained" disabled={this.state.explainer} onPress={this.readyForNext} color={buttonColor} style={{width: "60%",marginTop: "10%", elevation: 1, opacity: 1}}>Seuraava sana
                     </Button>
                 </View>
-            </View>
+            </MainView>
         );
     }
 }
