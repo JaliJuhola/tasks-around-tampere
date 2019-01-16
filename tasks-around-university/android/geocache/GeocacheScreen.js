@@ -8,6 +8,7 @@ import {getSocketConnection} from '../common/minigame/Connection';
 import { Headline } from 'react-native-paper';
 import { Appbar, IconButton, Caption} from 'react-native-paper';
 import Scanner from '../maingame/components/Scanner';
+import { MainView } from '../common/Components/MainView';
 
 /*
  * A simple timer component that displays time elapsed since component mounting.
@@ -52,8 +53,6 @@ class Timer extends Component {
 
 }
 
-const tuniColor = '#4e008e';
-
 /*
  * Styles for the Geocache component
  */
@@ -75,14 +74,14 @@ const geoStyles = StyleSheet.create({
   },
   header: {
     alignItems: 'stretch',
-    backgroundColor: tuniColor,
+    backgroundColor: '#4e008e',
     justifyContent: 'flex-end',
     flex: 1
   },
   widget: {
     borderWidth: 1,
     borderColor: 'black',
-    backgroundColor: tuniColor,
+    backgroundColor: '#4e008e',
     justifyContent: 'space-around',
     flex: 3,
   },
@@ -164,11 +163,11 @@ export class GeocacheScreen extends Component {
       const tries = data['tries'];
       if(current_score === that.state.currentScore) {
         if(tries >= 6) {
-          alert("Arvauksesi loppuivat!");
+          Alert.alert("Geochache", "Arvauksesi loppuivat!");
           Actions.main_map();
         }
         if(!riddle) {
-          alert("Peli loppui!");
+          Alert.alert("Geochache", "Peli loppui!");
           Actions.main_map();
         }
         that.setState(previousState => {
@@ -191,37 +190,23 @@ export class GeocacheScreen extends Component {
     }).then(function (response) {
       self.setState({scannedItem: ""});
       if(!response['data']['status']) {
-        alert("Väärin!");
+        Alert.alert("Geochache", "Väärin!");
       } else {
-        alert("Oikein!");
+        Alert.alert("Oikein!");
       }
     });
   }
   render() {
     if(this.state.scannerOpen) {
       return (
-        <Scanner scan_action={this.basicScan}></Scanner>
+        <Scanner scan_action={this.basicScan} open={this.state.scannerOpen}></Scanner>
       )
     }
     return (
-      <View style={geoStyles.container}>
-      		<Image
-          source={require('../assets/images/tay.jpg')}
-		  style={{justifyContent: 'center',position: 'absolute',top: 0,bottom: 0,zIndex: 0,height:'100%',width:'100%'}}
-		  blurRadius={1}
-        />
-      <Appbar.Header>
-        <Appbar.BackAction
-          onPress={() => {
-            Http.post('api/geocache/exit/',{
-            })
-          }}
-          >
-        </Appbar.BackAction>
-        <Appbar.Content
-          title={"Geocache"}
-          />
-      </Appbar.Header>
+      <MainView mainTitle="Geocache" onExit = { () => {
+        Http.post('api/geocache/exit/',{})
+      }}
+      >
         <Headline style={geoStyles.subHeading}>Vihje</Headline>
         <View style={geoStyles.contents}>
           <View style={geoStyles.widget}>
@@ -267,7 +252,7 @@ export class GeocacheScreen extends Component {
             </View>
           </View>
         </View>
-      </View>
+        </MainView>
     );
 
   }

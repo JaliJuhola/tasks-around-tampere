@@ -45,10 +45,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   backgroundImage: {
-    justifyContent: 'center',
     position: 'absolute',
     top: 0,
     bottom: 0,
+    justifyContent: 'center',
     zIndex: 0,
     height:'100%',
     width:'100%'
@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: 'lightgrey',
     width: '90%',
+    marginLeft: '5%',
     paddingVertical: 10,
     marginVertical: 10,
   },

@@ -8,5 +8,8 @@ export default class GlobalStorage {
     static async getItem(key) {
         return AsyncStorage.getItem(key);
     }
+    static async deleteItem(key) {
+        return AsyncStorage.setItem(key, "");
+    }
 
 }

@@ -8,6 +8,9 @@ import {Http} from '../../core/connections/http';
 import LobbyScreenStyles from '../styles/LobbyScreenStyles';
 import MiniGameEntry from '../../common/minigame/Entry';
 import { Actions } from 'react-native-router-flux';
+import {Loading} from '../../common/Components/Loading';
+import { MainView } from '../../common/Components/MainView';
+import settings from '../../Settings';
 
 export default class LobbyScreen extends React.Component {
 	constructor(props) {
@@ -21,6 +24,7 @@ export default class LobbyScreen extends React.Component {
 			playerId: undefined,
 			groupId: 0,
 			groupName: "",
+			isLoading: false,
 			playerName: "",
 			cards: [<LobbyCard key={0} name={"Pelaajia ei ole haettu"} role={"You"} joined={true}/>]
 	    };
@@ -52,7 +56,7 @@ export default class LobbyScreen extends React.Component {
 	toTarget = () => {
 		var self = this;
 		Http.post('api/lobby/close',{lobby_id: this.state.lobby_id}).then(function (response) {
-			MiniGameEntry.enter_minigame(self.state.target_action, true);
+			self.setState({isLoading:true});
 		});
 	}
 	members(player_id, group_name, first_load) {
@@ -61,7 +65,7 @@ export default class LobbyScreen extends React.Component {
 		var image_index = 0
 		var members = 0
 		Http.patch('api/lobby',{lobby_id: this.state.lobby_id}).then(function (response) {
-			if(response['data']['closed'] && self.target_action) {
+			if(response['data']['closed'] && self.state.target_action) {
 				return MiniGameEntry.enter_minigame(self.state.target_action, false);
 			}
 			return response['data']['players'].map((item) => {
@@ -92,18 +96,18 @@ export default class LobbyScreen extends React.Component {
 
 	}
 
-  _onNavigation = () => console.log("Navigation");
   render() {
 		let warningMessage = '';
 		let buttonColor = '';
 		let buttonPress = undefined;
 		let buttonOpacity = 1;
-		if(!this.state.isLeader) {
+		var self = this;
+		if(!this.state.isLeader && !settings['debug']) {
 			buttonColor = "#ff0033";
 			buttonPress = undefined;
 			buttonOpacity = 0.5;
 			warningMessage = <Caption  style={{flexDirection: "row", marginBottom: "5%", fontSize: 20, textAlign: "center", color: "#ff0033", elevation: 4}} height={40}>Vain ryhmän johtaja voi aloittaa pelin!</Caption>;
-		} else if (this.state.cards.length < 1) {
+		} else if (self.state.cards && self.state.cards.length < 2 && !settings['debug']) {
 			buttonColor = "#ff0033";
 			buttonPress = undefined;
 			buttonOpacity = 0.5;
@@ -114,47 +118,30 @@ export default class LobbyScreen extends React.Component {
 			buttonPress = this.toTarget;
 			buttonOpacity = 1;
 		}
-
     return (
-      <View style={LobbyScreenStyles.container}>
-		<Image
-          source={require('../../assets/images/tay.jpg')}
-		  style={{justifyContent: 'center',position: 'absolute',top: 0,bottom: 0,zIndex: 0,height:'100%',width:'100%'}}
-		  blurRadius={1}
-        />
-        <Appbar.Header style={LobbyScreenStyles.appbar}>
-			<Appbar.BackAction
-				onPress={() => Actions.main_map()}
-			>
-			</Appbar.BackAction>
-			<Appbar.Content
-			  title={this.state.groupName + "(" + this.state.groupId + ")" }
-			  subtitle="Aula"
-			  subtitleStyle={{marginTop: -5, opacity: 1}}
-			/>
-		</Appbar.Header>
-		<View style={{flexDirection: "row"}}>
-			<IconButton
-				icon="update"
-				color={this.state.loadingColor}
-				onPress={() => {
-					this.setState(previousState => (
-						{loadingColor: "#ffc107", cards: []}
-					));
-					this.members(this.state.playerId, this.state.groupName, false)
-				}}
-				style={{elevation: 3}}
-			/>
-		</View>
-			<ScrollView contentContainerStyle={LobbyScreenStyles.scrollView} height="92%">
-				{this.state.cards}
-			</ScrollView>
-			{warningMessage}
-			<View style={{flexDirection: "row", marginBottom: "5%"}} height="8%">
-				<Button mode="contained" onPress={buttonPress} color={buttonColor} style={{marginLeft: "20%", width: "60%", elevation: 1, opacity: buttonOpacity}}>Aloita
-				</Button>
+		<MainView onExit={() => Actions.main_map()} mainTitle={"Aula " + this.state.groupName + "(" + this.state.groupId + ")"} isLoading={this.state.isLoading} loadingTitle="Odotetaan muita pelaajia">
+			<View style={{flexDirection: "row"}}>
+				<IconButton
+					icon="update"
+					color={this.state.loadingColor}
+					onPress={() => {
+						this.setState(previousState => (
+							{loadingColor: "#ffc107", cards: []}
+						));
+						this.members(this.state.playerId, this.state.groupName, false)
+					}}
+					style={{elevation: 3}}
+				/>
 			</View>
-      </View>
+				<ScrollView contentContainerStyle={LobbyScreenStyles.scrollView} height="92%">
+					{this.state.cards}
+				</ScrollView>
+				{warningMessage}
+				<View style={{flexDirection: "row", marginBottom: "5%"}} height="8%">
+					<Button mode="contained" onPress={buttonPress} color={buttonColor} style={{marginLeft: "20%", width: "60%", elevation: 1, opacity: buttonOpacity}}>Aloita</Button>
+				</View>
+		</MainView>
+
 	)
   }
 }
