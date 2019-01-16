@@ -15,7 +15,7 @@ export class AliasScreen extends React.Component {
         this.state = {
             words: '',
             textInput: '',
-            currentWord: 'Peli alkaa hetken kuluttua!',
+            currentWord: 0,
             correctWord: ' ',
             explainer: true,
             timeElapsed: 0,
@@ -127,7 +127,7 @@ export class AliasScreen extends React.Component {
                 <View style={AliasScreenStyles.container}>
                     <ProgressBar progress={(this.state.totalTimeElapsed) / 20} style={AliasScreenStyles.progressBar} />
                     <Text style={AliasScreenStyles.text}>
-                    Rymäsi pisteet: {this.state.score}
+                    Ryhmäsi pisteet: {this.state.score}
                     </Text>
                     <Text style={AliasScreenStyles.text}>
                     {this.state.explainer ? "Selitettävä sana on: " + this.state.currentWord : "Et ole selittäjä!"}

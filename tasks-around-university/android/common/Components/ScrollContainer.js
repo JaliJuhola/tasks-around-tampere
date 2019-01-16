@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, ScrollView} from 'react-native';
+import {View} from 'react-native';
 
 export class ScrollContainer extends React.Component {
   constructor(props) {
@@ -8,9 +8,9 @@ export class ScrollContainer extends React.Component {
     render() {
         const tuniColor = '#4e008e';
       return (
-        <ScrollView contentContainerStyle={{borderWidth: 1,borderColor: 'black',backgroundColor: tuniColor,justifyContent: 'space-evenly'} }>
+        <View style={{borderWidth: 1,borderColor: 'black',backgroundColor: tuniColor,justifyContent: 'space-evenly'}}>
               {this.props.children}
-        </ScrollView>
+        </View>
       );
     }
 }

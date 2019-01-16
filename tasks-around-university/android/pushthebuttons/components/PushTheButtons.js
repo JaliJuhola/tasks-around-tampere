@@ -64,14 +64,20 @@ export default class PushTheButtonsScreen extends React.Component {
     var channel = this.pusher.subscribe('push-the-buttons-' + that.state.groupId);
     channel.bind('new-push', function(data) {
       const time_to_push = data['seconds_to_push'];
-      if(that.state.playerId === data['player_who_has_event']) {
         that.setState(previousState => {
           return { secondsToPush: time_to_push / 1000};
           });
+      if(that.state.playerId === data['player_who_has_event']) {
+
+        that.setState(previousState => {
+          return { playerToClickMessage: data['target_player'], clickable:true};
+        });
+      } else {
+        that.setState(previousState => {
+          return { playerToClickMessage: undefined};
+        });
       }
-      that.setState(previousState => {
-      return { playerToClickMessage: data['target_player'], clickable:true};
-      });
+
     });
     return channel;
   }
@@ -81,6 +87,9 @@ export default class PushTheButtonsScreen extends React.Component {
     channel.bind('push-completed', function(data) {
       if(!data['player_id']){
         Alert.alert("Push The Buttons", "Peli loppui pistein " + data['current_score']);
+        that.setState(previousState => {
+          return { playerToClickMessage: 0};
+        });
         return Actions.main_map()
       }
       that.setState(previousState => {
@@ -115,9 +124,7 @@ export default class PushTheButtonsScreen extends React.Component {
       <Text style={styles.textItemsBold}>{that.state.playerToClickMessage}</Text>
       <Text style={styles.textItems}> klikkaa nappia</Text>
     </View>
-    }
-
-    else {
+    } else {
       targetedStr = <View style={{flexDirection: 'row', }}>
       <Text style={styles.textItemsBold}>Odota komentoa!</Text>
     </View>

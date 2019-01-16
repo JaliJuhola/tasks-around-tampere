@@ -120,7 +120,7 @@ export default class Map extends React.Component {
           score: 25,
           hiscore: 0,
           timesPlayed: 0,
-          completed: true,
+          completed: false,
           distance: null,
           distanceText: null,
           coordinates: {
@@ -253,10 +253,10 @@ export default class Map extends React.Component {
         var color = "#0000FF";
         var name = user.name;
         if(user.type === 3) {
-          color = "#FF0000";
+          color = "#02f2ff";
           name = "You";
         } else if(user.type === 2) {
-          color = "#0000A0"
+          color = "#a00078"
           name = "Leader " + user.name;
         }
         if(user.location != null) {
@@ -272,8 +272,7 @@ export default class Map extends React.Component {
               onPress={(e) => {e.stopPropagation();}}
               pinColor={color}
             >
-              <Image source={markerImage} style={MapStyles.userMarkerImage} />
-
+              {/* <Image source={markerImage} style={MapStyles.userMarkerImage} /> */}
               <MapView.Callout tooltip={true}>
                 <View style={MapStyles.userNameContainer}>
                   <Text style={MapStyles.userName}>
@@ -295,17 +294,13 @@ export default class Map extends React.Component {
   displayMinigameMarkers() {
     var markers = this.state.markers.map((marker, i) =>  {
       var color = '#6200ee';
-      if(marker.distance == null) {
-        marker.distance = 1000;
-        marker.distanceText = "Calculating...";
-      }
       var marker_pressed = (e) => {e.stopPropagation(); this.showModalWindow(i);}
-      if(marker.distance > 20 && !settings['debug']) {
+      if(marker.distance > 100 && !settings['debug']) {
         color = '#808080';
         marker_pressed = undefined;
-        if(marker.completed) {
-          color = '#0EDA16';
-        }
+      }
+      if(marker.completed) {
+        color = '#0EDA16';
       }
       return(
         <MapView.Marker
