@@ -25,6 +25,7 @@ import {QuiklashScreen} from '../maingame/components/Quiklash';
 import {GeocacheScreen} from '../geocache/GeocacheScreen';
 import IconSelect from '../maingame/components/IconSelect';
 import { Auth } from '../core/auth/auth';
+import PTB2Screen from '../PushThebuttons2/screens/PTB2Screen';
 const reducerCreate = params => {
   const defaultReducer = new Reducer(params);
   return (state, action) => {
@@ -187,6 +188,14 @@ const AppNavigator = () => (
                 component={IconSelect}
                 title="IconSelect"
                 tabBarLabel="icos"
+                icon={TabBarIcon}
+                type="replace"
+              />
+              <Scene
+                key="ptb2"
+                component={PTB2Screen}
+                title="ptb2"
+                tabBarLabel="ptb2"
                 icon={TabBarIcon}
                 type="replace"
               />

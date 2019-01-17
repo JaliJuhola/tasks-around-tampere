@@ -146,6 +146,24 @@ export default class Map extends React.Component {
             longitude: 23.778125,
           },
           userNear: false
+        },
+        {
+          title: 'Push the buttons 2',
+          description: "",
+          target_str: 'ptb2',
+          difficulty: "Hard",
+          players: '2-6',
+          score: 0,
+          hiscore: 0,
+          timesPlayed: 0,
+          completed: false,
+          distance: null,
+          distanceText: null,
+          coordinates: {
+            latitude: 61.494455,
+            longitude: 23.777125,
+          },
+          userNear: false
         }
       ]
     };

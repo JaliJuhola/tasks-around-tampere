@@ -3,27 +3,17 @@ import { Image, View, StyleSheet, Text, TouchableHighlight } from 'react-native'
 import { IconButton } from 'react-native-paper';
 
 import PTB2Styles from '../styles/PTB2Styles';
-
-// TouchableHighlight in ColoredButton class has empty Text element
-// as its child as it requires exactly one child
-
-// todo
-// -tee ajasta jotenkin nopeentuva liukuvasti käytä pisteitä tai taulukon pituutta jollain 0.02 kertoimella
-
-// Backend hommat:
-// -startNewRound() :ssa hae painikejärjestys backendistä
-// -endTheGame() :ssa lähetä backendiin että peli on päättynyt
-// -checkEndStatus() :ssa tarkistetaan backendistä onko peli päättynyt (joku pelaajista lähettänyt tiedon siitä)
-// -endTheGame() :ssa lähetä pisteet backendiin, tarviiko niitä?
+import { MainView } from '../../common/Components/MainView';
 
 class ColoredButton extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            
+            isLoading: false,
+            loadingTitle: "Odotetaan muita pelaajia"
         }
     }
-    
+
     render() {
         const { backgroundColor, disabled } = this.props;
         const combined = StyleSheet.flatten([PTB2Styles.coloredButton, backgroundColor]);
@@ -36,42 +26,39 @@ class ColoredButton extends React.Component {
 }
 
 export default class PTB2Screen extends React.Component {
-    
+
     constructor(props) {
         super(props);
         this.state = {
             buttonOrder: [],
-            buttonsPressed: [],
+            click_count: 0,
             hasGameEnded: false,
             explainer: false,
             buttonsDisabled: false,
             startButtonDisabled: true,
             gameMessage: 'Game starts in 5 seconds!',
             score: 0,
+            currentTimeout: 4000,
+            currentClick: 0,
             debug: '',
             endCheck: '',
             redButtonStyle: {backgroundColor: 'darkred'},
             blueButtonStyle: {backgroundColor: 'blue'},
             greenButtonStyle: {backgroundColor: 'limegreen'},
-            yellowButtonStyle: {backgroundColor: 'gold'},            
+            yellowButtonStyle: {backgroundColor: 'gold'},
         };
         this.waitBeforeStarting();
     }
-    
-    startNewRound = () => {        
-        // GET api/buttons, ota ne talteen parsable muuttujaan
+
+    startNewRound = () => {
         this.setState({gameMessage: ''});
-        let parsable = JSON.parse('{"explainer":true,"buttons":[0, 3, 2, 1]}');
-        let order = parsable["buttons"];
-        this.setState({buttonOrder: order});
-        if (parsable["explainer"]) {
-            this.setState({buttonsDisabled: true});
-            let i = 0;
-            this.repeatOrder(order, 0);
-        }
+        // starts with button 0
+        let order = [0]
+        this.setState({buttonsDisabled: false, buttonOrder: order});
+        this.repeatOrder(order, 0);
         this.setState({endCheck: setInterval(this.checkEndStatus, 1000)});
     }
-    
+
     turnOffLight = (button, k, buttonID) => {
         switch(buttonID) {
             case 0:
@@ -90,98 +77,88 @@ export default class PTB2Screen extends React.Component {
                 break;
         }
         if (k < button.length && !this.state.hasGameEnded) {
-            var t = setTimeout(this.repeatOrder.bind(null, button, k), 200);
+            var t = setTimeout(this.repeatOrder(null, button, k), 200);
         }
     }
-    
+
     repeatOrder = (buttonsOrder, j) => {
         var timer = '';
         let buttons = buttonsOrder;
         let currentButton = buttons[j];
+        var random_button = Math.floor(Math.random() * 10);
+        var random_button2 = Math.floor(Math.random() * 10);
+
+        var buttonList = this.state.buttonOrder;
+        buttonList.append(random_button);
+        buttonList.append(random_button2);
         switch(currentButton) {
             case 0:
                 j++;
                 this.setState({redButtonStyle: {backgroundColor: 'red'}});
-                timer = setTimeout(this.turnOffLight.bind(null, buttons, j, currentButton), 750);
+                timer = setTimeout(this.turnOffLight(null, buttons, j, currentButton), this.state.currentTimeout);
                 break;
             case 1:
                 j++;
                 this.setState({blueButtonStyle: {backgroundColor: 'cyan'}});
-                timer = setTimeout(this.turnOffLight.bind(null, buttons, j, currentButton), 750);
+                timer = setTimeout(this.turnOffLight(null, buttons, j, currentButton), this.state.currentTimeout);
                 break;
             case 2:
                 j++;
                 this.setState({greenButtonStyle: {backgroundColor: 'lime'}});
-                timer = setTimeout(this.turnOffLight.bind(null, buttons, j, currentButton), 750);
+                timer = setTimeout(this.turnOffLight(null, buttons, j, currentButton), this.state.currentTimeout);
                 break;
             case 3:
                 j++;
                 this.setState({yellowButtonStyle: {backgroundColor: 'yellow'}});
-                timer = setTimeout(this.turnOffLight.bind(null, buttons, j, currentButton), 750);
+                timer = setTimeout(this.turnOffLight(null, buttons, j, currentButton), this.state.currentTimeout);
                 break;
             default:
                 break;
         }
     }
-    
+
     waitBeforeStarting = () => {
         var start = setTimeout(this.startNewRound, 5000);
     }
-    
+
     checkOrder = (buttonPressed) => {
-        let userInputs = this.state.buttonsPressed;
-        let correctInputs = this.state.buttonOrder;
-        userInputs.push(buttonPressed);
-        
-        let index = userInputs.length - 1;
-        if (buttonPressed != correctInputs[index]) {
+        if (buttonPressed !== this.state.buttonOrder[this.state.click_count]) {
             this.endTheGame();
         }
         else {
-            this.setState(prevState => ({
-                score: prevState.score + 1
-            }));
+            this.setState({
+                currentTimeout: this.state.currentTimeout - 50, score: this.state.score + 1, click_count: this.state.click_count + 1
+            })
         }
     }
-    
+
     endTheGame = () => {
         this.setState({hasGameEnded: true});
         this.setState({gameMessage: 'Game over!'});
-        
-        //lähetä backendiin että peli on päättynyt
-        //lähetä pisteet backendiin tässä
     }
-    
-    checkEndStatus = () => {
-        // tällä lopetetaan peli toisenkin käyttäjän ruudulta
-        // GET api/ready
-        // if (backend palauttaa true) {
-        //    this.setState({hasGameEnded: true});
-        // }
-    }
-    
+
     render() {
         return (
-            <View style={PTB2Styles.container}>
+            <MainView isLoading={this.state.isLoading} loadingTitle={this.state.loadingTitle}>
                 <View style={PTB2Styles.row}>
-                    <ColoredButton disabled={this.state.buttonsDisabled} backgroundColor={this.state.redButtonStyle} action={this.checkOrder.bind(null, 0)} />
+                    <ColoredButton disabled={this.state.buttonsDisabled} backgroundColor={this.state.redButtonStyle} action={this.checkOrder(null, 0)} />
                     <Text style={PTB2Styles.text}>Turn your phone sideways{"\n"}for better experience!</Text>
                 </View>
-                
+
                 <View style={PTB2Styles.row}>
-                    <ColoredButton disabled={this.state.buttonsDisabled} backgroundColor={this.state.blueButtonStyle} action={this.checkOrder.bind(null, 1)} />
-                    <Text style={PTB2Styles.text}>Score: {this.state.score}</Text>
+                    <ColoredButton disabled={this.state.buttonsDisabled} backgroundColor={this.state.blueButtonStyle} action={this.checkOrder(null, 1)} />
+                    <Text style={PTB2Styles.text}>Pisteesi: {this.state.score}</Text>
                 </View>
-                
+
                 <View style={PTB2Styles.row}>
-                    <ColoredButton disabled={this.state.buttonsDisabled} backgroundColor={this.state.greenButtonStyle} action={this.checkOrder.bind(null, 2)} />
+                    <ColoredButton disabled={this.state.buttonsDisabled} backgroundColor={this.state.greenButtonStyle} action={this.checkOrder(null, 2)} />
                     <Text style={PTB2Styles.text}>{this.state.gameMessage}</Text>
                 </View>
-                
+
                 <View style={PTB2Styles.row}>
-                    <ColoredButton disabled={this.state.buttonsDisabled} backgroundColor={this.state.yellowButtonStyle} action={this.checkOrder.bind(null, 3)} />
+                    <ColoredButton disabled={this.state.buttonsDisabled} backgroundColor={this.state.yellowButtonStyle} action={this.checkOrder(null, 3)} />
                 </View>
-            </View>
+            </MainView>
         );
     }
 }

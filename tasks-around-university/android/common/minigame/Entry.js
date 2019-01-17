@@ -32,6 +32,11 @@ class MiniGameEntry {
             case "quiklash":
                 Actions.quiklash();
                 break;
+            case "ptb2":
+                Http.post('api/push_the_buttons2', {}).then(function(){
+                    return Actions.ptb2();
+                })
+                break;
             default:
                 console.log("invalid minigame_str in static enter_minigame(minigame_str)")
         }
