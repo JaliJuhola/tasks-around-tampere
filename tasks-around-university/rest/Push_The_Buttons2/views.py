@@ -61,6 +61,5 @@ class PushTheButtons2MainView(APIView):
         return Response({'status': True})
 
     def post(self, request):
-        maingame = PushTheButtons2MainGame.objects.filter(group=request.user.group, game_ended=False).last()
-        PushTheButtons2MainGame.objects.create(group=request.user.group, game_ended=False, maingame = maingame)
+        PushTheButtons2MainGame.objects.create(group=request.user.group, game_ended=False)
         return Response({'status': True})
