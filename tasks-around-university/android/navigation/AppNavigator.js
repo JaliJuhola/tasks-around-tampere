@@ -26,6 +26,7 @@ import {GeocacheScreen} from '../geocache/GeocacheScreen';
 import IconSelect from '../maingame/components/IconSelect';
 import { Auth } from '../core/auth/auth';
 import PTB2Screen from '../PushThebuttons2/screens/PTB2Screen';
+import {Http} from '../core/connections/http';
 const reducerCreate = params => {
   const defaultReducer = new Reducer(params);
   return (state, action) => {
@@ -36,8 +37,6 @@ const reducerCreate = params => {
 
 
 const stateHandler = (prevState, newState, action) => {
-  // console.log(prevState);
-  // console.log(newState);
 };
 
 const getSceneStyle = () => ({
@@ -89,19 +88,64 @@ const onBackAndroid = () => {
     );
   }
   if(Actions.currentScene === "IconSelect") {
-    Actions.StartScreen();
+    Actions.start();
   }
-  if(Actions.currentScene === "Lobby") {
-    Actions.MapScreen();
-  }
-  if(Actions.currentScene === "Minigame") {
-    //-> map
+  if(Actions.currentScene === "lobby") {
+    Actions.main_map();
   }
   if(Actions.currentScene === "scanner") {
-    //Might be using scanner class to do this stuff.
+    Actions.main_map();
+  }
+  if(Actions.currentScene === "push_the_buttons") {
+    Alert.alert(
+      'Push the buttons',
+      'Haluatko varmasti poistua?',
+      [
+        { text: 'Ei', onPress: () => {} },
+        {
+          text: 'Kyllä',
+          onPress: () => {
+            Http.get('api/push_the_buttons');          },
+        },
+      ],
+      { cancellable: false }
+    );
   }
 
-  console.log("*************************************************");
+  if(Actions.currentScene === "alias") {
+    Alert.alert(
+      'Alias',
+      'Haluatko varmasti poistua?',
+      [
+        { text: 'Ei', onPress: () => {} },
+        {
+          text: 'Kyllä',
+          onPress: () => {
+            Http.post('api/alias/end',{
+            })
+          },
+        },
+      ],
+      { cancellable: false }
+    );
+  }
+
+  if(Actions.currentScene === "cache") {
+    Alert.alert(
+      'Geocache',
+      'Haluatko varmasti poistua?',
+      [
+        { text: 'Ei', onPress: () => {} },
+        {
+          text: 'Kyllä',
+          onPress: () => {
+            Http.post('api/geocache/exit/',{});
+          },
+        },
+      ],
+      { cancellable: false }
+    );
+  }
   return true;
 }
 const AppNavigator = () => (

@@ -13,7 +13,6 @@ class ColoredButton extends React.Component {
             loadingTitle: "Odotetaan muita pelaajia"
         }
     }
-
     render() {
         const { backgroundColor, disabled } = this.props;
         const combined = StyleSheet.flatten([PTB2Styles.coloredButton, backgroundColor]);
@@ -118,7 +117,7 @@ export default class PTB2Screen extends React.Component {
     }
 
     waitBeforeStarting = () => {
-        var start = setTimeout(this.startNewRound, 5000);
+        setTimeout(this.startNewRound, 5000);
     }
 
     checkOrder = (buttonPressed) => {

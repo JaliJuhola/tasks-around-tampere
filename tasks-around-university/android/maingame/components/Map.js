@@ -337,8 +337,7 @@ export default class Map extends React.Component {
   }
 
   showModalWindow(activatedMarker) {
-    this.setState({currentMarker: activatedMarker});
-    this.setState({markerModalVisible: true});
+    this.setState({currentMarker: activatedMarker, markerModalVisible: true});
   }
 
   playMinigame() {
@@ -416,33 +415,33 @@ export default class Map extends React.Component {
                 </View>
                 <View style={MapStyles.modalTextContainer}>
                   <View style={MapStyles.modalTextBorder}>
-                    <Text style={MapStyles.modalText}>Distance: {this.state.markers[this.state.currentMarker].distanceText}</Text>
+                    <Text style={MapStyles.modalText}>Etäisyys: {this.state.markers[this.state.currentMarker].distanceText}</Text>
                   </View>
                   <View style={MapStyles.modalTextBorder}>
-                    <Text style={MapStyles.modalText}>Difficulty: {this.state.markers[this.state.currentMarker].difficulty}</Text>
+                    <Text style={MapStyles.modalText}>Vaikeustaso: {this.state.markers[this.state.currentMarker].difficulty}</Text>
                   </View>
                   <View style={MapStyles.modalTextBorder}>
-                    <Text style={MapStyles.modalText}>Players: {this.state.markers[this.state.currentMarker].players}</Text>
+                    <Text style={MapStyles.modalText}>Pelaajat: {this.state.markers[this.state.currentMarker].players}</Text>
                   </View>
                   <View style={MapStyles.modalTextBorder}>
-                    <Text style={MapStyles.modalText}>High-Score: {this.state.markers[this.state.currentMarker].hiscore} Points</Text>
+                    <Text style={MapStyles.modalText}>Huippupisteet: {this.state.markers[this.state.currentMarker].hiscore} Points</Text>
                   </View>
                   <View style={MapStyles.modalTextBorder}>
-                    <Text style={MapStyles.modalText}>Your best score: {this.state.markers[this.state.currentMarker].score} Points</Text>
+                    <Text style={MapStyles.modalText}>Ryhmän huippupisteet {this.state.markers[this.state.currentMarker].score} Pisteet</Text>
                   </View>
                   <View style={MapStyles.modalTextBorder}>
-                    <Text style={MapStyles.modalText}>Times played: {this.state.markers[this.state.currentMarker].timesPlayed}</Text>
+                    <Text style={MapStyles.modalText}>Pelikerrat: {this.state.markers[this.state.currentMarker].timesPlayed}</Text>
                   </View>
                 </View>
                 <View style={MapStyles.modalDescription}>
-                  <Text style={MapStyles.modalText}>Description: {this.state.markers[this.state.currentMarker].description}</Text>
+                  <Text style={MapStyles.modalText}>Kuvaus: {this.state.markers[this.state.currentMarker].description}</Text>
                 </View>
                 <View style={MapStyles.modalButtonContainer}>
                   <TouchableOpacity style={MapStyles.modalButton} onPress={() => this.setState({markerModalVisible: false})}>
-                    <Text style={MapStyles.modalButtonText}>Back</Text>
+                    <Text style={MapStyles.modalButtonText}>Takaisin</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={MapStyles.modalButton} onPress={() => this.playMinigame()}>
-                    <Text style={MapStyles.modalButtonText}>Play</Text>
+                    <Text style={MapStyles.modalButtonText}>Pelaa</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -452,20 +451,20 @@ export default class Map extends React.Component {
             <View style={MapStyles.legendContainer}>
               <View style={MapStyles.legend}>
                 <Icon name="map-marker" color="#6200ee" size={20} />
-                <Text style={MapStyles.legendText}>Minigame</Text>
+                <Text style={MapStyles.legendText}>Minipeli</Text>
               </View>
               <View style={MapStyles.legend}>
                 <Icon name="map-marker" color="#0EDA16" size={20} />
-                <Text style={MapStyles.legendText}>Completed</Text>
+                <Text style={MapStyles.legendText}>Suoritettu</Text>
               </View>
               <View style={MapStyles.legend}>
                 <Image source={this.markerImages[0]} style={MapStyles.legendImage}></Image>
-                <Text style={MapStyles.legendText}>Player</Text>
+                <Text style={MapStyles.legendText}>Pelaaja</Text>
               </View>
             </View>
             <View style={MapStyles.progressContainer}>
-              <Text style={MapStyles.progressText}>Points: {this.state.teamScore}</Text>
-              <Text style={MapStyles.progressText}>Progress: {this.state.teamProgress}%</Text>
+              <Text style={MapStyles.progressText}>Pisteet: {this.state.teamScore}</Text>
+              <Text style={MapStyles.progressText}>Edistys: {this.state.teamProgress}%</Text>
             </View>
           </View>
         </MainView>
