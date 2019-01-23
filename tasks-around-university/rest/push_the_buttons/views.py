@@ -31,7 +31,6 @@ class PushTheButtonView(APIView):
         try:
             group = Group.objects.get(id=group_id)
             game_object = PushTheButtonsMainGame.objects.filter(group=group, game_ended=False).last()
-            print(game_object.__dict__)
             player = request.user
             if game_object.next_to_click:
                 if player.id != game_object.next_to_click.id or game_object.next_push_before < timezone.now():

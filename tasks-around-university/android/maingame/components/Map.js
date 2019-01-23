@@ -81,6 +81,7 @@ export default class Map extends React.Component {
           target_str: 'push_the_buttons',
           difficulty: "Easy",
           players: '2-6',
+          disabled: false,
           score: 0,
           hiscore: 0,
           timesPlayed: 0,
@@ -102,6 +103,7 @@ export default class Map extends React.Component {
           score: 0,
           hiscore: 0,
           timesPlayed: 0,
+          disabled: false,
           completed: false,
           distance: null,
           distanceText: null,
@@ -117,6 +119,7 @@ export default class Map extends React.Component {
           target_str: 'quiklash',
           difficulty: "Normal",
           players: '2-6',
+          disabled: true,
           score: 25,
           hiscore: 0,
           timesPlayed: 0,
@@ -135,6 +138,7 @@ export default class Map extends React.Component {
           target_str: 'cache',
           difficulty: "Hard",
           players: '2-6',
+          disabled: false,
           score: 0,
           hiscore: 0,
           timesPlayed: 0,
@@ -153,6 +157,7 @@ export default class Map extends React.Component {
           target_str: 'ptb2',
           difficulty: "Hard",
           players: '2-6',
+          disabled: true,
           score: 0,
           hiscore: 0,
           timesPlayed: 0,
@@ -188,6 +193,7 @@ export default class Map extends React.Component {
     return TimerMixin.setInterval(() => {
       this.updateUsersLocation();
       this.updateMinigameScore();
+      this.updateOverallScore();
       if(this.state.minigameMarkers.length > 0) {
         this.setState({isLoading:false});
       }
@@ -230,21 +236,24 @@ export default class Map extends React.Component {
 
       this.setState({markerNearUser: false});
 
-      newMarkers = this.state.markers.slice();
+      var newMarkers = this.state.markers.slice();
 
-      userLat = this.state.userLocation.latitude;
-      userLon = this.state.userLocation.longitude;
-      for(i = 0; i < this.state.markers.length; i++) {
-        markerLat = this.state.markers[i].coordinates.latitude;
-        markerLon = this.state.markers[i].coordinates.longitude;
-        r = 6371000;
-        distanceLat = (userLat - markerLat) * (Math.PI/180);
-        distanceLon = (userLon - markerLon) * (Math.PI/180);
-        a = Math.sin(distanceLat/2) * Math.sin(distanceLat/2) + (Math.cos((userLat) * (Math.PI/180))) * (Math.cos((markerLat) * (Math.PI/180))) * Math.sin(distanceLon/2) * Math.sin(distanceLon/2);
-        c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        distance = r * c;
+      var userLat = this.state.userLocation.latitude;
+      var userLon = this.state.userLocation.longitude;
+      for(var i = 0; i < this.state.markers.length; i++) {
+        var markerLat = this.state.markers[i].coordinates.latitude;
+        var markerLon = this.state.markers[i].coordinates.longitude;
+        var disabled = this.state.markers[i].disabled;
+        var r = 6371000;
+        var distanceLat = (userLat - markerLat) * (Math.PI/180);
+        var distanceLon = (userLon - markerLon) * (Math.PI/180);
+        var a = Math.sin(distanceLat/2) * Math.sin(distanceLat/2) + (Math.cos((userLat) * (Math.PI/180))) * (Math.cos((markerLat) * (Math.PI/180))) * Math.sin(distanceLon/2) * Math.sin(distanceLon/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var distance = r * c;
 
         newMarkers[i].distance = distance;
+        newMarkers[i].disabled = disabled;
+
         if(distance < 20) {
           newMarkers[i].userNear = true;
           this.setState({markerNearUser: true});
@@ -311,8 +320,12 @@ export default class Map extends React.Component {
   //Returns minigame-markers
   displayMinigameMarkers() {
     var markers = this.state.markers.map((marker, i) =>  {
-      var color = '#6200ee';
+      let color = '#6200ee';
       var marker_pressed = (e) => {e.stopPropagation(); this.showModalWindow(i);}
+      if(marker.disabled) {
+        color = '#484848';
+        marker_pressed = undefined;
+      }
       if(marker.distance > 100 && !settings['debug']) {
         color = '#808080';
         marker_pressed = undefined;
@@ -368,8 +381,6 @@ export default class Map extends React.Component {
         marker.timesPlayed = response['data'][marker['title']]['count'];
         if(marker.timesPlayed > 0) {
           marker.completed = true;
-        } else {
-
         }
         return marker;
       });
@@ -378,6 +389,7 @@ export default class Map extends React.Component {
   }
 
   render() {
+    // If not authenticated go back to startScreen
     Auth.not_auth();
     return (
       <MainView
@@ -451,11 +463,11 @@ export default class Map extends React.Component {
             <View style={MapStyles.legendContainer}>
               <View style={MapStyles.legend}>
                 <Icon name="map-marker" color="#6200ee" size={20} />
-                <Text style={MapStyles.legendText}>Minipeli</Text>
+                <Text style={MapStyles.legendText}>Aktiivinen minipeli</Text>
               </View>
               <View style={MapStyles.legend}>
                 <Icon name="map-marker" color="#0EDA16" size={20} />
-                <Text style={MapStyles.legendText}>Suoritettu</Text>
+                <Text style={MapStyles.legendText}>Suoritettu minipeli</Text>
               </View>
               <View style={MapStyles.legend}>
                 <Image source={this.markerImages[0]} style={MapStyles.legendImage}></Image>

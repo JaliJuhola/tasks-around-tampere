@@ -6,9 +6,7 @@ import {
   Router,
   Actions,
   Reducer,
-  ActionConst,
   Overlay,
-  Tabs,
   Modal,
   Stack,
   Lightbox,
@@ -37,6 +35,7 @@ const reducerCreate = params => {
 
 
 const stateHandler = (prevState, newState, action) => {
+  BackHandler.addEventListener('hardwareBackPress', onBackAndroid);
 };
 
 const getSceneStyle = () => ({
@@ -130,22 +129,22 @@ const onBackAndroid = () => {
     );
   }
 
-  if(Actions.currentScene === "cache") {
-    Alert.alert(
-      'Geocache',
-      'Haluatko varmasti poistua?',
-      [
-        { text: 'Ei', onPress: () => {} },
-        {
-          text: 'Kyllä',
-          onPress: () => {
-            Http.post('api/geocache/exit/',{});
-          },
-        },
-      ],
-      { cancellable: false }
-    );
-  }
+  // if(Actions.currentScene === "cache") {
+  //   Alert.alert(
+  //     'Geocache',
+  //     'Haluatko varmasti poistua?',
+  //     [
+  //       { text: 'Ei', onPress: () => {} },
+  //       {
+  //         text: 'Kyllä',
+  //         onPress: () => {
+  //           Http.post('api/geocache/exit/',{});
+  //         },
+  //       },
+  //     ],
+  //     { cancellable: false }
+  //   );
+  // }
   return true;
 }
 const AppNavigator = () => (
