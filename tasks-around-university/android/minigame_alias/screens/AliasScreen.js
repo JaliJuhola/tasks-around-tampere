@@ -86,7 +86,8 @@ export class AliasScreen extends React.Component {
     endRound = () => {
         var self = this;
         Http.post('api/alias/end').then(function (response) {
-            Alert.alert("Alias", "Peli loppui sinulla on " + this.state.score + " pistettä");
+            Alert.alert("Alias", "Peli loppui sinulla on " + self.state.score + " pistettä");
+
         })
     }
 
@@ -101,8 +102,8 @@ export class AliasScreen extends React.Component {
         let guess = this.state.textInput.toLowerCase();
         if (guess === this.state.currentWord.toLowerCase()) {
             Alert.alert("Alias", "Arvasit oikein!");
+            self.setState({textInput: ""});
             Http.patch('api/alias/score',{}).then(function (response) {
-                self.setState({textInput: ""});
             });
         }
         else {

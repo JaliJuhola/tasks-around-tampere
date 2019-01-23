@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import { TextInput, Button, Headline } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Bubbles} from 'react-native-loader';
+import { Http } from '../../core/connections/http';
 
 
 
@@ -89,8 +90,7 @@ export class QuiklashScreen extends React.Component {
   getQuestion(){
     var response;
     if(this.state.temp == 0){
-      response = JSON.parse('{"ready":true,"question":"What kittens would say if they could talk"}');
-      this.state.temp++;
+      Http.get("question")
     }
     else{
       response = JSON.parse('{"ready":true,"question":"Trash talk you would hear at a chess meet"}');

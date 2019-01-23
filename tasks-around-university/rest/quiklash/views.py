@@ -13,7 +13,7 @@ class QuicklashMainGame(APIView):
 
     def post(self, request):
         group = request.user.group
-        models.QuiklashQuestion.objects.create(group=group)
+        models.QuiklashMainGame.objects.create(group=group, game_ended=False)
         return Response({
             'status': True,
         })

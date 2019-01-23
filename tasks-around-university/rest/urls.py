@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^', include('rest.quiklash.urls')),
     url(r'^', include('rest.alias.urls')),
     url(r'^', include('rest.geocache.urls')),
+    url(r'^', include('rest.Push_The_Buttons2.urls')),
 ]

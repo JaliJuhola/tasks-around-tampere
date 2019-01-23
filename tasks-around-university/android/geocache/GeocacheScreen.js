@@ -9,6 +9,7 @@ import { Headline } from 'react-native-paper';
 import { Appbar, IconButton, Caption} from 'react-native-paper';
 import Scanner from '../maingame/components/Scanner';
 import { MainView } from '../common/Components/MainView';
+import { BackHandler } from 'react-native';
 
 /*
  * A simple timer component that displays time elapsed since component mounting.
@@ -131,24 +132,52 @@ export class GeocacheScreen extends Component {
     this.basicScan = this.basicScan.bind(this);
     // Save the starting time of the game (used in scoring).
     this.startTime = new Date().getTime();
+    this.androidBackHandler = this.androidBackhandler.bind(this);
+
+  }
+  androidBackhandler() {
+    var self = this;
+    if(self.state.scannerOpen) {
+      self.setState({scannerOpen: false})
+    } else {
+      Alert.alert(
+        'Geocache',
+        'Haluatko varmasti poistua?',
+        [
+          { text: 'Ei', onPress: () => {} },
+          {
+            text: 'Kyllä',
+            onPress: () => {
+              Http.post('api/geocache/exit/',{});
+            },
+          },
+        ],
+        { cancellable: false }
+      );
+    }
+    return true;
+  }
+  componentWillUnmount () {
+    BackHandler.removeEventListener('hardwareBackPress', this.androidBackHandler)
   }
 
   componentDidMount() {
-      var self = this;
-      Http.get('api/me').then(function (response) {
-        self.setState(previousState => (
-          {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
-          ));
-      }).then(() => {
-        self.activate_channels_new_riddle();
+    BackHandler.addEventListener('hardwareBackPress', this.androidBackHandler)
+    var self = this;
+    Http.get('api/me').then(function (response) {
+      self.setState(previousState => (
+        {groupId: response['data']['group']['id'], playerId: response['data']['player']['id'], playerName: response['data']['player']['name'], groupName: response['data']['group']['name']}
+        ));
+    }).then(() => {
+      self.activate_channels_new_riddle();
+    });
+    Http.get('api/geocache/',{answer: self.state.answerStr
+    }).then(function (response) {
+      self.setState({
+        currentRiddle: response['data']['riddle'],
+        groupId: response['data']['group_id']
       });
-      Http.get('api/geocache/',{answer: self.state.answerStr
-      }).then(function (response) {
-        self.setState({
-          currentRiddle: response['data']['riddle'],
-          groupId: response['data']['group_id']
-        });
-      })
+    })
   }
   basicScan = (scanned_item) => {
       this.setState({scannedItem: scanned_item, scannerOpen: false})
