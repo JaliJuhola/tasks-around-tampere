@@ -6,9 +6,7 @@ import {
   Router,
   Actions,
   Reducer,
-  ActionConst,
   Overlay,
-  Tabs,
   Modal,
   Stack,
   Lightbox,
@@ -25,6 +23,9 @@ import {QuiklashScreen} from '../maingame/components/Quiklash';
 import {GeocacheScreen} from '../geocache/GeocacheScreen';
 import IconSelect from '../maingame/components/IconSelect';
 import { Auth } from '../core/auth/auth';
+import PTB2Screen from '../PushThebuttons2/screens/PTB2Screen';
+import {Http} from '../core/connections/http';
+
 const reducerCreate = params => {
   const defaultReducer = new Reducer(params);
   return (state, action) => {
@@ -35,8 +36,7 @@ const reducerCreate = params => {
 
 
 const stateHandler = (prevState, newState, action) => {
-  // console.log(prevState);
-  // console.log(newState);
+  BackHandler.addEventListener('hardwareBackPress', onBackAndroid);
 };
 
 const getSceneStyle = () => ({
@@ -88,19 +88,52 @@ const onBackAndroid = () => {
     );
   }
   if(Actions.currentScene === "IconSelect") {
+
+    Actions.start();
+
     Actions.StartScreen();
   }
-  if(Actions.currentScene === "Lobby") {
-    Actions.MapScreen();
-  }
-  if(Actions.currentScene === "Minigame") {
-    //-> map
+  if(Actions.currentScene === "lobby") {
+    Actions.main_map();
   }
   if(Actions.currentScene === "scanner") {
+    Actions.main_map();
+  }
+  if(Actions.currentScene === "push_the_buttons") {
+    Alert.alert(
+      'Push the buttons',
+      'Haluatko varmasti poistua?',
+      [
+        { text: 'Ei', onPress: () => {} },
+        {
+          text: 'Kyllä',
+          onPress: () => {
+            Http.get('api/push_the_buttons');          },
+        },
+      ],
+      { cancellable: false }
+    );
+
     //Might be using scanner class to do this stuff.
   }
 
-  console.log("*************************************************");
+  if(Actions.currentScene === "alias") {
+    Alert.alert(
+      'Alias',
+      'Haluatko varmasti poistua?',
+      [
+        { text: 'Ei', onPress: () => {} },
+        {
+          text: 'Kyllä',
+          onPress: () => {
+            Http.post('api/alias/end',{
+            })
+          },
+        },
+      ],
+      { cancellable: false }
+    );
+  }
   return true;
 }
 const AppNavigator = () => (
@@ -187,6 +220,14 @@ const AppNavigator = () => (
                 component={IconSelect}
                 title="IconSelect"
                 tabBarLabel="icos"
+                icon={TabBarIcon}
+                type="replace"
+              />
+              <Scene
+                key="ptb2"
+                component={PTB2Screen}
+                title="ptb2"
+                tabBarLabel="ptb2"
                 icon={TabBarIcon}
                 type="replace"
               />

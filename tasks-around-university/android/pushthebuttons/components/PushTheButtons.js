@@ -11,11 +11,15 @@ import { Actions } from 'react-native-router-flux';
 import {Http} from '../../core/connections/http';
 import {getSocketConnection} from '../../common/minigame/Connection';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import {Loading} from '../../common/Components/Loading';
 import {Appbar, Subheading, Divider} from 'react-native-paper';
 import { MainView } from '../../common/Components/MainView';
 =======
 import {Appbar, Subheading, Divider} from 'react-native-paper';
+=======
+import {Divider} from 'react-native-paper';
+>>>>>>> development
 import { MainView } from '../../common/Components/MainView';
 import {GameContainer} from '../../common/Components/GameContainer';
 import TimerCountdown from 'react-native-timer-countdown';
@@ -111,11 +115,7 @@ export default class PushTheButtonsScreen extends React.Component {
       return { playerToClickMessage: undefined, clickable:false };
     });
     Http.patch('api/push_the_buttons',{group_id: self.state.groupId
-    }).then(function (response) {
-    }).catch(function (error) {
-      console.log(error);
-      console.log(error.status);
-    })
+    });
   }
   render() {
     var that = this;
@@ -142,7 +142,7 @@ export default class PushTheButtonsScreen extends React.Component {
     </View>
     }
     return (
-        <MainView mainTitle="Push the buttons" onExit= {() => {Actions.main_map();}}>
+        <MainView mainTitle="Push the buttons" onExit= {() => {Http.get('api/push_the_buttons')}}>
         <GameContainer style={styles.container}>
         <View style={{flexDirection: 'row', }}>
             <Text style={styles.textItems}>Numerosi: </Text>
@@ -158,8 +158,6 @@ export default class PushTheButtonsScreen extends React.Component {
           <View style={{flexDirection: 'row', }}>
             <Text style={styles.textItems}>Aikaa painaa nappia: </Text><TimerCountdown
               initialSecondsRemaining={1000*this.state.secondsToPush}
-              onTick={secondsRemaining => console.log('tick', secondsRemaining)}
-              onTimeElapsed={() => console.log('complete')}
               style={styles.textItemsBold}
             />
           </View>

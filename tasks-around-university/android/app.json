@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "tasks-around-university",
+    "name": "tasks-around-university-final",
     "description": "A very interesting project.",
-    "slug": "tasks-around-university",
+    "slug": "tasks-around-university-final",
     "privacy": "public",
     "sdkVersion": "30.0.0",
     "platforms": [
