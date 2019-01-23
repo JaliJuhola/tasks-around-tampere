@@ -105,8 +105,7 @@ export default class PushTheButtonsScreen extends React.Component {
       return { playerToClickMessage: undefined, clickable:false };
     });
     Http.patch('api/push_the_buttons',{group_id: self.state.groupId
-    }).then(function (response) {
-    })
+    });
   }
   render() {
     var that = this;

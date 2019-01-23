@@ -25,6 +25,7 @@ import IconSelect from '../maingame/components/IconSelect';
 import { Auth } from '../core/auth/auth';
 import PTB2Screen from '../PushThebuttons2/screens/PTB2Screen';
 import {Http} from '../core/connections/http';
+
 const reducerCreate = params => {
   const defaultReducer = new Reducer(params);
   return (state, action) => {
@@ -87,7 +88,10 @@ const onBackAndroid = () => {
     );
   }
   if(Actions.currentScene === "IconSelect") {
+
     Actions.start();
+
+    Actions.StartScreen();
   }
   if(Actions.currentScene === "lobby") {
     Actions.main_map();
@@ -109,6 +113,8 @@ const onBackAndroid = () => {
       ],
       { cancellable: false }
     );
+
+    //Might be using scanner class to do this stuff.
   }
 
   if(Actions.currentScene === "alias") {
@@ -128,23 +134,6 @@ const onBackAndroid = () => {
       { cancellable: false }
     );
   }
-
-  // if(Actions.currentScene === "cache") {
-  //   Alert.alert(
-  //     'Geocache',
-  //     'Haluatko varmasti poistua?',
-  //     [
-  //       { text: 'Ei', onPress: () => {} },
-  //       {
-  //         text: 'Kyllä',
-  //         onPress: () => {
-  //           Http.post('api/geocache/exit/',{});
-  //         },
-  //       },
-  //     ],
-  //     { cancellable: false }
-  //   );
-  // }
   return true;
 }
 const AppNavigator = () => (

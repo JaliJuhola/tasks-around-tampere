@@ -87,6 +87,7 @@ export class AliasScreen extends React.Component {
         var self = this;
         Http.post('api/alias/end').then(function (response) {
             Alert.alert("Alias", "Peli loppui sinulla on " + self.state.score + " pistettä");
+
         })
     }
 
